@@ -300,7 +300,7 @@
                     <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
                     <span class="text-slate-400 small fw-semibold text-uppercase tracking-wider">Live Repair Lab Diagnostics</span>
                 </div>
-                <h1 class="display-5 fw-bold text-white mb-3">Live Servicessssss & Ticket Tracker</h1>
+                <h1 class="display-5 fw-bold text-white mb-3">Live  & Ticket Tracker</h1>
                 <p class="lead text-slate-400 mb-5">Trace hardware updates, diagnostic status, and expected delivery times.</p>
 
                 <div class="row justify-content-center">
