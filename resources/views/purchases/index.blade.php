@@ -100,110 +100,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                <!-- Modal: Edit Purchase -->
-                                <div class="modal fade" id="editPurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title fw-bold">Edit Purchase Entry: {{ $purchase->purchase_no }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('admin.purchases.update', $purchase->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="row mb-4">
-                                                        <div class="col-md-6 mb-3 mb-md-0">
-                                                            <label class="form-label fw-semibold">Select Supplier <span class="text-danger">*</span></label>
-                                                            <select name="supplier_id" class="form-select" required>
-                                                                <option value="" disabled>Select Supplier</option>
-                                                                @foreach($suppliers as $supplier)
-                                                                <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label fw-semibold">Purchase Date <span class="text-danger">*</span></label>
-                                                            <input type="date" name="purchase_date" class="form-control" value="{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('Y-m-d') }}" required>
-                                                        </div>
-                                                    </div>
-
-                                                    <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-list me-1"></i>Purchase Items:</h6>
-                                                    
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered table-sm align-middle mb-3">
-                                                            <thead class="table-light">
-                                                                <tr>
-                                                                    <th>Item Catalog Description</th>
-                                                                    <th style="width: 120px;">Qty Purchased</th>
-                                                                    <th style="width: 150px;">Unit Cost (BDT)</th>
-                                                                    <th class="text-center" style="width: 50px;"></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="edit-purchase-rows-{{ $purchase->id }}">
-                                                                @foreach($purchase->details as $index => $detail)
-                                                                <tr>
-                                                                    <td>
-                                                                        <select name="items[{{ $index }}][inventory_item_id]" class="form-select form-select-sm" required>
-                                                                            <option value="" disabled>Select Item...</option>
-                                                                            @foreach($items as $item)
-                                                                            <option value="{{ $item->id }}" {{ $detail->inventory_item_id == $item->id ? 'selected' : '' }}>{{ $item->name }} (SKU: {{ $item->sku }})</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" name="items[{{ $index }}][quantity]" class="form-control form-control-sm text-center" value="{{ $detail->quantity }}" min="1" required>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type="number" name="items[{{ $index }}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" value="{{ $detail->cost_price }}" required>
-                                                                    </td>
-                                                                    <td class="text-center">
-                                                                        <button type="button" class="btn btn-link btn-sm text-danger remove-edit-row"><i class="ti tabler-trash"></i></button>
-                                                                    </td>
-                                                                </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    <button type="button" class="btn btn-sm btn-outline-primary add-edit-item-row" data-purchase-id="{{ $purchase->id }}">
-                                                        <i class="ti tabler-plus me-1"></i>Add Another Item
-                                                    </button>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Update Purchase Record</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Modal: Delete Purchase Confirm -->
-                                <div class="modal fade" id="deletePurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-sm">
-                                        <div class="modal-content">
-                                            <div class="modal-header border-0 pb-0">
-                                                <h5 class="modal-title fw-bold text-danger">Delete Purchase</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center py-3">
-                                                <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
-                                                <p class="mb-0">Are you sure you want to delete purchase <strong>{{ $purchase->purchase_no }}</strong>? Inventory quantities restocked will be reverted.</p>
-                                            </div>
-                                            <div class="modal-footer border-0 pt-0 justify-content-center">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('admin.purchases.destroy', $purchase->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 @empty
                                 <tr>
                                     <td colspan="6" class="text-center py-4 text-muted">No stock-in purchases logged.</td>
@@ -245,65 +141,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                <!-- Modal: Edit Supplier -->
-                                <div class="modal fade" id="editSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title fw-bold">Edit Supplier Profile</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('admin.purchases.suppliers.update', $supplier->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-semibold">Supplier / Company Name <span class="text-danger">*</span></label>
-                                                        <input type="text" name="name" class="form-control" value="{{ $supplier->name }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-                                                        <input type="text" name="phone" class="form-control" value="{{ $supplier->phone }}" required>
-                                                    </div>
-                                                    <div class="mb-0">
-                                                        <label class="form-label fw-semibold">Office Address Details</label>
-                                                        <textarea name="address" rows="3" class="form-control">{{ $supplier->address }}</textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Update Supplier</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Modal: Delete Supplier Confirm -->
-                                <div class="modal fade" id="deleteSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-sm">
-                                        <div class="modal-content">
-                                            <div class="modal-header border-0 pb-0">
-                                                <h5 class="modal-title fw-bold text-danger">Delete Supplier</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center py-3">
-                                                <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
-                                                <p class="mb-0">Are you sure you want to delete supplier <strong>{{ $supplier->name }}</strong>?</p>
-                                            </div>
-                                            <div class="modal-footer border-0 pt-0 justify-content-center">
-                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('admin.purchases.suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 @empty
                                 <tr>
                                     <td colspan="5" class="text-center py-4 text-muted">No registered suppliers found.</td>
@@ -317,6 +154,10 @@
         </div>
     </div>
 </div>
+
+<!-- ========================================================= -->
+<!-- ALL MODALS (PLACED OUTSIDE TABLES TO PREVENT OVERLAY BUGS) -->
+<!-- ========================================================= -->
 
 <!-- Modal: Add Supplier -->
 <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
@@ -426,6 +267,173 @@
         </div>
     </div>
 </div>
+
+<!-- Modals for Purchase Iteration -->
+@foreach($purchases as $purchase)
+    <!-- Modal: Edit Purchase -->
+    <div class="modal fade" id="editPurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Edit Purchase Entry: {{ $purchase->purchase_no }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.purchases.update', $purchase->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label fw-semibold">Select Supplier <span class="text-danger">*</span></label>
+                                <select name="supplier_id" class="form-select" required>
+                                    <option value="" disabled>Select Supplier</option>
+                                    @foreach($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Purchase Date <span class="text-danger">*</span></label>
+                                <input type="date" name="purchase_date" class="form-control" value="{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('Y-m-d') }}" required>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-list me-1"></i>Purchase Items:</h6>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm align-middle mb-3">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item Catalog Description</th>
+                                        <th style="width: 120px;">Qty Purchased</th>
+                                        <th style="width: 150px;">Unit Cost (BDT)</th>
+                                        <th class="text-center" style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit-purchase-rows-{{ $purchase->id }}">
+                                    @foreach($purchase->details as $index => $detail)
+                                    <tr>
+                                        <td>
+                                            <select name="items[{{ $index }}][inventory_item_id]" class="form-select form-select-sm" required>
+                                                <option value="" disabled>Select Item...</option>
+                                                @foreach($items as $item)
+                                                <option value="{{ $item->id }}" {{ $detail->inventory_item_id == $item->id ? 'selected' : '' }}>{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[{{ $index }}][quantity]" class="form-control form-control-sm text-center" value="{{ $detail->quantity }}" min="1" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[{{ $index }}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" value="{{ $detail->cost_price }}" required>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-link btn-sm text-danger remove-edit-row"><i class="ti tabler-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-outline-primary add-edit-item-row" data-purchase-id="{{ $purchase->id }}">
+                            <i class="ti tabler-plus me-1"></i>Add Another Item
+                        </button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Purchase Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Delete Purchase Confirm -->
+    <div class="modal fade" id="deletePurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-danger">Delete Purchase</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-3">
+                    <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
+                    <p class="mb-0">Are you sure you want to delete purchase <strong>{{ $purchase->purchase_no }}</strong>? Inventory quantities restocked will be reverted.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ route('admin.purchases.destroy', $purchase->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
+
+<!-- Modals for Supplier Iteration -->
+@foreach($suppliers as $supplier)
+    <!-- Modal: Edit Supplier -->
+    <div class="modal fade" id="editSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Edit Supplier Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.purchases.suppliers.update', $supplier->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Supplier / Company Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" value="{{ $supplier->name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" class="form-control" value="{{ $supplier->phone }}" required>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label fw-semibold">Office Address Details</label>
+                            <textarea name="address" rows="3" class="form-control">{{ $supplier->address }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Supplier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Delete Supplier Confirm -->
+    <div class="modal fade" id="deleteSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-danger">Delete Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-3">
+                    <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
+                    <p class="mb-0">Are you sure you want to delete supplier <strong>{{ $supplier->name }}</strong>?</p>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ route('admin.purchases.suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
