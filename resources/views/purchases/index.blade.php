@@ -1,4 +1,4 @@
-﻿@extends('layouts/contentNavbarLayout')
+@extends('layouts/contentNavbarLayout')
 
 @section('title', 'Purchases & Suppliers - M3 Mobile Care')
 
@@ -21,6 +21,15 @@
     </div>
 
     <!-- Alert Notifications -->
+    @if(session('success'))
+        <div class="col-12 mb-3">
+            <div class="alert alert-success border-0 small py-2 d-flex align-items-center justify-content-between">
+                <div><i class="ti tabler-check me-2"></i>{{ session('success') }}</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="col-12 mb-3">
             <div class="alert alert-danger border-0 small py-2">
@@ -63,6 +72,7 @@
                                     <th>Items Restocked</th>
                                     <th>Total Cost</th>
                                     <th>Date Ordered</th>
+                                    <th class="text-end" style="width: 120px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,10 +89,124 @@
                                     </td>
                                     <td><span class="fw-extrabold text-danger">{{ number_format($purchase->total_amount, 2) }} BDT</span></td>
                                     <td>{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('M d, Y') }}</td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-1">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary" data-bs-toggle="modal" data-bs-target="#editPurchaseModal{{ $purchase->id }}" title="Edit Purchase">
+                                                <i class="ti tabler-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger" data-bs-toggle="modal" data-bs-target="#deletePurchaseModal{{ $purchase->id }}" title="Delete Purchase">
+                                                <i class="ti tabler-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
+
+                                <!-- Modal: Edit Purchase -->
+                                <div class="modal fade" id="editPurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fw-bold">Edit Purchase Entry: {{ $purchase->purchase_no }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('admin.purchases.update', $purchase->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="row mb-4">
+                                                        <div class="col-md-6 mb-3 mb-md-0">
+                                                            <label class="form-label fw-semibold">Select Supplier <span class="text-danger">*</span></label>
+                                                            <select name="supplier_id" class="form-select" required>
+                                                                <option value="" disabled>Select Supplier</option>
+                                                                @foreach($suppliers as $supplier)
+                                                                <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label fw-semibold">Purchase Date <span class="text-danger">*</span></label>
+                                                            <input type="date" name="purchase_date" class="form-control" value="{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('Y-m-d') }}" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-list me-1"></i>Purchase Items:</h6>
+                                                    
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-sm align-middle mb-3">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Item Catalog Description</th>
+                                                                    <th style="width: 120px;">Qty Purchased</th>
+                                                                    <th style="width: 150px;">Unit Cost (BDT)</th>
+                                                                    <th class="text-center" style="width: 50px;"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="edit-purchase-rows-{{ $purchase->id }}">
+                                                                @foreach($purchase->details as $index => $detail)
+                                                                <tr>
+                                                                    <td>
+                                                                        <select name="items[{{ $index }}][inventory_item_id]" class="form-select form-select-sm" required>
+                                                                            <option value="" disabled>Select Item...</option>
+                                                                            @foreach($items as $item)
+                                                                            <option value="{{ $item->id }}" {{ $detail->inventory_item_id == $item->id ? 'selected' : '' }}>{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" name="items[{{ $index }}][quantity]" class="form-control form-control-sm text-center" value="{{ $detail->quantity }}" min="1" required>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="number" name="items[{{ $index }}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" value="{{ $detail->cost_price }}" required>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <button type="button" class="btn btn-link btn-sm text-danger remove-edit-row"><i class="ti tabler-trash"></i></button>
+                                                                    </td>
+                                                                </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                    <button type="button" class="btn btn-sm btn-outline-primary add-edit-item-row" data-purchase-id="{{ $purchase->id }}">
+                                                        <i class="ti tabler-plus me-1"></i>Add Another Item
+                                                    </button>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update Purchase Record</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal: Delete Purchase Confirm -->
+                                <div class="modal fade" id="deletePurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title fw-bold text-danger">Delete Purchase</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center py-3">
+                                                <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
+                                                <p class="mb-0">Are you sure you want to delete purchase <strong>{{ $purchase->purchase_no }}</strong>? Inventory quantities restocked will be reverted.</p>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0 justify-content-center">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{{ route('admin.purchases.destroy', $purchase->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">No stock-in purchases logged.</td>
+                                    <td colspan="6" class="text-center py-4 text-muted">No stock-in purchases logged.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -100,6 +224,7 @@
                                     <th>Phone Number</th>
                                     <th>Address Details</th>
                                     <th>Date Registered</th>
+                                    <th class="text-end" style="width: 120px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,10 +234,79 @@
                                     <td><span class="fw-semibold text-dark">{{ $supplier->phone }}</span></td>
                                     <td>{{ $supplier->address ?? 'N/A' }}</td>
                                     <td>{{ $supplier->created_at->format('M d, Y') }}</td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-1">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal{{ $supplier->id }}" title="Edit Supplier">
+                                                <i class="ti tabler-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger" data-bs-toggle="modal" data-bs-target="#deleteSupplierModal{{ $supplier->id }}" title="Delete Supplier">
+                                                <i class="ti tabler-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
+
+                                <!-- Modal: Edit Supplier -->
+                                <div class="modal fade" id="editSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fw-bold">Edit Supplier Profile</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('admin.purchases.suppliers.update', $supplier->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Supplier / Company Name <span class="text-danger">*</span></label>
+                                                        <input type="text" name="name" class="form-control" value="{{ $supplier->name }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+                                                        <input type="text" name="phone" class="form-control" value="{{ $supplier->phone }}" required>
+                                                    </div>
+                                                    <div class="mb-0">
+                                                        <label class="form-label fw-semibold">Office Address Details</label>
+                                                        <textarea name="address" rows="3" class="form-control">{{ $supplier->address }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Update Supplier</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal: Delete Supplier Confirm -->
+                                <div class="modal fade" id="deleteSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title fw-bold text-danger">Delete Supplier</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center py-3">
+                                                <i class="ti tabler-alert-triangle fs-1 text-danger mb-2 d-block"></i>
+                                                <p class="mb-0">Are you sure you want to delete supplier <strong>{{ $supplier->name }}</strong>?</p>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0 justify-content-center">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{{ route('admin.purchases.suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">No registered suppliers found.</td>
+                                    <td colspan="5" class="text-center py-4 text-muted">No registered suppliers found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -239,43 +433,43 @@
         const addRowBtn = document.getElementById('add-item-row-btn');
         const rowsBody = document.getElementById('purchase-rows-body');
 
-        // Add row
-        addRowBtn.addEventListener('click', function() {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <select name="items[${rowCount}][inventory_item_id]" class="form-select form-select-sm" required>
-                        <option value="" disabled selected>Select Item...</option>
-                        @foreach($items as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <input type="number" name="items[${rowCount}][quantity]" class="form-control form-control-sm text-center" value="1" min="1" required>
-                </td>
-                <td>
-                    <input type="number" name="items[${rowCount}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" placeholder="0.00" required>
-                </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-link btn-sm text-danger remove-purchase-row"><i class="ti tabler-trash"></i></button>
-                </td>
-            `;
-            rowsBody.appendChild(tr);
-            rowCount++;
-            
-            // Enable remove buttons if multiple rows
-            updateRemoveButtons();
-        });
-
-        // Remove row
-        rowsBody.addEventListener('click', function(e) {
-            if (e.target.closest('.remove-purchase-row')) {
-                const tr = e.target.closest('tr');
-                tr.remove();
+        if (addRowBtn) {
+            addRowBtn.addEventListener('click', function() {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <select name="items[${rowCount}][inventory_item_id]" class="form-select form-select-sm" required>
+                            <option value="" disabled selected>Select Item...</option>
+                            @foreach($items as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="items[${rowCount}][quantity]" class="form-control form-control-sm text-center" value="1" min="1" required>
+                    </td>
+                    <td>
+                        <input type="number" name="items[${rowCount}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" placeholder="0.00" required>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-link btn-sm text-danger remove-purchase-row"><i class="ti tabler-trash"></i></button>
+                    </td>
+                `;
+                rowsBody.appendChild(tr);
+                rowCount++;
                 updateRemoveButtons();
-            }
-        });
+            });
+        }
+
+        if (rowsBody) {
+            rowsBody.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-purchase-row')) {
+                    const tr = e.target.closest('tr');
+                    tr.remove();
+                    updateRemoveButtons();
+                }
+            });
+        }
 
         function updateRemoveButtons() {
             const buttons = document.querySelectorAll('.remove-purchase-row');
@@ -285,6 +479,45 @@
                 buttons.forEach(btn => btn.classList.remove('disabled'));
             }
         }
+
+        // Add dynamic row for edit purchase modals
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.add-edit-item-row')) {
+                const btn = e.target.closest('.add-edit-item-row');
+                const purchaseId = btn.dataset.purchaseId;
+                const tbody = document.getElementById('edit-purchase-rows-' + purchaseId);
+                const nextIndex = tbody.children.length;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <select name="items[${nextIndex}][inventory_item_id]" class="form-select form-select-sm" required>
+                            <option value="" disabled selected>Select Item...</option>
+                            @foreach($items as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="items[${nextIndex}][quantity]" class="form-control form-control-sm text-center" value="1" min="1" required>
+                    </td>
+                    <td>
+                        <input type="number" name="items[${nextIndex}][cost_price]" step="0.01" min="0" class="form-control form-control-sm text-end" placeholder="0.00" required>
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-link btn-sm text-danger remove-edit-row"><i class="ti tabler-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            if (e.target.closest('.remove-edit-row')) {
+                const tr = e.target.closest('tr');
+                const tbody = tr.parentElement;
+                if (tbody.children.length > 1) {
+                    tr.remove();
+                }
+            }
+        });
     });
 </script>
 @endsection

@@ -86,7 +86,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['permission:purchases'])->group(function () {
         Route::get('/admin/purchases', [PurchaseController::class, 'index'])->name('admin.purchases.index');
         Route::post('/admin/purchases', [PurchaseController::class, 'store'])->name('admin.purchases.store');
+        Route::put('/admin/purchases/{id}', [PurchaseController::class, 'update'])->name('admin.purchases.update');
+        Route::delete('/admin/purchases/{id}', [PurchaseController::class, 'destroy'])->name('admin.purchases.destroy');
+
         Route::post('/admin/purchases/suppliers', [PurchaseController::class, 'storeSupplier'])->name('admin.purchases.suppliers');
+        Route::put('/admin/purchases/suppliers/{id}', [PurchaseController::class, 'updateSupplier'])->name('admin.purchases.suppliers.update');
+        Route::delete('/admin/purchases/suppliers/{id}', [PurchaseController::class, 'destroySupplier'])->name('admin.purchases.suppliers.destroy');
     });
 
     // Customers (General lookup accessible if they have POS or Repairs permission)
