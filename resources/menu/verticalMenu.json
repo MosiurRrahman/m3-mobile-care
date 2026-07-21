@@ -1,0 +1,100 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base ti tabler-smart-home",
+      "slug": "dashboard",
+      "url": "dashboard"
+    },
+    {
+      "name": "POS Terminal",
+      "icon": "menu-icon icon-base ti tabler-device-laptop",
+      "slug": "admin.pos",
+      "url": "admin/pos"
+    },
+    {
+      "name": "Job Cards (Repairs)",
+      "icon": "menu-icon icon-base ti tabler-device-mobile-cog",
+      "slug": "admin.repairs",
+      "url": "admin/repairs"
+    },
+    {
+      "name": "Spare Parts",
+      "icon": "menu-icon icon-base ti tabler-tool",
+      "slug": "admin.inventory.parts",
+      "url": "admin/inventory/parts"
+    },
+    {
+      "name": "Accessories Stock",
+      "icon": "menu-icon icon-base ti tabler-plug",
+      "slug": "admin.inventory.accessories",
+      "url": "admin/inventory/accessories"
+    },
+    {
+      "name": "Categories",
+      "icon": "menu-icon icon-base ti tabler-category",
+      "slug": "admin.categories.index",
+      "url": "admin/categories"
+    },
+    {
+      "name": "Customers Registry",
+      "icon": "menu-icon icon-base ti tabler-users",
+      "slug": "admin.customers",
+      "url": "admin/customers"
+    },
+    {
+      "name": "Supplier & Purchases",
+      "icon": "menu-icon icon-base ti tabler-truck-delivery",
+      "slug": "admin.purchases",
+      "url": "admin/purchases"
+    },
+    {
+      "name": "Expense Manager",
+      "icon": "menu-icon icon-base ti tabler-receipt",
+      "slug": "admin.expenses",
+      "url": "admin/expenses"
+    },
+    {
+      "name": "Financial Reports",
+      "icon": "menu-icon icon-base ti tabler-report-analytics",
+      "slug": "admin.reports",
+      "url": "admin/reports"
+    },
+    {
+      "name": "Cash Register",
+      "icon": "menu-icon icon-base ti tabler-cash",
+      "slug": "admin.cash.index",
+      "url": "admin/cash"
+    },
+    {
+      "name": "Social Manager",
+      "icon": "menu-icon icon-base ti tabler-share",
+      "slug": "admin.social.index",
+      "url": "admin/social"
+    },
+    {
+      "name": "Staff Accounts",
+      "icon": "menu-icon icon-base ti tabler-users-group",
+      "slug": "admin.users.index",
+      "url": "admin/users"
+    },
+    {
+      "name": "System Activity Logs",
+      "icon": "menu-icon icon-base ti tabler-lock-square",
+      "slug": "admin.activity-logs.index",
+      "url": "admin/activity-logs"
+    },
+    {
+      "name": "Partner Ledger",
+      "icon": "menu-icon icon-base ti tabler-chart-pie",
+      "slug": "admin.partner-ledger.index",
+      "url": "admin/partner-ledger"
+    },
+    {
+      "name": "Shop Settings",
+      "icon": "menu-icon icon-base ti tabler-settings",
+      "slug": "admin.settings.index",
+      "url": "admin/settings"
+    }
+  ]
+}
