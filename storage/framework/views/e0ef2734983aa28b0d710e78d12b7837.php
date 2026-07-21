@@ -51,7 +51,7 @@
         0% { transform: translate(0, 0) scale(1); }
         100% { transform: translate(60px, 40px) scale(1.15); }
     }
-    
+
     /* Global Typography contrast overrides */
     h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
@@ -60,7 +60,7 @@
     p, .text-slate-400 {
         color: #94a3b8 !important;
     }
-    
+
     /* Table styling & isolation */
     .table {
         color: #cbd5e1 !important;
@@ -143,7 +143,7 @@
         70% { box-shadow: 0 0 0 10px rgba(243, 112, 33, 0); }
         100% { box-shadow: 0 0 0 0 rgba(243, 112, 33, 0); }
     }
-    
+
     .bg-slate-900 {
         background-color: #0d1321 !important;
     }
@@ -161,7 +161,7 @@
         border-color: #f37021 !important;
         box-shadow: 0 0 25px rgba(243, 112, 33, 0.35) !important;
     }
-    
+
     /* Badges override */
     .badge {
         font-weight: 600 !important;
@@ -191,7 +191,7 @@
         background-color: rgba(239, 68, 68, 0.16) !important;
         color: #f87171 !important;
     }
-    
+
     /* Modal Text Color Overrides for High Contrast Legibility */
     #repairDetailsModal {
         color: #e2e8f0 !important;
@@ -290,7 +290,7 @@
     <div class="grid-bg"></div>
     <div class="orb-orange"></div>
     <div class="orb-cyan"></div>
-    
+
     <div class="container py-5 position-relative" style="z-index: 2;">
         <div class="row justify-content-center text-center">
             <div class="col-lg-8">
@@ -298,9 +298,9 @@
                     <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
                     <span class="text-slate-400 small fw-semibold text-uppercase tracking-wider">Live Repair Lab Diagnostics</span>
                 </div>
-                <h1 class="display-5 fw-bold text-white mb-3">Live Service & Ticket Tracker</h1>
+                <h1 class="display-5 fw-bold text-white mb-3">Livesss Service & Ticket Tracker</h1>
                 <p class="lead text-slate-400 mb-5">Trace hardware updates, diagnostic status, and expected delivery times.</p>
-                
+
                 <div class="row justify-content-center">
                     <div class="col-md-9 col-lg-8">
                         <div class="glass-card p-4 shadow-lg">
@@ -402,7 +402,8 @@
                                         <td class="py-3.5 fw-bold text-primary"><?php echo e($recent->ticket_id); ?></td>
                                         <td>
                                             <?php if($recent->customer): ?>
-                                                <?php echo e(\Illuminate\Support\Str::limit($recent->customer->name, 12)); ?> 
+                                                <?php echo e(\Illuminate\Support\Str::limit($recent->customer->name, 12)); ?>
+
                                                 <span class="text-slate-500 small d-block"><?php echo e(substr($recent->customer->phone, 0, 4)); ?>****<?php echo e(substr($recent->customer->phone, -4)); ?></span>
                                             <?php else: ?>
                                                 <span class="text-slate-400">Walk-in</span>
@@ -468,7 +469,7 @@
                 </div>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <div class="modal-body p-4">
                 <?php echo $__env->make('_partials.track-modal-body', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
