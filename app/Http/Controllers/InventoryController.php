@@ -30,6 +30,8 @@ class InventoryController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
                   ->orWhere('barcode', 'like', "%{$search}%");
             });
         }
@@ -82,6 +84,8 @@ class InventoryController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
                   ->orWhere('barcode', 'like', "%{$search}%");
             });
         }
@@ -140,6 +144,7 @@ class InventoryController extends Controller
             'sub_category' => 'nullable|string|max:255',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'brand' => 'nullable|string|max:255',
+            'model' => 'nullable|string|max:255',
             'barcode' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'product_type' => 'required|string|in:single,variable',
@@ -149,7 +154,7 @@ class InventoryController extends Controller
             
             // Single Product pricing fields
             'quantity' => 'required_if:product_type,single|nullable|integer|min:0',
-            'purchase_price' => 'required|numeric|min:0', // Used as base cost for both types
+            'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'required_if:product_type,single|nullable|numeric|min:0',
             'discount_type' => 'nullable|string|in:flat,percentage',
             'discount_value' => 'nullable|numeric|min:0',
@@ -187,11 +192,8 @@ class InventoryController extends Controller
             $quantity = $request->input('quantity', 0);
             $salePrice = $request->input('sale_price', 0);
         } else {
-            // Variable product
             $variants = $request->input('variants', []);
             $variantsData = $variants;
-            
-            // Sum quantity and take price from the first variant as a default
             foreach ($variants as $index => $variant) {
                 $quantity += intval($variant['quantity']);
                 if ($index === 0) {
@@ -212,11 +214,12 @@ class InventoryController extends Controller
             'sku' => $sku,
             'barcode' => $request->input('barcode'),
             'type' => $request->input('type'),
-            'category' => $category->name, // legacy column compatibility
+            'category' => $category->name,
             'category_id' => $category->id,
             'sub_category' => $request->input('sub_category'),
             'supplier_id' => $request->input('supplier_id'),
             'brand' => $request->input('brand'),
+            'model' => $request->input('model'),
             'description' => $request->input('description'),
             'product_type' => $productType,
             'quantity' => $quantity,
@@ -262,6 +265,7 @@ class InventoryController extends Controller
             'sub_category' => 'nullable|string|max:255',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'brand' => 'nullable|string|max:255',
+            'model' => 'nullable|string|max:255',
             'barcode' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'product_type' => 'required|string|in:single,variable',
@@ -294,7 +298,6 @@ class InventoryController extends Controller
         // Handle images
         $imagePaths = $item->images ?? [];
         if ($request->hasFile('images')) {
-            // Delete old images from storage
             if (!empty($item->images)) {
                 foreach ($item->images as $oldImage) {
                     Storage::disk('public')->delete($oldImage);
@@ -333,6 +336,7 @@ class InventoryController extends Controller
             'sub_category' => $request->input('sub_category'),
             'supplier_id' => $request->input('supplier_id'),
             'brand' => $request->input('brand'),
+            'model' => $request->input('model'),
             'description' => $request->input('description'),
             'product_type' => $productType,
             'quantity' => $quantity,
@@ -360,7 +364,6 @@ class InventoryController extends Controller
         $item = InventoryItem::findOrFail($id);
         $type = $item->type;
 
-        // Delete images from storage
         if (!empty($item->images)) {
             foreach ($item->images as $image) {
                 Storage::disk('public')->delete($image);

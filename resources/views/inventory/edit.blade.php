@@ -29,7 +29,7 @@
                             <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-info-circle me-2"></i>Product Information</h5>
                             
                             <div class="row mb-3">
-                                <div class="col-md-6 mb-3 mb-md-0">
+                                <div class="col-md-4 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="supplier_id">Supplier</label>
                                     <select name="supplier_id" id="supplier_id" class="form-select select2">
                                         <option value="">Select Supplier</option>
@@ -38,9 +38,13 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="brand">Brand Name</label>
                                     <input type="text" name="brand" id="brand" class="form-control" value="{{ old('brand', $item->brand) }}" placeholder="e.g. Joyroom, Apple, Samsung">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="model">Device Model / Model</label>
+                                    <input type="text" name="model" id="model" class="form-control" value="{{ old('model', $item->model) }}" placeholder="e.g. iPhone 13, Galaxy S21">
                                 </div>
                             </div>
 

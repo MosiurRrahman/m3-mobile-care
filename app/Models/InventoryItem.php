@@ -27,6 +27,7 @@ class InventoryItem extends Model
         'category_id',
         'sub_category',
         'brand',
+        'model',
         'description',
         'product_type', // single, variable
         'discount_type', // flat, percentage

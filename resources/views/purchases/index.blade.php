@@ -83,7 +83,7 @@
                                     <td>
                                         <ul class="list-unstyled mb-0 small">
                                             @foreach($purchase->details as $detail)
-                                            <li><i class="ti tabler-circle-filled fs-9 text-primary me-1"></i>{{ $detail->item ? $detail->item->name : 'Deleted Item' }} (x{{ $detail->quantity }} @ {{ number_format($detail->cost_price, 0) }} BDT)</li>
+                                            <li><i class="ti tabler-circle-filled fs-9 text-primary me-1"></i><strong>{{ $detail->item ? $detail->item->name : 'Deleted Item' }}</strong> @if($detail->item && ($detail->item->brand || $detail->item->model || $detail->item->sub_category)) <span class="text-muted fs-7">[Brand: {{ $detail->item->brand ?? "-" }}, Model: {{ $detail->item->model ?? $detail->item->sub_category ?? "-" }}]</span> @endif (x{{ $detail->quantity }} @ {{ number_format($detail->cost_price, 0) }} BDT)</li>
                                             @endforeach
                                         </ul>
                                     </td>
@@ -256,7 +256,7 @@
                                         <select name="items[0][inventory_item_id]" class="form-select form-select-sm" required>
                                             <option value="" disabled selected>Select Item...</option>
                                             @foreach($items as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                                            <option value="{{ $item->id }}">{{ $item->name }} @if($item->brand || $item->model || $item->sub_category) [Brand: {{ $item->brand ?? "-" }}, Model: {{ $item->model ?? $item->sub_category ?? "-" }}] @endif (SKU: {{ $item->sku }})</option>
                                             @endforeach
                                         </select>
                                     </td>
@@ -336,7 +336,7 @@
                                             <select name="items[{{ $index }}][inventory_item_id]" class="form-select form-select-sm" required>
                                                 <option value="" disabled>Select Item...</option>
                                                 @foreach($items as $item)
-                                                <option value="{{ $item->id }}" {{ $detail->inventory_item_id == $item->id ? 'selected' : '' }}>{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                                                <option value="{{ $item->id }}" {{ $detail->inventory_item_id == $item->id ? 'selected' : '' }}>{{ $item->name }} @if($item->brand || $item->model || $item->sub_category) [Brand: {{ $item->brand ?? "-" }}, Model: {{ $item->model ?? $item->sub_category ?? "-" }}] @endif (SKU: {{ $item->sku }})</option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -483,7 +483,7 @@
                         <select name="items[${rowCount}][inventory_item_id]" class="form-select form-select-sm" required>
                             <option value="" disabled selected>Select Item...</option>
                             @foreach($items as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                            <option value="{{ $item->id }}">{{ $item->name }} @if($item->brand || $item->model || $item->sub_category) [Brand: {{ $item->brand ?? "-" }}, Model: {{ $item->model ?? $item->sub_category ?? "-" }}] @endif (SKU: {{ $item->sku }})</option>
                             @endforeach
                         </select>
                     </td>
@@ -535,7 +535,7 @@
                         <select name="items[${nextIndex}][inventory_item_id]" class="form-select form-select-sm" required>
                             <option value="" disabled selected>Select Item...</option>
                             @foreach($items as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }} (SKU: {{ $item->sku }})</option>
+                            <option value="{{ $item->id }}">{{ $item->name }} @if($item->brand || $item->model || $item->sub_category) [Brand: {{ $item->brand ?? "-" }}, Model: {{ $item->model ?? $item->sub_category ?? "-" }}] @endif (SKU: {{ $item->sku }})</option>
                             @endforeach
                         </select>
                     </td>

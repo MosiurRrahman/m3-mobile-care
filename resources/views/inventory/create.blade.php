@@ -29,7 +29,7 @@
                             <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-info-circle me-2"></i>Product Information</h5>
                             
                             <div class="row mb-3">
-                                <div class="col-md-6 mb-3 mb-md-0">
+                                <div class="col-md-4 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="supplier_id">Supplier</label>
                                     <select name="supplier_id" id="supplier_id" class="form-select select2">
                                         <option value="">Select Supplier</option>
@@ -38,16 +38,20 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="brand">Brand Name</label>
-                                    <input type="text" name="brand" id="brand" class="form-control" value="{{ old('brand') }}" placeholder="e.g. Joyroom, Apple, Samsung">
+                                    <input type="text" name="brand" id="brand" class="form-control" value="{{ old('brand') }}" placeholder="e.g. Apple, Samsung, Joyroom">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold" for="model">Device Model / Model</label>
+                                    <input type="text" name="model" id="model" class="form-control" value="{{ old('model') }}" placeholder="e.g. iPhone 13, Galaxy S21">
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label class="form-label fw-semibold" for="name">Product Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" placeholder="e.g. Joyroom T03S Pro Wireless Earbuds" required>
+                                    <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" placeholder="e.g. Original OLED Display / Fast Charging Cable" required>
                                 </div>
                             </div>
 
@@ -63,7 +67,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold" for="sub_category">Sub Category</label>
-                                    <input type="text" name="sub_category" id="sub_category" class="form-control" value="{{ old('sub_category') }}" placeholder="e.g. Bluetooth Audio">
+                                    <input type="text" name="sub_category" id="sub_category" class="form-control" value="{{ old('sub_category') }}" placeholder="e.g. Bluetooth Audio, Display Assembly">
                                 </div>
                             </div>
 
@@ -214,7 +218,6 @@
         const productType = document.getElementById('product_type');
         const singleFields = document.getElementById('single-product-fields');
         const variableFields = document.getElementById('variable-product-fields');
-        const alertQuantityInput = document.getElementById('alert_quantity');
 
         function toggleProductType() {
             const singleInputs = singleFields.querySelectorAll('input, select, textarea');
@@ -224,7 +227,6 @@
                 singleFields.classList.remove('d-none');
                 variableFields.classList.add('d-none');
                 
-                // Enable single fields
                 singleInputs.forEach(input => {
                     input.disabled = false;
                     if (input.id === 'quantity' || input.id === 'sale_price') {
@@ -232,7 +234,6 @@
                     }
                 });
 
-                // Disable variable fields
                 variableInputs.forEach(input => {
                     input.disabled = true;
                 });
@@ -240,13 +241,11 @@
                 singleFields.classList.add('d-none');
                 variableFields.classList.remove('d-none');
                 
-                // Disable single fields
                 singleInputs.forEach(input => {
                     input.disabled = true;
                     input.required = false;
                 });
 
-                // Enable variable fields
                 variableInputs.forEach(input => {
                     input.disabled = false;
                 });
@@ -292,8 +291,6 @@
         }
 
         addVariantRowBtn.addEventListener('click', () => addVariantRow());
-
-        // Initialize with 1 variant row if empty
         addVariantRow('Color', 'Black', 'ACCS-BLK', '5', '');
         toggleProductType();
     });
