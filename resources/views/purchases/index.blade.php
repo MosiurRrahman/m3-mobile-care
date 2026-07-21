@@ -117,7 +117,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Supplier Name</th>
-                                    <th>Phone Number</th>
+                                    <th>Phone Number(s)</th>
                                     <th>Address Details</th>
                                     <th>Date Registered</th>
                                     <th class="text-end" style="width: 120px;">Actions</th>
@@ -127,7 +127,18 @@
                                 @forelse($suppliers as $supplier)
                                 <tr>
                                     <td><span class="fw-bold text-dark">{{ $supplier->name }}</span></td>
-                                    <td><span class="fw-semibold text-dark">{{ $supplier->phone }}</span></td>
+                                    <td>
+                                        @php
+                                            $phoneList = array_map('trim', explode(',', $supplier->phone ?? ''));
+                                        @endphp
+                                        <div class="d-flex flex-column gap-1">
+                                            @foreach($phoneList as $pNum)
+                                                @if(!empty($pNum))
+                                                    <div><i class="ti tabler-phone fs-6 text-primary me-1"></i><span class="fw-semibold text-dark">{{ $pNum }}</span></div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </td>
                                     <td>{{ $supplier->address ?? 'N/A' }}</td>
                                     <td>{{ $supplier->created_at->format('M d, Y') }}</td>
                                     <td class="text-end">
@@ -175,8 +186,16 @@
                         <input type="text" name="name" id="sup_name" class="form-control" placeholder="e.g. Dhaka Parts Depot" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" for="sup_phone">Phone Number <span class="text-danger">*</span></label>
-                        <input type="text" name="phone" id="sup_phone" class="form-control" placeholder="e.g. 01923456789" required>
+                        <label class="form-label fw-semibold">Phone Number(s) <span class="text-danger">*</span></label>
+                        <div id="add-supplier-phones-container">
+                            <div class="input-group mb-2">
+                                <input type="text" name="phone[]" class="form-control" placeholder="e.g. 01924915598" required>
+                                <button type="button" class="btn btn-outline-danger disabled remove-phone-input-btn"><i class="ti tabler-trash"></i></button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-1" id="add-phone-field-btn">
+                            <i class="ti tabler-plus me-1"></i>Add Another Phone Number
+                        </button>
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold" for="sup_address">Office Address Details</label>
@@ -376,6 +395,10 @@
 
 <!-- Modals for Supplier Iteration -->
 @foreach($suppliers as $supplier)
+    @php
+        $supplierPhones = array_filter(array_map('trim', explode(',', $supplier->phone ?? '')));
+        if (empty($supplierPhones)) { $supplierPhones = ['']; }
+    @endphp
     <!-- Modal: Edit Supplier -->
     <div class="modal fade" id="editSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -393,8 +416,18 @@
                             <input type="text" name="name" class="form-control" value="{{ $supplier->name }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-                            <input type="text" name="phone" class="form-control" value="{{ $supplier->phone }}" required>
+                            <label class="form-label fw-semibold">Phone Number(s) <span class="text-danger">*</span></label>
+                            <div id="edit-supplier-phones-container-{{ $supplier->id }}">
+                                @foreach($supplierPhones as $pVal)
+                                <div class="input-group mb-2">
+                                    <input type="text" name="phone[]" class="form-control" value="{{ $pVal }}" placeholder="e.g. 01924915598" required>
+                                    <button type="button" class="btn btn-outline-danger {{ count($supplierPhones) === 1 ? 'disabled' : '' }} remove-phone-input-btn"><i class="ti tabler-trash"></i></button>
+                                </div>
+                                @endforeach
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-1 add-edit-phone-btn" data-supplier-id="{{ $supplier->id }}">
+                                <i class="ti tabler-plus me-1"></i>Add Another Phone Number
+                            </button>
                         </div>
                         <div class="mb-0">
                             <label class="form-label fw-semibold">Office Address Details</label>
@@ -437,6 +470,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Stock-In Purchase dynamic rows
         let rowCount = 1;
         const addRowBtn = document.getElementById('add-item-row-btn');
         const rowsBody = document.getElementById('purchase-rows-body');
@@ -526,6 +560,61 @@
                 }
             }
         });
+
+        // Dynamic Multiple Phone Inputs for Supplier Modals
+        const addPhoneBtn = document.getElementById('add-phone-field-btn');
+        const phonesContainer = document.getElementById('add-supplier-phones-container');
+
+        if (addPhoneBtn && phonesContainer) {
+            addPhoneBtn.addEventListener('click', function() {
+                const div = document.createElement('div');
+                div.className = 'input-group mb-2';
+                div.innerHTML = `
+                    <input type="text" name="phone[]" class="form-control" placeholder="e.g. 01924915598" required>
+                    <button type="button" class="btn btn-outline-danger remove-phone-input-btn"><i class="ti tabler-trash"></i></button>
+                `;
+                phonesContainer.appendChild(div);
+                updatePhoneRemoveState(phonesContainer);
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            // Add phone in edit supplier modal
+            if (e.target.closest('.add-edit-phone-btn')) {
+                const btn = e.target.closest('.add-edit-phone-btn');
+                const supplierId = btn.dataset.supplierId;
+                const container = document.getElementById('edit-supplier-phones-container-' + supplierId);
+                const div = document.createElement('div');
+                div.className = 'input-group mb-2';
+                div.innerHTML = `
+                    <input type="text" name="phone[]" class="form-control" placeholder="e.g. 01924915598" required>
+                    <button type="button" class="btn btn-outline-danger remove-phone-input-btn"><i class="ti tabler-trash"></i></button>
+                `;
+                container.appendChild(div);
+                updatePhoneRemoveState(container);
+            }
+
+            // Remove phone input field
+            if (e.target.closest('.remove-phone-input-btn')) {
+                const btn = e.target.closest('.remove-phone-input-btn');
+                if (btn.classList.contains('disabled')) return;
+                const inputGroup = btn.closest('.input-group');
+                const container = inputGroup.parentElement;
+                if (container.children.length > 1) {
+                    inputGroup.remove();
+                    updatePhoneRemoveState(container);
+                }
+            }
+        });
+
+        function updatePhoneRemoveState(container) {
+            const btns = container.querySelectorAll('.remove-phone-input-btn');
+            if (btns.length === 1) {
+                btns[0].classList.add('disabled');
+            } else {
+                btns.forEach(b => b.classList.remove('disabled'));
+            }
+        }
     });
 </script>
 @endsection

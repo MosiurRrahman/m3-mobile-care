@@ -208,11 +208,20 @@ class PurchaseController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required',
             'address' => 'nullable|string',
         ]);
 
-        Supplier::create($request->all());
+        $phoneInput = $request->input('phone');
+        $phoneStr = is_array($phoneInput) 
+            ? implode(', ', array_filter(array_map('trim', $phoneInput))) 
+            : trim($phoneInput);
+
+        Supplier::create([
+            'name' => $request->input('name'),
+            'phone' => $phoneStr,
+            'address' => $request->input('address'),
+        ]);
 
         return redirect()->route('admin.purchases.index')->with('success', 'Supplier profile registered successfully!');
     }
@@ -226,11 +235,20 @@ class PurchaseController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required',
             'address' => 'nullable|string',
         ]);
 
-        $supplier->update($request->all());
+        $phoneInput = $request->input('phone');
+        $phoneStr = is_array($phoneInput) 
+            ? implode(', ', array_filter(array_map('trim', $phoneInput))) 
+            : trim($phoneInput);
+
+        $supplier->update([
+            'name' => $request->input('name'),
+            'phone' => $phoneStr,
+            'address' => $request->input('address'),
+        ]);
 
         return redirect()->route('admin.purchases.index')->with('success', 'Supplier profile updated successfully!');
     }
