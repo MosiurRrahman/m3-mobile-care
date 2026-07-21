@@ -117,13 +117,17 @@
                             <!-- Single Product fields -->
                             <div id="single-product-fields">
                                 <div class="row mb-3">
-                                    <div class="col-md-6 mb-3 mb-md-0">
+                                    <div class="col-md-4 mb-3 mb-md-0">
                                         <label class="form-label fw-semibold" for="quantity">Quantity in Stock <span class="text-danger">*</span></label>
                                         <input type="number" name="quantity" id="quantity" class="form-control" value="{{ old('quantity', $item->quantity) }}" min="0">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4 mb-3 mb-md-0">
                                         <label class="form-label fw-semibold" for="sale_price">Retail Price (BDT) <span class="text-danger">*</span></label>
                                         <input type="number" name="sale_price" id="sale_price" step="0.01" min="0" class="form-control" value="{{ old('sale_price', $item->sale_price) }}">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold" for="min_sale_price">Minimum Rate (BDT)</label>
+                                        <input type="number" name="min_sale_price" id="min_sale_price" step="0.01" min="0" class="form-control" value="{{ old('min_sale_price', $item->min_sale_price) }}" placeholder="Minimum rate limit">
                                     </div>
                                 </div>
                                 <div class="row mb-0">

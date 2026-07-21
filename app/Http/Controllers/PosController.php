@@ -60,7 +60,7 @@ class PosController extends Controller
     }
 
     /**
-     * Handle POS checkout.
+     * Handle POS checkout with Minimum Price Rate Protection.
      */
     public function checkout(Request $request)
     {
@@ -78,10 +78,11 @@ class PosController extends Controller
             'cart' => 'required|array',
             'cart.*.id' => 'required|exists:inventory_items,id',
             'cart.*.qty' => 'required|integer|min:1',
+            'cart.*.price' => 'nullable|numeric|min:0',
         ]);
 
         $cart = $request->input('cart');
-        $discount = $request->input('discount', 0);
+        $discount = floatval($request->input('discount', 0));
         
         $cashAmount = floatval($request->input('cash_amount', 0));
         $bkashAmount = floatval($request->input('bkash_amount', 0));
@@ -126,22 +127,45 @@ class PosController extends Controller
         try {
             $sale = DB::transaction(function () use ($request, $cart, $discount, $paidAmount, $paymentMethod, $methods) {
                 $totalAmount = 0;
-                
-                // Fetch and lock items
+                $totalMinAllowed = 0;
                 $lockedItems = [];
+
                 foreach ($cart as $cartItem) {
                     $item = InventoryItem::where('id', $cartItem['id'])->lockForUpdate()->firstOrFail();
                     if ($item->quantity < $cartItem['qty']) {
                         throw new \Exception("Insufficient stock for item: {$item->name}. Only {$item->quantity} left.");
                     }
-                    $totalAmount += $item->sale_price * $cartItem['qty'];
+
+                    // Get custom price or fallback to item sale price
+                    $unitPrice = isset($cartItem['price']) && floatval($cartItem['price']) > 0
+                        ? floatval($cartItem['price'])
+                        : floatval($item->sale_price);
+
+                    // Get effective minimum allowed selling price
+                    $minPrice = $item->effective_min_price;
+
+                    if ($unitPrice < $minPrice) {
+                        throw new \Exception("Unit price for '{$item->name}' cannot be less than minimum rate of " . number_format($minPrice, 2) . " BDT.");
+                    }
+
+                    $itemTotal = $unitPrice * $cartItem['qty'];
+                    $totalAmount += $itemTotal;
+                    $totalMinAllowed += ($minPrice * $cartItem['qty']);
+
                     $lockedItems[] = [
                         'item' => $item,
-                        'qty' => $cartItem['qty']
+                        'qty' => $cartItem['qty'],
+                        'unit_price' => $unitPrice,
                     ];
                 }
 
                 $payableAmount = max(0, $totalAmount - $discount);
+
+                // Enforce overall minimum price rate protection against discount abuse
+                if ($payableAmount < $totalMinAllowed) {
+                    throw new \Exception("Discount applied exceeds allowed limit! Total bill cannot be less than minimum rate total of " . number_format($totalMinAllowed, 2) . " BDT.");
+                }
+
                 $dueAmount = max(0, $payableAmount - $paidAmount);
 
                 if ($dueAmount > 0 && is_null($request->input('customer_id'))) {
@@ -194,13 +218,14 @@ class PosController extends Controller
                 foreach ($lockedItems as $locked) {
                     $item = $locked['item'];
                     $qty = $locked['qty'];
+                    $unitPrice = $locked['unit_price'];
 
-                    // Record Sale Detail with purchase_price snapshot for accurate COGS history
+                    // Record Sale Detail with custom unit price & purchase_price snapshot for COGS
                     SaleDetail::create([
                         'sale_id'           => $sale->id,
                         'inventory_item_id' => $item->id,
                         'quantity'          => $qty,
-                        'sale_price'        => $item->sale_price,
+                        'sale_price'        => $unitPrice,
                         'purchase_price'    => $item->purchase_price ?? 0,
                     ]);
 

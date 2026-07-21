@@ -71,7 +71,7 @@
 
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4" id="products-catalog-list" style="max-height: 600px; overflow-y: auto; padding-right: 5px;">
                     @foreach($items as $item)
-                    <div class="col product-card-wrapper mb-2" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-sku="{{ $item->sku }}" data-barcode="{{ $item->barcode }}" data-price="{{ $item->sale_price }}" data-qty="{{ $item->quantity }}" data-category="{{ $item->categoryRelation ? $item->categoryRelation->name : $item->category }}" data-brand="{{ $item->brand ?: 'Generic' }}" data-cost-price="{{ $item->purchase_price }}" data-description="{{ $item->description }}" data-variants="{{ json_encode($item->variants) }}" data-image="{{ !empty($item->images) && is_array($item->images) && isset($item->images[0]) ? asset('storage/' . $item->images[0]) : '' }}" data-qty-alert="{{ $item->alert_quantity }}">
+                    <div class="col product-card-wrapper mb-2" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-sku="{{ $item->sku }}" data-barcode="{{ $item->barcode }}" data-price="{{ $item->sale_price }}" data-min-price="{{ $item->effective_min_price }}" data-qty="{{ $item->quantity }}" data-category="{{ $item->categoryRelation ? $item->categoryRelation->name : $item->category }}" data-brand="{{ $item->brand ?: 'Generic' }}" data-cost-price="{{ $item->purchase_price }}" data-description="{{ $item->description }}" data-variants="{{ json_encode($item->variants) }}" data-image="{{ !empty($item->images) && is_array($item->images) && isset($item->images[0]) ? asset('storage/' . $item->images[0]) : '' }}" data-qty-alert="{{ $item->alert_quantity }}">
                         <div class="product-pos-card shadow-xs {{ $item->quantity <= 0 ? 'product-out-of-stock' : '' }}">
                             @if($item->quantity <= 0)
                                 <span class="product-out-of-stock-badge">Out of Stock</span>
@@ -125,27 +125,32 @@
         </div>
     </div>
 
-    <!-- POS Cart & Checkout -->
+    <!-- POS Cart & Checkout Sidebar (Vuexy Theme Standard) -->
     <div class="col-lg-5 mb-4">
         <div class="card border-0 shadow-sm h-100 d-flex flex-column justify-content-between">
-            <div class="card-body pb-2">
-                <h5 class="fw-bold mb-4 text-primary"><i class="ti tabler-shopping-cart me-2"></i>Shopping Cart</h5>
+            <div class="card-body pb-2 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold mb-0 text-dark d-flex align-items-center">
+                        <i class="ti tabler-shopping-cart text-primary me-2 fs-3"></i>Shopping Cart
+                    </h5>
+                    <span class="badge bg-label-primary px-3 py-1.5 rounded-pill fw-bold" id="cart-item-count-pill" style="font-size: 0.75rem;">0 Items</span>
+                </div>
                 
-                <div class="cart-items-wrapper" style="max-height: 380px; overflow-y: auto; padding-right: 5px;" id="cart-container">
+                <div class="cart-items-wrapper" style="max-height: 360px; overflow-y: auto; padding-right: 4px;" id="cart-container">
                     <div id="empty-cart-row" class="text-center py-5 text-muted">
-                        <div class="rounded-circle bg-light d-inline-flex p-3.5 mb-3">
+                        <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 border">
                             <i class="ti tabler-shopping-cart-x fs-1 text-secondary"></i>
                         </div>
                         <h6 class="fw-bold mb-1 text-secondary">Your Cart is Empty</h6>
-                        <p class="small mb-0 text-muted px-4">Scan barcodes or add items from the catalog to begin processing the sale invoice.</p>
+                        <p class="small mb-0 text-muted px-4">Scan barcodes or select items from the catalog to build checkout bill.</p>
                     </div>
-                    <div id="cart-list" class="d-flex flex-column gap-2.5"></div>
+                    <div id="cart-list" class="d-flex flex-column gap-2"></div>
                 </div>
             </div>
 
             <!-- Checkout calculations -->
-            <div class="card-footer border-top-0 p-4" style="background: #f8fafc; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
-                <div class="d-flex justify-content-between align-items-center mb-2.5">
+            <div class="card-footer border-top-0 p-4" style="background: #f8f7fa; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Subtotal</span>
                     <span class="fw-bold text-dark" id="summary-subtotal" style="font-size: 0.95rem;">0.00 BDT</span>
                 </div>
@@ -154,16 +159,17 @@
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label class="form-label text-muted fw-semibold mb-0" for="pos-discount" style="font-size: 0.85rem;">Apply Discount</label>
                     </div>
-                    <div class="input-group input-group-sm shadow-xs">
-                        <span class="input-group-text bg-white border-end-0 text-muted" style="border-color: #e2e8f0;"><i class="ti tabler-tag" style="font-size: 0.9rem;"></i></span>
-                        <input type="number" id="pos-discount" class="form-control form-control-sm text-end border-start-0 ps-0 fw-bold" value="0" min="0" style="font-size: 0.9rem; border-radius: 0 8px 8px 0; border-color: #e2e8f0;">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="ti tabler-tag" style="font-size: 0.9rem;"></i></span>
+                        <input type="number" id="pos-discount" class="form-control form-control-sm text-end border-start-0 ps-0 fw-bold text-danger" value="0" min="0" style="font-size: 0.9rem;">
                     </div>
                 </div>
 
-                <div class="p-3 rounded-3 mb-3" style="background: #eefcf4; border-left: 4px solid #00b67a;">
+                <!-- Total Payable Card Highlight (Vuexy Label-Success Theme) -->
+                <div class="p-3 rounded mb-3" style="background: rgba(40, 199, 111, 0.08); border-left: 4px solid #28c76f;">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-bold text-success-emphasis" style="font-size: 0.9rem; color: #007d52 !important;">Total Payable</span>
-                        <span class="fw-extrabold text-success" style="font-size: 1.25rem; font-weight: 800; color: #00b67a !important;" id="summary-payable">0.00 BDT</span>
+                        <span class="fw-bold" style="font-size: 0.9rem; color: #1e7e43;">Total Payable</span>
+                        <span class="fw-extrabold text-success" id="summary-payable" style="font-size: 1.3rem; font-weight: 800; color: #28c76f !important;">0.00 BDT</span>
                     </div>
                 </div>
 
@@ -259,7 +265,7 @@
                     </a>
                 </div>
 
-                <button class="btn btn-success btn-lg w-100 py-3 fw-bold" id="checkout-submit-btn" disabled style="border-radius: 12px; font-size: 1rem; box-shadow: 0 4px 14px rgba(40, 199, 111, 0.2); transition: all 0.2s ease;">
+                <button class="btn btn-success btn-lg w-100 py-3 fw-bold" id="checkout-submit-btn" disabled style="border-radius: 8px; font-size: 1rem; box-shadow: 0 4px 12px rgba(40, 199, 111, 0.25);">
                     <i class="ti tabler-credit-card me-2 fs-4"></i>Complete & Print Invoice
                 </button>
             </div>
@@ -807,6 +813,7 @@
 
             const name = card.getAttribute('data-name');
             const price = parseFloat(card.getAttribute('data-price'));
+            const minPrice = parseFloat(card.getAttribute('data-min-price')) || price;
             const maxQty = parseInt(card.getAttribute('data-qty'));
 
             // Check if already in cart
@@ -822,7 +829,7 @@
                     alert(`Insufficient stock! ${name} is out of stock.`);
                     return;
                 }
-                cart.push({ id, name, price, qty: 1, maxQty });
+                cart.push({ id, name, price, minPrice, qty: 1, maxQty });
             }
 
             renderCart();
@@ -830,6 +837,11 @@
 
         // Render shopping cart
         function renderCart() {
+            const countPill = document.getElementById('cart-item-count-pill');
+            if (countPill) {
+                const totalQty = cart.reduce((acc, i) => acc + i.qty, 0);
+                countPill.innerText = totalQty + (totalQty === 1 ? ' Item' : ' Items');
+            }
             cartList.innerHTML = '';
 
             if (cart.length === 0) {
@@ -863,31 +875,40 @@
                 subtotal += itemTotal;
 
                 const itemDiv = document.createElement('div');
-                itemDiv.className = 'cart-item p-3 border rounded-3 bg-white d-flex align-items-center justify-content-between transition-all hover-shadow';
+                itemDiv.className = 'cart-item p-3 mb-2.5 border rounded-3 bg-white shadow-xs';
+                itemDiv.style.borderColor = '#e2e8f0';
                 itemDiv.innerHTML = `
-                    <div class="d-flex align-items-center gap-2.5" style="max-width: 55%;">
-                        <div class="rounded bg-primary bg-opacity-10 p-2 text-primary d-none d-sm-flex align-items-center justify-content-center" style="width: 38px; height: 38px; flex-shrink: 0;">
-                            <i class="ti tabler-package fs-4"></i>
+                    <!-- Top Row: Product Title, Min Rate & Remove Button -->
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div style="flex: 1; min-width: 0;" class="pe-2">
+                            <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 0.88rem;" title="${item.name}">${item.name}</h6>
+                            <span class="badge bg-label-secondary" style="font-size: 0.68rem;" title="Minimum Rate Limit">
+                                <i class="ti tabler-lock me-0.5"></i>Min Rate: ৳${item.minPrice.toFixed(0)}
+                            </span>
                         </div>
-                        <div class="text-truncate">
-                            <h6 class="fw-bold text-dark mb-0.5 text-truncate" style="font-size: 0.85rem;" title="${item.name}">${item.name}</h6>
-                            <span class="text-muted small" style="font-size: 0.75rem;">${item.price.toLocaleString('en-US', {minimumFractionDigits: 2})} BDT</span>
-                        </div>
+                        <button type="button" class="btn btn-sm btn-icon btn-label-danger remove-cart-item rounded-circle" data-id="${item.id}" title="Remove Item" style="width: 30px; height: 30px; padding: 0;">
+                            <i class="ti tabler-trash fs-5"></i>
+                        </button>
                     </div>
-                    <div class="d-flex align-items-center gap-3">
-                        <!-- Custom quantity controller -->
-                        <div class="input-group input-group-sm" style="width: 95px;">
-                            <button class="btn btn-outline-secondary px-2 dec-qty-btn" type="button" data-id="${item.id}"><i class="ti tabler-minus fs-7" style="pointer-events: none;"></i></button>
-                            <input type="number" class="form-control text-center cart-qty-input px-1" data-id="${item.id}" value="${item.qty}" min="1" max="${item.maxQty}">
-                            <button class="btn btn-outline-secondary px-2 inc-qty-btn" type="button" data-id="${item.id}"><i class="ti tabler-plus fs-7" style="pointer-events: none;"></i></button>
+
+                    <!-- Bottom Row: Rate Input, Horizontal Qty Control, Item Subtotal -->
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top border-light flex-wrap gap-2">
+                        <!-- Rate Input -->
+                        <div class="d-flex align-items-center gap-1.5">
+                            <span class="text-muted small fw-semibold" style="font-size: 0.72rem;">Rate (৳):</span>
+                            <input type="number" step="0.01" class="form-control form-control-sm text-end fw-bold cart-item-price-input" data-id="${item.id}" value="${item.price}" min="${item.minPrice}" style="width: 85px; font-size: 0.82rem; height: 28px;" title="Edit Unit Selling Price">
                         </div>
-                        
-                        <!-- Item subtotal and remove -->
-                        <div class="text-end" style="min-width: 85px;">
-                            <span class="fw-bold text-dark d-block" style="font-size: 0.8rem;">${itemTotal.toLocaleString('en-US', {minimumFractionDigits: 2})} BDT</span>
-                            <button class="btn btn-link btn-xs text-danger p-0 mt-0.5 remove-cart-item" data-id="${item.id}" style="font-size: 0.7rem; text-decoration: none;">
-                                <i class="ti tabler-trash me-0.5"></i>Remove
-                            </button>
+
+                        <!-- Horizontal Quantity Pill (Never breaks onto 2 lines) -->
+                        <div class="d-flex align-items-center gap-1 bg-light p-1 rounded-3 border" style="white-space: nowrap; border-color: #e2e8f0 !important;">
+                            <button class="btn btn-xs btn-white text-dark shadow-2xs px-2 dec-qty-btn" type="button" data-id="${item.id}" style="height: 24px; min-width: 24px; padding: 0;"><i class="ti tabler-minus" style="font-size: 0.7rem; pointer-events: none;"></i></button>
+                            <span class="fw-bold text-dark px-2" style="font-size: 0.85rem; min-width: 24px; text-align: center;">${item.qty}</span>
+                            <button class="btn btn-xs btn-white text-dark shadow-2xs px-2 inc-qty-btn" type="button" data-id="${item.id}" style="height: 24px; min-width: 24px; padding: 0;"><i class="ti tabler-plus" style="font-size: 0.7rem; pointer-events: none;"></i></button>
+                        </div>
+
+                        <!-- Item Subtotal -->
+                        <div class="text-end ms-auto">
+                            <span class="fw-extrabold text-dark" style="font-size: 0.95rem; font-weight: 800;">${itemTotal.toLocaleString('en-US', {minimumFractionDigits: 2})} BDT</span>
                         </div>
                     </div>
                 `;
@@ -991,7 +1012,20 @@
         // Discount changes
         discountInput.addEventListener('input', function() {
             let subtotal = 0;
-            cart.forEach(item => subtotal += item.price * item.qty);
+            let minSubtotal = 0;
+            cart.forEach(item => {
+                subtotal += item.price * item.qty;
+                minSubtotal += item.minPrice * item.qty;
+            });
+
+            const maxAllowedDiscount = Math.max(0, subtotal - minSubtotal);
+            let enteredDiscount = parseFloat(discountInput.value) || 0;
+
+            if (enteredDiscount > maxAllowedDiscount) {
+                alert(`ডিসকাউন্ট সীমার বাইরে! মোট সর্বনিম্ন বিক্রয়মূল্য (${minSubtotal.toLocaleString('en-US', {minimumFractionDigits: 2})} BDT) এর নিচে বিক্রি করা সম্ভব নয়।`);
+                discountInput.value = maxAllowedDiscount;
+            }
+
             updatePayable(subtotal);
         });
 
@@ -1212,6 +1246,24 @@
 
         // Cart Actions (Quantity change, Increment, Decrement, or Remove)
         cartContainer.addEventListener('change', function(e) {
+            if (e.target.classList.contains('cart-item-price-input')) {
+                const input = e.target;
+                const id = input.getAttribute('data-id');
+                let newPrice = parseFloat(input.value) || 0;
+                
+                const item = cart.find(i => i.id === id);
+                if (item) {
+                    if (newPrice < item.minPrice) {
+                        alert(`নির্ধারিত সর্বনিম্ন বিক্রয়মূল্য (${item.minPrice.toFixed(2)} BDT) এর নিচে বিক্রি করা সম্ভব নয়!`);
+                        newPrice = item.minPrice;
+                        input.value = newPrice;
+                    }
+                    item.price = newPrice;
+                    renderCart();
+                }
+                return;
+            }
+
             if (e.target.classList.contains('cart-qty-input')) {
                 const input = e.target;
                 const id = input.getAttribute('data-id');
@@ -1480,7 +1532,7 @@
                     rocket_ref: getMfsRef('Rocket'),
                     cash_received: cashReceived,
                     change_returned: changeReturned,
-                    cart: cart.map(item => ({ id: item.id, qty: item.qty }))
+                    cart: cart.map(item => ({ id: item.id, qty: item.qty, price: item.price }))
                 })
             })
             .then(res => res.json())

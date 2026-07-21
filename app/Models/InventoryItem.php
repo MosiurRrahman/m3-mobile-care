@@ -21,6 +21,7 @@ class InventoryItem extends Model
         'alert_quantity',
         'purchase_price',
         'sale_price',
+        'min_sale_price',
         'branch',
         // Advanced fields
         'supplier_id',
@@ -43,7 +44,21 @@ class InventoryItem extends Model
         'images' => 'array',
         'variants' => 'array',
         'expiry' => 'date',
+        'min_sale_price' => 'float',
+        'sale_price' => 'float',
+        'purchase_price' => 'float',
     ];
+
+    /**
+     * Get minimum allowed selling price (fallback to sale_price if min_sale_price is not set).
+     */
+    public function getEffectiveMinPriceAttribute(): float
+    {
+        if ($this->min_sale_price !== null && $this->min_sale_price > 0) {
+            return (float) $this->min_sale_price;
+        }
+        return (float) ($this->sale_price ?? 0);
+    }
 
     /**
      * Get the supplier for this inventory item.
