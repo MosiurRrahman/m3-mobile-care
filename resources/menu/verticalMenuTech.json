@@ -1,0 +1,16 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base ti tabler-smart-home",
+      "slug": "dashboard",
+      "url": "dashboard"
+    },
+    {
+      "name": "My Service Jobs",
+      "icon": "menu-icon icon-base ti tabler-device-mobile-cog",
+      "slug": "admin.repairs",
+      "url": "admin/repairs"
+    }
+  ]
+}

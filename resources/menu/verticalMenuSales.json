@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base ti tabler-smart-home",
+      "slug": "dashboard",
+      "url": "dashboard"
+    },
+    {
+      "name": "POS Terminal",
+      "icon": "menu-icon icon-base ti tabler-device-laptop",
+      "slug": "admin.pos",
+      "url": "admin/pos"
+    },
+    {
+      "name": "Accessories Stock",
+      "icon": "menu-icon icon-base ti tabler-plug",
+      "slug": "admin.inventory.accessories",
+      "url": "admin/inventory/accessories"
+    },
+    {
+      "name": "Customers Registry",
+      "icon": "menu-icon icon-base ti tabler-users",
+      "slug": "admin.customers",
+      "url": "admin/customers"
+    }
+  ]
+}

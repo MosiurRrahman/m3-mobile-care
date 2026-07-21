@@ -1,0 +1,46 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon icon-base ti tabler-smart-home",
+      "slug": "dashboard",
+      "url": "dashboard"
+    },
+    {
+      "name": "POS Terminal",
+      "icon": "menu-icon icon-base ti tabler-device-laptop",
+      "slug": "admin.pos",
+      "url": "admin/pos"
+    },
+    {
+      "name": "Job Cards (Repairs)",
+      "icon": "menu-icon icon-base ti tabler-device-mobile-cog",
+      "slug": "admin.repairs",
+      "url": "admin/repairs"
+    },
+    {
+      "name": "Spare Parts",
+      "icon": "menu-icon icon-base ti tabler-tool",
+      "slug": "admin.inventory.parts",
+      "url": "admin/inventory/parts"
+    },
+    {
+      "name": "Accessories Stock",
+      "icon": "menu-icon icon-base ti tabler-plug",
+      "slug": "admin.inventory.accessories",
+      "url": "admin/inventory/accessories"
+    },
+    {
+      "name": "Customers Registry",
+      "icon": "menu-icon icon-base ti tabler-users",
+      "slug": "admin.customers",
+      "url": "admin/customers"
+    },
+    {
+      "name": "Supplier & Purchases",
+      "icon": "menu-icon icon-base ti tabler-truck-delivery",
+      "slug": "admin.purchases",
+      "url": "admin/purchases"
+    }
+  ]
+}
