@@ -618,4 +618,81 @@ class RepairBusinessImprovementsTest extends TestCase
             'account_type' => 'profit',
         ]);
     }
+
+    public function test_partner_investment_deposit_increases_capital_and_profit()
+    {
+        $this->actingAs($this->admin);
+
+        \App\Models\PartnerBalance::create([
+            'partner_name' => 'Munna Raihan',
+            'capital_balance' => 50000.00,
+            'accumulated_profit' => 1000.00,
+            'payback_completed_at' => null,
+        ]);
+
+        // 1. Add capital deposit
+        $response = $this->post(route('admin.partner-ledger.deposit'), [
+            'partner_name' => 'Munna Raihan',
+            'account_type' => 'capital',
+            'amount' => 25000.00,
+            'description' => 'Additional capital injection',
+        ]);
+        $response->assertRedirect(route('admin.partner-ledger.index'));
+
+        $raihan = \App\Models\PartnerBalance::where('partner_name', 'Munna Raihan')->first();
+        $this->assertEquals(75000.00, $raihan->capital_balance);
+
+        $this->assertDatabaseHas('partner_ledger_entries', [
+            'partner_name' => 'Munna Raihan',
+            'account_type' => 'capital',
+            'type' => 'credit',
+            'amount' => 25000.00,
+            'balance_after' => 75000.00,
+        ]);
+    }
+
+    public function test_partner_ledger_entry_update_and_destroy_adjusts_balances()
+    {
+        $this->actingAs($this->admin);
+
+        $raihan = \App\Models\PartnerBalance::create([
+            'partner_name' => 'Munna Raihan',
+            'capital_balance' => 50000.00,
+            'accumulated_profit' => 1000.00,
+            'payback_completed_at' => null,
+        ]);
+
+        $entry = \App\Models\PartnerLedgerEntry::create([
+            'partner_name' => 'Munna Raihan',
+            'account_type' => 'capital',
+            'type' => 'credit',
+            'amount' => 10000.00,
+            'balance_after' => 60000.00,
+            'description' => 'Test deposit',
+            'created_by' => $this->admin->id,
+        ]);
+
+        $raihan->update(['capital_balance' => 60000.00]);
+
+        // 1. Update entry from 10000 to 15000
+        $response = $this->put(route('admin.partner-ledger.update', $entry->id), [
+            'partner_name' => 'Munna Raihan',
+            'account_type' => 'capital',
+            'type' => 'credit',
+            'amount' => 15000.00,
+            'description' => 'Updated deposit',
+        ]);
+        $response->assertRedirect(route('admin.partner-ledger.index'));
+
+        $raihan->refresh();
+        $this->assertEquals(65000.00, $raihan->capital_balance);
+
+        // 2. Delete entry (should revert 15000 credit)
+        $response = $this->delete(route('admin.partner-ledger.destroy', $entry->id));
+        $response->assertRedirect(route('admin.partner-ledger.index'));
+
+        $raihan->refresh();
+        $this->assertEquals(50000.00, $raihan->capital_balance);
+        $this->assertDatabaseMissing('partner_ledger_entries', ['id' => $entry->id]);
+    }
 }

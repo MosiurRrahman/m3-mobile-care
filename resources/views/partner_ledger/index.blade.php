@@ -182,45 +182,97 @@
 
     <div class="col-12 col-lg-6 mb-4">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header border-bottom py-3">
-                <h5 class="card-title fw-bold mb-0">Record Partner Cash Withdrawal (উত্তোলন)</h5>
+            <div class="card-header border-bottom py-2">
+                <ul class="nav nav-tabs card-header-tabs" id="partnerActionTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold text-success" id="deposit-tab" data-bs-toggle="tab" data-bs-target="#deposit-tab-pane" type="button" role="tab" aria-controls="deposit-tab-pane" aria-selected="true">
+                            <i class="ti tabler-circle-plus me-1"></i> Add Investment / Deposit (বিনিয়োগ / জমা)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold text-danger" id="withdraw-tab" data-bs-toggle="tab" data-bs-target="#withdraw-tab-pane" type="button" role="tab" aria-controls="withdraw-tab-pane" aria-selected="false">
+                            <i class="ti tabler-cash me-1"></i> Cash Withdrawal (উত্তোলন)
+                        </button>
+                    </li>
+                </ul>
             </div>
-            <form action="{{ route('admin.partner-ledger.withdraw') }}" method="POST" onsubmit="return confirm('Are you sure you want to process this cash withdrawal?')">
-                @csrf
-                <div class="card-body pt-3">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="partner_name">Select Partner <span class="text-danger">*</span></label>
-                        <select name="partner_name" id="partner_name" class="form-select" required>
-                            <option value="">-- Choose Partner --</option>
-                            <option value="Monowar Munna">Monowar Munna</option>
-                            <option value="Munna Raihan">Munna Raihan</option>
-                            <option value="Mosiur">Mosiur</option>
-                        </select>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-6">
-                            <label class="form-label fw-semibold" for="account_type">Account Type <span class="text-danger">*</span></label>
-                            <select name="account_type" id="account_type" class="form-select" required>
-                                <option value="profit">Profit Share Account (লভ্যাংশ)</option>
-                                <option value="capital">Capital Account (মূলধন)</option>
+            <div class="tab-content card-body pt-3" id="partnerActionTabContent">
+                <!-- Tab 1: Add Investment / Deposit -->
+                <div class="tab-pane fade show active" id="deposit-tab-pane" role="tabpanel" aria-labelledby="deposit-tab" tabindex="0">
+                    <form action="{{ route('admin.partner-ledger.deposit') }}" method="POST" onsubmit="return confirm('Are you sure you want to record this investment / deposit?')">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="deposit_partner_name">Select Partner <span class="text-danger">*</span></label>
+                            <select name="partner_name" id="deposit_partner_name" class="form-select" required>
+                                <option value="">-- Choose Partner --</option>
+                                <option value="Monowar Munna">Monowar Munna</option>
+                                <option value="Munna Raihan">Munna Raihan</option>
+                                <option value="Mosiur">Mosiur</option>
                             </select>
                         </div>
-                        <div class="col-6">
-                            <label class="form-label fw-semibold" for="withdraw_amount">Amount (BDT) <span class="text-danger">*</span></label>
-                            <input type="number" name="amount" id="withdraw_amount" step="0.01" min="0.01" class="form-control" required placeholder="e.g. 5000">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold" for="deposit_account_type">Account Type <span class="text-danger">*</span></label>
+                                <select name="account_type" id="deposit_account_type" class="form-select" required>
+                                    <option value="capital">Capital Account (মূলধন)</option>
+                                    <option value="profit">Profit Share Account (লভ্যাংশ)</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold" for="deposit_amount">Amount (BDT) <span class="text-danger">*</span></label>
+                                <input type="number" name="amount" id="deposit_amount" step="0.01" min="0.01" class="form-control" required placeholder="e.g. 50000">
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold" for="withdraw_description">Description / Notes <span class="text-danger">*</span></label>
-                        <textarea name="description" id="withdraw_description" rows="2" class="form-control" placeholder="e.g. Personal emergency withdrawal" required></textarea>
-                    </div>
-                    <div class="d-grid pt-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="ti tabler-cash me-1"></i> Save Payout / Withdrawal
-                        </button>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="deposit_description">Description / Notes <span class="text-danger">*</span></label>
+                            <textarea name="description" id="deposit_description" rows="2" class="form-control" placeholder="e.g. Additional capital investment for business expansion" required></textarea>
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="ti tabler-circle-plus me-1"></i> Save Investment / Deposit
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+
+                <!-- Tab 2: Cash Withdrawal -->
+                <div class="tab-pane fade" id="withdraw-tab-pane" role="tabpanel" aria-labelledby="withdraw-tab" tabindex="0">
+                    <form action="{{ route('admin.partner-ledger.withdraw') }}" method="POST" onsubmit="return confirm('Are you sure you want to process this cash withdrawal?')">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="partner_name">Select Partner <span class="text-danger">*</span></label>
+                            <select name="partner_name" id="partner_name" class="form-select" required>
+                                <option value="">-- Choose Partner --</option>
+                                <option value="Monowar Munna">Monowar Munna</option>
+                                <option value="Munna Raihan">Munna Raihan</option>
+                                <option value="Mosiur">Mosiur</option>
+                            </select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold" for="account_type">Account Type <span class="text-danger">*</span></label>
+                                <select name="account_type" id="account_type" class="form-select" required>
+                                    <option value="profit">Profit Share Account (লভ্যাংশ)</option>
+                                    <option value="capital">Capital Account (মূলধন)</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold" for="withdraw_amount">Amount (BDT) <span class="text-danger">*</span></label>
+                                <input type="number" name="amount" id="withdraw_amount" step="0.01" min="0.01" class="form-control" required placeholder="e.g. 5000">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="withdraw_description">Description / Notes <span class="text-danger">*</span></label>
+                            <textarea name="description" id="withdraw_description" rows="2" class="form-control" placeholder="e.g. Personal emergency withdrawal" required></textarea>
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ti tabler-cash me-1"></i> Save Payout / Withdrawal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -256,6 +308,7 @@
                             <th>Running Bal</th>
                             <th>Description</th>
                             <th>Created By</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="table-border-bottom-0">
@@ -279,12 +332,78 @@
                             </td>
                             <td class="fw-bold text-dark">{{ number_format($entry->amount, 2) }} BDT</td>
                             <td class="fw-bold">{{ number_format($entry->balance_after, 2) }} BDT</td>
-                            <td style="max-width: 300px; white-space: normal;">{{ $entry->description }}</td>
+                            <td style="max-width: 250px; white-space: normal;">{{ $entry->description }}</td>
                             <td><span class="text-muted small">{{ $entry->creator ? $entry->creator->name : 'System' }}</span></td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-icon btn-label-primary me-1" data-bs-toggle="modal" data-bs-target="#editEntryModal{{ $entry->id }}" title="Edit Entry">
+                                    <i class="ti tabler-pencil fs-6"></i>
+                                </button>
+                                <form action="{{ route('admin.partner-ledger.destroy', $entry->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this ledger entry? Partner balances will be adjusted automatically.')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="Delete Entry">
+                                        <i class="ti tabler-trash fs-6"></i>
+                                    </button>
+                                </form>
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="editEntryModal{{ $entry->id }}" tabindex="-1" aria-hidden="true" style="white-space: normal;">
+                                    <div class="modal-dialog modal-dialog-centered text-start">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title fw-bold">Edit Ledger Entry #{{ $entry->id }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="{{ route('admin.partner-ledger.update', $entry->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Partner Name</label>
+                                                        <select name="partner_name" class="form-select" required>
+                                                            <option value="Monowar Munna" {{ $entry->partner_name === 'Monowar Munna' ? 'selected' : '' }}>Monowar Munna</option>
+                                                            <option value="Munna Raihan" {{ $entry->partner_name === 'Munna Raihan' ? 'selected' : '' }}>Munna Raihan</option>
+                                                            <option value="Mosiur" {{ $entry->partner_name === 'Mosiur' ? 'selected' : '' }}>Mosiur</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Account Type</label>
+                                                            <select name="account_type" class="form-select" required>
+                                                                <option value="capital" {{ $entry->account_type === 'capital' ? 'selected' : '' }}>Capital Account (মূলধন)</option>
+                                                                <option value="profit" {{ $entry->account_type === 'profit' ? 'selected' : '' }}>Profit Share Account (লভ্যাংশ)</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label fw-semibold">Entry Type</label>
+                                                            <select name="type" class="form-select" required>
+                                                                <option value="credit" {{ $entry->type === 'credit' ? 'selected' : '' }}>Credit (Deposit / Investment)</option>
+                                                                <option value="debit" {{ $entry->type === 'debit' ? 'selected' : '' }}>Debit (Withdrawal / Payout)</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Amount (BDT)</label>
+                                                        <input type="number" name="amount" step="0.01" min="0.01" class="form-control" value="{{ $entry->amount }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">Description / Notes</label>
+                                                        <textarea name="description" rows="2" class="form-control">{{ $entry->description }}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">No ledger transactions recorded yet.</td>
+                            <td colspan="9" class="text-center py-4">No ledger transactions recorded yet.</td>
                         </tr>
                         @endforelse
                     </tbody>

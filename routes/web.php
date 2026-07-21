@@ -151,7 +151,10 @@ Route::middleware(['auth'])->group(function () {
         // Partner Profit & Capital Ledger Management
         Route::get('/admin/partner-ledger', [PartnerLedgerController::class, 'index'])->name('admin.partner-ledger.index');
         Route::post('/admin/partner-ledger/distribute', [PartnerLedgerController::class, 'distributeProfit'])->name('admin.partner-ledger.distribute');
+        Route::post('/admin/partner-ledger/deposit', [PartnerLedgerController::class, 'storeDeposit'])->name('admin.partner-ledger.deposit');
         Route::post('/admin/partner-ledger/withdraw', [PartnerLedgerController::class, 'storeWithdrawal'])->name('admin.partner-ledger.withdraw');
+        Route::put('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'update'])->name('admin.partner-ledger.update');
+        Route::delete('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'destroy'])->name('admin.partner-ledger.destroy');
         Route::post('/admin/partner-ledger/rollback', [PartnerLedgerController::class, 'rollbackDistribution'])->name('admin.partner-ledger.rollback');
     });
 });

@@ -216,6 +216,68 @@ class PartnerLedgerController extends Controller
     }
 
     /**
+     * Store a partner investment / deposit entry.
+     */
+    public function storeDeposit(Request $request)
+    {
+        $this->checkAndInitializeBalances();
+        $request->validate([
+            'partner_name' => 'required|string|in:Monowar Munna,Munna Raihan,Mosiur',
+            'account_type' => 'required|string|in:capital,profit',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $partnerName = $request->input('partner_name');
+        $accountType = $request->input('account_type');
+        $amount = floatval($request->input('amount'));
+        $desc = $request->input('description') ?: 'Investment / Deposit';
+
+        $balance = PartnerBalance::where('partner_name', $partnerName)->first();
+        if (!$balance) {
+            return redirect()->back()->with('error', 'Partner account not found.');
+        }
+
+        DB::transaction(function() use ($balance, $partnerName, $accountType, $amount, $desc) {
+            if ($accountType === 'capital') {
+                $balance->capital_balance += $amount;
+                
+                // Reset payback_completed_at if capital increases above 0
+                if ($partnerName === 'Monowar Munna' && $balance->capital_balance > 0.00 && !is_null($balance->payback_completed_at)) {
+                    $balance->payback_completed_at = null;
+                }
+                
+                $balance->save();
+                
+                PartnerLedgerEntry::create([
+                    'partner_name' => $partnerName,
+                    'account_type' => 'capital',
+                    'type' => 'credit',
+                    'amount' => $amount,
+                    'balance_after' => $balance->capital_balance,
+                    'description' => $desc,
+                    'created_by' => auth()->id(),
+                ]);
+            } else {
+                $balance->accumulated_profit += $amount;
+                $balance->save();
+                
+                PartnerLedgerEntry::create([
+                    'partner_name' => $partnerName,
+                    'account_type' => 'profit',
+                    'type' => 'credit',
+                    'amount' => $amount,
+                    'balance_after' => $balance->accumulated_profit,
+                    'description' => $desc,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+        });
+
+        return redirect()->route('admin.partner-ledger.index')->with('success', "Investment / Deposit of " . number_format($amount, 2) . " BDT processed successfully!");
+    }
+
+    /**
      * Store a partner cash withdrawal entry.
      */
     public function storeWithdrawal(Request $request)
@@ -290,6 +352,151 @@ class PartnerLedgerController extends Controller
         });
 
         return redirect()->route('admin.partner-ledger.index')->with('success', "Withdrawal of " . number_format($amount, 2) . " BDT processed successfully!");
+    }
+
+    /**
+     * Update a partner ledger entry.
+     */
+    public function update(Request $request, $id)
+    {
+        $this->checkAndInitializeBalances();
+        
+        $entry = PartnerLedgerEntry::findOrFail($id);
+
+        $request->validate([
+            'partner_name' => 'required|string|in:Monowar Munna,Munna Raihan,Mosiur',
+            'account_type' => 'required|string|in:capital,profit',
+            'type' => 'required|string|in:credit,debit',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string|max:500',
+        ]);
+
+        $newPartner = $request->input('partner_name');
+        $newAccount = $request->input('account_type');
+        $newType = $request->input('type');
+        $newAmount = floatval($request->input('amount'));
+        $newDesc = $request->input('description');
+
+        DB::transaction(function() use ($entry, $newPartner, $newAccount, $newType, $newAmount, $newDesc) {
+            // 1. Reverse old entry from old partner balance
+            $oldBalance = PartnerBalance::where('partner_name', $entry->partner_name)->first();
+            if ($oldBalance) {
+                if ($entry->account_type === 'capital') {
+                    if ($entry->type === 'credit') {
+                        $oldBalance->capital_balance -= $entry->amount;
+                    } else {
+                        $oldBalance->capital_balance += $entry->amount;
+                    }
+                } else {
+                    if ($entry->type === 'credit') {
+                        $oldBalance->accumulated_profit -= $entry->amount;
+                    } else {
+                        $oldBalance->accumulated_profit += $entry->amount;
+                    }
+                }
+                
+                if ($entry->partner_name === 'Monowar Munna') {
+                    if ($oldBalance->capital_balance <= 0.00) {
+                        if (is_null($oldBalance->payback_completed_at)) {
+                            $oldBalance->payback_completed_at = now();
+                        }
+                    } else {
+                        $oldBalance->payback_completed_at = null;
+                    }
+                }
+                
+                $oldBalance->save();
+            }
+
+            // 2. Apply new entry to new partner balance
+            $newBalance = PartnerBalance::where('partner_name', $newPartner)->first();
+            if (!$newBalance) {
+                throw new \Exception("Partner account not found.");
+            }
+
+            if ($newAccount === 'capital') {
+                if ($newType === 'credit') {
+                    $newBalance->capital_balance += $newAmount;
+                } else {
+                    $newBalance->capital_balance -= $newAmount;
+                }
+            } else {
+                if ($newType === 'credit') {
+                    $newBalance->accumulated_profit += $newAmount;
+                } else {
+                    $newBalance->accumulated_profit -= $newAmount;
+                }
+            }
+
+            if ($newPartner === 'Monowar Munna') {
+                if ($newBalance->capital_balance <= 0.00) {
+                    if (is_null($newBalance->payback_completed_at)) {
+                        $newBalance->payback_completed_at = now();
+                    }
+                } else {
+                    $newBalance->payback_completed_at = null;
+                }
+            }
+
+            $newBalance->save();
+
+            // 3. Update entry details
+            $entry->update([
+                'partner_name' => $newPartner,
+                'account_type' => $newAccount,
+                'type' => $newType,
+                'amount' => $newAmount,
+                'balance_after' => ($newAccount === 'capital') ? $newBalance->capital_balance : $newBalance->accumulated_profit,
+                'description' => $newDesc,
+            ]);
+        });
+
+        return redirect()->route('admin.partner-ledger.index')->with('success', 'Partner ledger entry updated successfully!');
+    }
+
+    /**
+     * Delete a partner ledger entry.
+     */
+    public function destroy($id)
+    {
+        $this->checkAndInitializeBalances();
+        
+        $entry = PartnerLedgerEntry::findOrFail($id);
+
+        DB::transaction(function() use ($entry) {
+            $balance = PartnerBalance::where('partner_name', $entry->partner_name)->first();
+            if ($balance) {
+                if ($entry->account_type === 'capital') {
+                    if ($entry->type === 'credit') {
+                        $balance->capital_balance -= $entry->amount;
+                    } else {
+                        $balance->capital_balance += $entry->amount;
+                    }
+                } else {
+                    if ($entry->type === 'credit') {
+                        $balance->accumulated_profit -= $entry->amount;
+                    } else {
+                        $balance->accumulated_profit += $entry->amount;
+                    }
+                }
+
+                if ($entry->partner_name === 'Monowar Munna') {
+                    if ($balance->capital_balance <= 0.00) {
+                        if (is_null($balance->payback_completed_at)) {
+                            $balance->payback_completed_at = now();
+                        }
+                    } else {
+                        $balance->payback_completed_at = null;
+                    }
+                }
+
+                $balance->save();
+            }
+
+            $entry->delete();
+        });
+
+        return redirect()->route('admin.partner-ledger.index')->with('success', 'Partner ledger entry deleted successfully!');
     }
 
     /**
@@ -372,7 +579,7 @@ class PartnerLedgerController extends Controller
             PartnerBalance::insert([
                 [
                     'partner_name' => 'Monowar Munna',
-                    'capital_balance' => 450000.00,
+                    'capital_balance' => 0.00,
                     'accumulated_profit' => 0.00,
                     'payback_completed_at' => null,
                     'created_at' => now(),
@@ -380,7 +587,7 @@ class PartnerLedgerController extends Controller
                 ],
                 [
                     'partner_name' => 'Munna Raihan',
-                    'capital_balance' => 50000.00,
+                    'capital_balance' => 0.00,
                     'accumulated_profit' => 0.00,
                     'payback_completed_at' => null,
                     'created_at' => now(),
@@ -388,7 +595,7 @@ class PartnerLedgerController extends Controller
                 ],
                 [
                     'partner_name' => 'Mosiur',
-                    'capital_balance' => 50000.00,
+                    'capital_balance' => 0.00,
                     'accumulated_profit' => 0.00,
                     'payback_completed_at' => null,
                     'created_at' => now(),

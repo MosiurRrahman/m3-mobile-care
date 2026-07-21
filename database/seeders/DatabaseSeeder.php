@@ -543,7 +543,7 @@ class DatabaseSeeder extends Seeder
         DB::table('partner_balances')->insert([
             [
                 'partner_name' => 'Monowar Munna',
-                'capital_balance' => 450000.00,
+                'capital_balance' => 0.00,
                 'accumulated_profit' => 0.00,
                 'payback_completed_at' => null,
                 'created_at' => now(),
@@ -551,7 +551,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'partner_name' => 'Munna Raihan',
-                'capital_balance' => 50000.00,
+                'capital_balance' => 0.00,
                 'accumulated_profit' => 0.00,
                 'payback_completed_at' => null,
                 'created_at' => now(),
@@ -559,7 +559,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'partner_name' => 'Mosiur',
-                'capital_balance' => 50000.00,
+                'capital_balance' => 0.00,
                 'accumulated_profit' => 0.00,
                 'payback_completed_at' => null,
                 'created_at' => now(),
