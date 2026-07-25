@@ -79,7 +79,7 @@
       });
     @endif
 
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
       @foreach($errors->all() as $validationError)
         iziToast.error({
           title: 'Validation Error',

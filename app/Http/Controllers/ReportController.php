@@ -67,9 +67,9 @@ class ReportController extends Controller
         // Technician commissions on completed repairs
         $commissionsTotal = $completedRepairs->sum('commission_amount');
 
-        // 2. POS Sales Income (Sales paid_amount sum)
+        // 2. POS & Online Sales Income (Sales payable_amount sum)
         $salesIncome = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ->sum('paid_amount');
+            ->sum('payable_amount');
         $salesPaid = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->sum('paid_amount');
         $salesDue = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])

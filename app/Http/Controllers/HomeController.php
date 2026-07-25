@@ -15,10 +15,6 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->check() && !$request->filled('ticket_id')) {
-            return redirect()->route('dashboard');
-        }
-
         $repair = null;
         $searched = false;
 

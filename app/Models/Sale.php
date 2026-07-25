@@ -25,6 +25,7 @@ class Sale extends Model
         'payment_method',
         'salesman_id',
         'branch',
+        'status',
     ];
 
     /**
@@ -55,6 +56,11 @@ class Sale extends Model
      * Get all payment logs associated with this sale.
      */
     public function payments(): MorphMany
+    {
+        return $this->morphMany(PaymentLog::class, 'payable');
+    }
+
+    public function paymentLogs(): MorphMany
     {
         return $this->morphMany(PaymentLog::class, 'payable');
     }

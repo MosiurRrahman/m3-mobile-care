@@ -16,6 +16,7 @@ class InventoryItem extends Model
         'sku',
         'barcode',
         'type', // spare_part, accessory
+        'status', // active, inactive
         'category', // e.g. Display, Battery (legacy string representation)
         'quantity',
         'alert_quantity',
@@ -48,6 +49,31 @@ class InventoryItem extends Model
         'sale_price' => 'float',
         'purchase_price' => 'float',
     ];
+
+    protected $appends = [
+        'image_url',
+    ];
+
+    /**
+     * Get primary image URL safely regardless of whether it's full URL, frontend asset, or storage path.
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (!empty($this->images) && is_array($this->images) && count($this->images) > 0 && !empty($this->images[0])) {
+            $img = $this->images[0];
+            if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+                return $img;
+            }
+            if (str_starts_with($img, 'frontend/')) {
+                return asset($img);
+            }
+            if (str_starts_with($img, 'storage/')) {
+                return asset($img);
+            }
+            return asset('storage/' . $img);
+        }
+        return asset('frontend/img/product-img-1.jpg');
+    }
 
     /**
      * Get minimum allowed selling price (fallback to sale_price if min_sale_price is not set).

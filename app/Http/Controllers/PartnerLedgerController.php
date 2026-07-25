@@ -126,11 +126,21 @@ class PartnerLedgerController extends Controller
         
         $mosiurRatio = 0.60 - $monowarRatio;
 
-        $monowarAmount = $netProfit * $monowarRatio;
-        $raihanAmount = $netProfit * $raihanRatio;
-        $mosiurAmount = $netProfit * $mosiurRatio;
+        $customShares = $request->input('shares', []);
 
-        DB::transaction(function() use ($month, $netProfit, $monowar, $raihan, $mosiur, $monowarRatio, $raihanRatio, $mosiurRatio, $monowarAmount, $raihanAmount, $mosiurAmount) {
+        $monowarAmount = isset($customShares['Monowar Munna']) && $customShares['Monowar Munna'] !== '' 
+            ? floatval($customShares['Monowar Munna']) 
+            : ($netProfit * $monowarRatio);
+
+        $raihanAmount = isset($customShares['Munna Raihan']) && $customShares['Munna Raihan'] !== '' 
+            ? floatval($customShares['Munna Raihan']) 
+            : ($netProfit * $raihanRatio);
+
+        $mosiurAmount = isset($customShares['Mosiur']) && $customShares['Mosiur'] !== '' 
+            ? floatval($customShares['Mosiur']) 
+            : ($netProfit * $mosiurRatio);
+
+        DB::transaction(function() use ($month, $monowar, $raihan, $mosiur, $monowarRatio, $raihanRatio, $mosiurRatio, $monowarAmount, $raihanAmount, $mosiurAmount) {
             // 1. Monowar Munna
             $monowar->accumulated_profit += $monowarAmount;
             $monowar->save();
@@ -141,7 +151,7 @@ class PartnerLedgerController extends Controller
                 'amount' => abs($monowarAmount),
                 'balance_after' => $monowar->accumulated_profit,
                 'month' => $month,
-                'description' => "Profit distribution for month {$month} at ratio " . number_format($monowarRatio * 100, 2) . "%",
+                'description' => "Profit distribution for month {$month} (" . number_format($monowarAmount, 2) . " BDT)",
                 'created_by' => auth()->id(),
             ]);
 
@@ -155,7 +165,7 @@ class PartnerLedgerController extends Controller
                 'amount' => abs($raihanAmount),
                 'balance_after' => $raihan->accumulated_profit,
                 'month' => $month,
-                'description' => "Profit distribution for month {$month} at ratio " . number_format($raihanRatio * 100, 2) . "%",
+                'description' => "Profit distribution for month {$month} (" . number_format($raihanAmount, 2) . " BDT)",
                 'created_by' => auth()->id(),
             ]);
 
@@ -169,7 +179,7 @@ class PartnerLedgerController extends Controller
                 'amount' => abs($mosiurAmount),
                 'balance_after' => $mosiur->accumulated_profit,
                 'month' => $month,
-                'description' => "Profit distribution for month {$month} at ratio " . number_format($mosiurRatio * 100, 2) . "%",
+                'description' => "Profit distribution for month {$month} (" . number_format($mosiurAmount, 2) . " BDT)",
                 'created_by' => auth()->id(),
             ]);
         });
@@ -275,6 +285,52 @@ class PartnerLedgerController extends Controller
         });
 
         return redirect()->route('admin.partner-ledger.index')->with('success', "Investment / Deposit of " . number_format($amount, 2) . " BDT processed successfully!");
+    }
+
+    /**
+     * Update/edit initial capital balance for a partner.
+     */
+    public function updatePartnerCapital(Request $request, $id)
+    {
+        $this->checkAndInitializeBalances();
+
+        $request->validate([
+            'capital_balance' => 'required|numeric|min:0',
+        ]);
+
+        $partner = PartnerBalance::findOrFail($id);
+        $oldCapital = floatval($partner->capital_balance);
+        $newCapital = floatval($request->input('capital_balance'));
+
+        DB::transaction(function() use ($partner, $oldCapital, $newCapital) {
+            $partner->capital_balance = $newCapital;
+            $partner->save();
+
+            // Update or create initial capital ledger entry
+            $initialEntry = PartnerLedgerEntry::where('partner_name', $partner->partner_name)
+                ->where('account_type', 'capital')
+                ->where('type', 'credit')
+                ->first();
+
+            if ($initialEntry) {
+                $initialEntry->amount = $newCapital;
+                $initialEntry->balance_after = $newCapital;
+                $initialEntry->description = "Initial Capital Investment (Updated)";
+                $initialEntry->save();
+            } else {
+                PartnerLedgerEntry::create([
+                    'partner_name' => $partner->partner_name,
+                    'account_type' => 'capital',
+                    'type' => 'credit',
+                    'amount' => $newCapital,
+                    'balance_after' => $newCapital,
+                    'description' => "Initial Capital Investment",
+                    'created_by' => auth()->id(),
+                ]);
+            }
+        });
+
+        return redirect()->route('admin.partner-ledger.index')->with('success', "Capital balance for {$partner->partner_name} updated to " . number_format($newCapital, 2) . " BDT successfully!");
     }
 
     /**

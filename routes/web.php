@@ -17,10 +17,33 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CashController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\PartnerLedgerController;
 
-// Public Routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// E-Commerce Shop & Saafie Template Routes
+Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::get('/shop', [ShopController::class, 'shop'])->name('shop.catalog');
+Route::get('/shop/product/{id}', [ShopController::class, 'show'])->name('shop.show');
+Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
+Route::post('/cart/add', [ShopController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/update', [ShopController::class, 'updateCart'])->name('cart.update');
+Route::get('/cart/remove/{id}', [ShopController::class, 'removeFromCart'])->name('cart.remove');
+Route::get('/wishlist', [ShopController::class, 'wishlist'])->name('shop.wishlist');
+Route::post('/wishlist/toggle', [ShopController::class, 'addToWishlist'])->name('wishlist.toggle');
+Route::get('/checkout', [ShopController::class, 'checkout'])->name('shop.checkout');
+Route::post('/checkout', [ShopController::class, 'processCheckout'])->name('checkout.process');
+Route::get('/order-success/{invoice_no}', [ShopController::class, 'orderSuccess'])->name('order.success');
+Route::get('/contact', [ShopController::class, 'contact'])->name('shop.contact');
+Route::get('/faq', [ShopController::class, 'faq'])->name('shop.faq');
+Route::get('/about', [ShopController::class, 'about'])->name('shop.about');
+Route::get('/customer/login', [ShopController::class, 'customerLogin'])->name('customer.login');
+Route::post('/customer/login', [ShopController::class, 'processCustomerLogin'])->name('customer.login.process');
+Route::get('/customer/register', [ShopController::class, 'customerRegister'])->name('customer.register');
+Route::post('/customer/register', [ShopController::class, 'processCustomerRegister'])->name('customer.register.process');
+Route::get('/customer/logout', [ShopController::class, 'customerLogout'])->name('customer.logout');
+
+// Public Repair Tracking & Booking Routes
 Route::get('/track', [HomeController::class, 'index'])->name('track.form');
 Route::post('/track', [HomeController::class, 'track'])->name('track.search');
 Route::get('/track-ajax', [HomeController::class, 'trackAjax'])->name('track.ajax');
@@ -52,6 +75,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/sales/{id}/pay-due', [PosController::class, 'payDue'])->name('admin.sales.pay-due');
     });
 
+    // Online Store Orders Management
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/admin/orders/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+    Route::post('/admin/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+
     // Repairs (Job Cards)
     Route::middleware(['permission:repairs'])->group(function () {
         Route::get('/admin/repairs', [RepairController::class, 'index'])->name('admin.repairs.index');
@@ -67,6 +95,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Inventory Catalog (Parts & Accessories)
     Route::middleware(['permission:inventory'])->group(function () {
+        Route::get('/admin/inventory', [InventoryController::class, 'indexAccessories'])->name('admin.inventory.index');
         Route::get('/admin/inventory/parts', [InventoryController::class, 'indexParts'])->name('admin.inventory.parts');
         Route::get('/admin/inventory/accessories', [InventoryController::class, 'indexAccessories'])->name('admin.inventory.accessories');
         Route::get('/admin/inventory/create', [InventoryController::class, 'create'])->name('admin.inventory.create');
@@ -74,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/inventory', [InventoryController::class, 'store'])->name('admin.inventory.store');
         Route::put('/admin/inventory/{id}', [InventoryController::class, 'update'])->name('admin.inventory.update');
         Route::delete('/admin/inventory/{id}', [InventoryController::class, 'destroy'])->name('admin.inventory.destroy');
+        Route::post('/admin/inventory/{id}/toggle-status', [InventoryController::class, 'toggleStatus'])->name('admin.inventory.toggleStatus');
         
         // Categories
         Route::get('/admin/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
@@ -111,6 +141,12 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/admin/social/{id}', [SocialMediaController::class, 'update'])->name('admin.social.update');
         Route::delete('/admin/social/{id}', [SocialMediaController::class, 'destroy'])->name('admin.social.destroy');
         Route::post('/admin/social/{id}/publish', [SocialMediaController::class, 'publish'])->name('admin.social.publish');
+
+        // Service Catalog Management
+        Route::get('/admin/services', [ServiceController::class, 'index'])->name('admin.services.index');
+        Route::post('/admin/services', [ServiceController::class, 'store'])->name('admin.services.store');
+        Route::put('/admin/services/{id}', [ServiceController::class, 'update'])->name('admin.services.update');
+        Route::delete('/admin/services/{id}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
     });
 
     // Expense Management (Accessible by users with the expenses permission, which is granted to Super Admin and toggled for Admin Manager)
@@ -153,6 +189,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/partner-ledger/distribute', [PartnerLedgerController::class, 'distributeProfit'])->name('admin.partner-ledger.distribute');
         Route::post('/admin/partner-ledger/deposit', [PartnerLedgerController::class, 'storeDeposit'])->name('admin.partner-ledger.deposit');
         Route::post('/admin/partner-ledger/withdraw', [PartnerLedgerController::class, 'storeWithdrawal'])->name('admin.partner-ledger.withdraw');
+        Route::put('/admin/partner-ledger/capital/{id}', [PartnerLedgerController::class, 'updatePartnerCapital'])->name('admin.partner-ledger.update-capital');
         Route::put('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'update'])->name('admin.partner-ledger.update');
         Route::delete('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'destroy'])->name('admin.partner-ledger.destroy');
         Route::post('/admin/partner-ledger/rollback', [PartnerLedgerController::class, 'rollbackDistribution'])->name('admin.partner-ledger.rollback');

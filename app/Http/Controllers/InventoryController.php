@@ -379,4 +379,16 @@ class InventoryController extends Controller
         $route = $type === 'spare_part' ? 'admin.inventory.parts' : 'admin.inventory.accessories';
         return redirect()->route($route)->with('success', 'Inventory product deleted successfully!');
     }
+
+    /**
+     * Toggle product active/inactive status.
+     */
+    public function toggleStatus($id)
+    {
+        $item = InventoryItem::findOrFail($id);
+        $item->status = ($item->status === 'inactive') ? 'active' : 'inactive';
+        $item->save();
+
+        return redirect()->back()->with('success', "Product '{$item->name}' status changed to '{$item->status}'.");
+    }
 }

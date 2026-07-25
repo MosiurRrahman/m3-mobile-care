@@ -83,6 +83,7 @@
                             <th>Stock Quantity</th>
                             <th>Cost Price</th>
                             <th>Sale Price</th>
+                            <th>Status</th>
                             @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                             <th class="text-end" style="width: 150px;">Actions</th>
                             @endif
@@ -94,14 +95,8 @@
                             $isLowStock = $item->quantity <= $item->alert_quantity;
                         @endphp
                         <tr class="{{ $isLowStock ? 'table-warning' : '' }}">
-                            <td>
-                                @if(!empty($item->images) && is_array($item->images) && count($item->images) > 0)
-                                    <img src="{{ asset('storage/' . $item->images[0]) }}" class="rounded shadow-xs" alt="{{ $item->name }}" style="width: 42px; height: 42px; object-fit: cover; border: 1px solid rgba(0,0,0,0.08);">
-                                @else
-                                    <div class="rounded d-flex align-items-center justify-content-center bg-light text-muted" style="width: 42px; height: 42px; border: 1px solid rgba(0,0,0,0.08);">
-                                        <i class="ti tabler-photo fs-4 text-secondary"></i>
-                                    </div>
-                                @endif
+                                <td>
+                                <img src="{{ $item->image_url }}" class="rounded shadow-xs" alt="{{ $item->name }}" style="width: 42px; height: 42px; object-fit: cover; border: 1px solid rgba(0,0,0,0.08);">
                             </td>
                             <td><span class="fw-bold text-dark">{{ $item->sku }}</span></td>
                             <td>
@@ -117,6 +112,15 @@
                             </td>
                             <td>{{ number_format($item->purchase_price, 2) }} BDT</td>
                             <td><span class="fw-bold text-success">{{ number_format($item->sale_price, 2) }} BDT</span></td>
+                            <td>
+                                <form action="{{ route('admin.inventory.toggleStatus', $item->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm py-1 px-2 {{ $item->status === 'inactive' ? 'btn-outline-danger' : 'btn-outline-success' }}" title="Click to toggle product status">
+                                        <i class="ti {{ $item->status === 'inactive' ? 'tabler-eye-off' : 'tabler-eye' }} me-1"></i>
+                                        {{ ucfirst($item->status ?? 'active') }}
+                                    </button>
+                                </form>
+                            </td>
                             @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                             <td class="text-end">
                                 <div class="d-inline-flex">

@@ -59,7 +59,12 @@
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="transition: transform 0.2s; cursor: default;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">
                     <div class="card-header bg-label-{{ $color }} pb-2 d-flex justify-content-between align-items-center">
                         <h5 class="card-title fw-bold mb-0 text-{{ $color }}">{{ $bal->partner_name }}</h5>
-                        <span class="badge bg-{{ $color }} fw-semibold fs-7">{{ number_format($ratio * 100, 2) }}% Share</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-{{ $color }} fw-semibold fs-7">{{ number_format($ratio * 100, 2) }}% Share</span>
+                            <button type="button" class="btn btn-xs btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editCapitalModal{{ $bal->id }}" title="Edit Capital Investment">
+                                <i class="ti tabler-edit"></i> Edit
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body pt-3">
                         <div class="row g-2 text-center mb-3">
@@ -122,37 +127,41 @@
                     <span class="text-muted small">Automatically computed from service repairs, POS sales, technician commissions, and general expenses</span>
                 </div>
 
-                <h6 class="fw-bold mb-2">Split Allocation (অনুপাত বন্টন):</h6>
-                <div class="table-responsive mb-3">
-                    <table class="table table-bordered table-sm align-middle text-center mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Partner</th>
-                                <th>Ratio</th>
-                                <th>Share Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-start fw-semibold">Monowar Munna</td>
-                                <td class="text-primary fw-bold">{{ number_format($monowarRatio * 100, 2) }}%</td>
-                                <td class="fw-bold">{{ number_format($monthProfit * $monowarRatio, 2) }} BDT</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start fw-semibold">Munna Raihan</td>
-                                <td class="text-info fw-bold">{{ number_format($raihanRatio * 100, 2) }}%</td>
-                                <td class="fw-bold">{{ number_format($monthProfit * $raihanRatio, 2) }} BDT</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start fw-semibold">Mosiur</td>
-                                <td class="text-warning fw-bold">{{ number_format($mosiurRatio * 100, 2) }}%</td>
-                                <td class="fw-bold">{{ number_format($monthProfit * $mosiurRatio, 2) }} BDT</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <h6 class="fw-bold mb-2 d-flex justify-content-between align-items-center">
+                    <span>Split Allocation (অনুপাত বন্টন):</span>
+                    <small class="text-muted fw-normal" style="font-size: 0.78rem;">* আপনি প্রয়োজন অনুযায়ী শেয়ার টাকা এডিট করতে পারবেন</small>
+                </h6>
 
                 @if($isAlreadyDistributed)
+                    <div class="table-responsive mb-3">
+                        <table class="table table-bordered table-sm align-middle text-center mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Partner</th>
+                                    <th>Ratio</th>
+                                    <th>Share Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-start fw-semibold">Monowar Munna</td>
+                                    <td class="text-primary fw-bold">{{ number_format($monowarRatio * 100, 2) }}%</td>
+                                    <td class="fw-bold text-success">{{ number_format($monthProfit * $monowarRatio, 2) }} BDT</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start fw-semibold">Munna Raihan</td>
+                                    <td class="text-info fw-bold">{{ number_format($raihanRatio * 100, 2) }}%</td>
+                                    <td class="fw-bold text-success">{{ number_format($monthProfit * $raihanRatio, 2) }} BDT</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start fw-semibold">Mosiur</td>
+                                    <td class="text-warning fw-bold">{{ number_format($mosiurRatio * 100, 2) }}%</td>
+                                    <td class="fw-bold text-success">{{ number_format($monthProfit * $mosiurRatio, 2) }} BDT</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="d-grid gap-2">
                         <button class="btn btn-secondary" disabled>
                             <i class="ti tabler-circle-check me-1"></i> Profit Already Distributed for this Month
@@ -162,13 +171,58 @@
                             <input type="hidden" name="month" value="{{ $selectedMonth }}">
                             <button type="submit" class="btn btn-outline-danger w-100">
                                 <i class="ti tabler-lock-open me-1"></i> Unlock & Recalculate Month
-                              </button>
+                            </button>
                         </form>
                     </div>
                 @else
-                    <form action="{{ route('admin.partner-ledger.distribute') }}" method="POST" onsubmit="return confirm('Are you sure you want to lock the month and distribute the net profit/loss among partners? This cannot be undone!')">
+                    <form action="{{ route('admin.partner-ledger.distribute') }}" method="POST" onsubmit="return confirm('Are you sure you want to lock the month and distribute the profit/loss among partners? This cannot be undone!')">
                         @csrf
                         <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                        
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered table-sm align-middle text-center mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Partner</th>
+                                        <th style="width: 25%;">Ratio</th>
+                                        <th style="width: 45%;">Share Amount (BDT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-start fw-semibold py-2">Monowar Munna</td>
+                                        <td class="text-primary fw-bold">{{ number_format($monowarRatio * 100, 2) }}%</td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light">৳</span>
+                                                <input type="number" step="0.01" name="shares[Monowar Munna]" class="form-control form-control-sm fw-bold text-end partner-share-input" value="{{ number_format($monthProfit * $monowarRatio, 2, '.', '') }}" required>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start fw-semibold py-2">Munna Raihan</td>
+                                        <td class="text-info fw-bold">{{ number_format($raihanRatio * 100, 2) }}%</td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light">৳</span>
+                                                <input type="number" step="0.01" name="shares[Munna Raihan]" class="form-control form-control-sm fw-bold text-end partner-share-input" value="{{ number_format($monthProfit * $raihanRatio, 2, '.', '') }}" required>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start fw-semibold py-2">Mosiur</td>
+                                        <td class="text-warning fw-bold">{{ number_format($mosiurRatio * 100, 2) }}%</td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light">৳</span>
+                                                <input type="number" step="0.01" name="shares[Mosiur]" class="form-control form-control-sm fw-bold text-end partner-share-input" value="{{ number_format($monthProfit * $mosiurRatio, 2, '.', '') }}" required>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-success">
                                 <i class="ti tabler-lock-open me-1"></i> Close Month & Distribute Profit
@@ -417,4 +471,36 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Capital Investment Modals -->
+@foreach($balances as $bal)
+<div class="modal fade" id="editCapitalModal{{ $bal->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom py-3">
+                <h5 class="modal-title fw-bold">Edit Capital: {{ $bal->partner_name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.partner-ledger.update-capital', $bal->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Capital Investment Amount (মূলধন টাকা)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">৳</span>
+                            <input type="number" step="0.01" min="0" name="capital_balance" class="form-control fw-bold text-end" value="{{ $bal->capital_balance }}" required>
+                        </div>
+                        <small class="text-muted mt-2 d-block fs-7">* মূলধনের পরিমাণ এডিট করলে স্বয়ংক্রিয়ভাবে পার্টনারদের শেয়ার অনুপাত (Ratio %) এবং লেজার হিস্ট্রি আপডেট হয়ে যাবে।</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-top py-2">
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection

@@ -71,7 +71,7 @@
 
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4" id="products-catalog-list" style="max-height: 600px; overflow-y: auto; padding-right: 5px;">
                     @foreach($items as $item)
-                    <div class="col product-card-wrapper mb-2" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-sku="{{ $item->sku }}" data-barcode="{{ $item->barcode }}" data-price="{{ $item->sale_price }}" data-min-price="{{ $item->effective_min_price }}" data-qty="{{ $item->quantity }}" data-category="{{ $item->categoryRelation ? $item->categoryRelation->name : $item->category }}" data-brand="{{ $item->brand ?: 'Generic' }}" data-cost-price="{{ $item->purchase_price }}" data-description="{{ $item->description }}" data-variants="{{ json_encode($item->variants) }}" data-image="{{ !empty($item->images) && is_array($item->images) && isset($item->images[0]) ? asset('storage/' . $item->images[0]) : '' }}" data-qty-alert="{{ $item->alert_quantity }}">
+                    <div class="col product-card-wrapper mb-2" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-sku="{{ $item->sku }}" data-barcode="{{ $item->barcode }}" data-price="{{ $item->sale_price }}" data-min-price="{{ $item->effective_min_price }}" data-qty="{{ $item->quantity }}" data-category="{{ $item->categoryRelation ? $item->categoryRelation->name : $item->category }}" data-brand="{{ $item->brand ?: 'Generic' }}" data-cost-price="{{ $item->purchase_price }}" data-description="{{ $item->description }}" data-variants="{{ json_encode($item->variants) }}" data-image="{{ $item->image_url }}" data-qty-alert="{{ $item->alert_quantity }}">
                         <div class="product-pos-card shadow-xs {{ $item->quantity <= 0 ? 'product-out-of-stock' : '' }}">
                             @if($item->quantity <= 0)
                                 <span class="product-out-of-stock-badge">Out of Stock</span>
@@ -82,15 +82,9 @@
                             </button>
 
                             <!-- Image Column (Centered, transparent background to blend in) -->
-                            @if(!empty($item->images) && is_array($item->images) && isset($item->images[0]))
-                                <div class="product-image-container mb-3">
-                                    <img src="{{ asset('storage/' . $item->images[0]) }}" class="w-100 h-100 object-fit-cover" alt="{{ $item->name }}">
-                                </div>
-                            @else
-                                <div class="product-image-container mb-3 border bg-light">
-                                    <i class="ti tabler-photo fs-2 text-secondary"></i>
-                                </div>
-                            @endif
+                            <div class="product-image-container mb-3">
+                                <img src="{{ $item->image_url }}" class="w-100 h-100 object-fit-contain" alt="{{ $item->name }}">
+                            </div>
                             
                             <!-- Info Column -->
                             <div class="product-info-container mb-3">
