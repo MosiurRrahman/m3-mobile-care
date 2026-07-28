@@ -8,6 +8,48 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Structured Data / JSON-LD for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobilePhoneRepairStore",
+  "name": "M3 Mobile Care",
+  "image": "https://m3mobilecares.com/assets/img/branding/logo-dark-icon.png",
+  "@id": "https://m3mobilecares.com/#store",
+  "url": "https://m3mobilecares.com",
+  "telephone": "+8801700000000",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Main Road",
+    "addressLocality": "Dhaka",
+    "addressCountry": "BD"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 23.8103,
+    "longitude": 90.4125
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "opens": "09:00",
+    "closes": "21:00"
+  },
+  "sameAs": [
+    "https://www.facebook.com/m3mobilecare"
+  ]
+}
+</script>
+
 <style>
     body {
         font-family: 'Outfit', sans-serif !important;
@@ -262,13 +304,13 @@
 </style>
 
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark glass-nav sticky-top py-3">
+<nav class="navbar navbar-expand-lg navbar-dark glass-nav sticky-top py-3" aria-label="Main Navigation">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
-            <img src="{{ asset('assets/img/branding/logo-dark-icon.png') }}" alt="M3 Logo" style="height: 38px; width: auto; object-fit: contain;" class="me-2.5">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}" aria-label="M3 Mobile Care Homepage">
+            <img src="{{ asset('assets/img/branding/logo-dark-icon.png') }}" alt="M3 Mobile Care Logo" width="38" height="38" style="height: 38px; width: auto; object-fit: contain;" class="me-2.5">
             <span class="fs-4 fw-extrabold text-white" style="font-family: 'Outfit', sans-serif;">M3 <span style="color: #f37021;">MOBILE CARE</span></span>
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -301,7 +343,7 @@
                     <span class="text-slate-400 small fw-semibold text-uppercase tracking-wider">Live Repair Lab Diagnostics</span>
                 </div>
                 <h1 class="display-5 fw-bold text-white mb-3">Live Service & Ticket Tracker</h1>
-                <p class="lead text-slate-400 mb-5">Trace hardware updates, diagnostic status, and expected delivery times.</p>
+                <p class="lead text-slate-400 mb-5">Trace hardware updates, diagnostic status, and expected delivery times for your device.</p>
                 
                 <div class="row justify-content-center">
                     <div class="col-md-9 col-lg-8">
@@ -310,9 +352,10 @@
                                 @csrf
                                 <div class="d-flex flex-column flex-sm-row gap-3">
                                     <div class="flex-grow-1">
-                                        <input type="text" name="ticket_id" class="form-control form-control-lg input-glow text-center text-sm-start" placeholder="Enter Ticket ID (e.g. M3-202607-XXXX)" value="{{ request('ticket_id') }}" required style="border-radius: 12px; height: 54px;">
+                                        <label for="ticket_id_input" class="visually-hidden">Ticket ID Number</label>
+                                        <input type="text" id="ticket_id_input" name="ticket_id" aria-label="Enter Ticket ID Number" class="form-control form-control-lg input-glow text-center text-sm-start" placeholder="Enter Ticket ID (e.g. M3-202607-XXXX)" value="{{ request('ticket_id') }}" required style="border-radius: 12px; height: 54px;">
                                     </div>
-                                    <button type="submit" class="btn btn-gradient btn-lg px-4 rounded-pill" style="height: 54px; min-width: 180px;">
+                                    <button type="submit" class="btn btn-gradient btn-lg px-4 rounded-pill" aria-label="Trace Ticket Status" style="height: 54px; min-width: 180px;">
                                         <i class="ti tabler-search me-1"></i>Trace Status
                                     </button>
                                 </div>

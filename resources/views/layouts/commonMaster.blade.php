@@ -41,30 +41,33 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>
-    @yield('title') | {{ config('variables.templateName') ? config('variables.templateName') : 'TemplateName' }}
-    - {{ config('variables.templateSuffix') ? config('variables.templateSuffix') : 'TemplateSuffix' }}
-  </title>
-  <meta name="description"
-    content="{{ config('variables.templateDescription') ? config('variables.templateDescription') : '' }}" />
-  <meta name="keywords"
-    content="{{ config('variables.templateKeyword') ? config('variables.templateKeyword') : '' }}" />
-  <meta property="og:title" content="{{ config('variables.ogTitle') ? config('variables.ogTitle') : '' }}" />
-  <meta property="og:type" content="{{ config('variables.ogType') ? config('variables.ogType') : '' }}" />
-  <meta property="og:url" content="{{ config('variables.productPage') ? config('variables.productPage') : '' }}" />
-  <meta property="og:image" content="{{ config('variables.ogImage') ? config('variables.ogImage') : '' }}" />
-  <meta property="og:description"
-    content="{{ config('variables.templateDescription') ? config('variables.templateDescription') : '' }}" />
-  <meta property="og:site_name"
-    content="{{ config('variables.creatorName') ? config('variables.creatorName') : '' }}" />
-  <meta name="robots" content="noindex, nofollow" />
-  <!-- laravel CRUD token -->
+  <title>@yield('title', config('variables.templateName') . ' - ' . config('variables.templateSuffix'))</title>
+  <meta name="description" content="@yield('meta_description', config('variables.templateDescription'))" />
+  <meta name="keywords" content="@yield('meta_keywords', config('variables.templateKeyword'))" />
+  <meta name="author" content="{{ config('variables.creatorName') }}" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="@yield('og_title', config('variables.ogTitle'))" />
+  <meta property="og:description" content="@yield('og_description', config('variables.templateDescription'))" />
+  <meta property="og:url" content="{{ url()->current() }}" />
+  <meta property="og:image" content="@yield('og_image', config('variables.ogImage'))" />
+  <meta property="og:site_name" content="{{ config('variables.creatorName') }}" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="@yield('og_title', config('variables.ogTitle'))" />
+  <meta name="twitter:description" content="@yield('og_description', config('variables.templateDescription'))" />
+  <meta name="twitter:image" content="@yield('og_image', config('variables.ogImage'))" />
+
+  <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}" />
+  
   <!-- Canonical SEO -->
-  <link rel="canonical" href="{{ config('variables.productPage') ? config('variables.productPage') : '' }}" />
+  <link rel="canonical" href="{{ url()->current() }}" />
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
 
