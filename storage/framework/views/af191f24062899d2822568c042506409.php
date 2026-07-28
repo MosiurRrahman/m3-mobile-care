@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Sales POS Terminal - M3 Mobile Care'); ?>
 
 <?php $__env->startSection('content'); ?>
