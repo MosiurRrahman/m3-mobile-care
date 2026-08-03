@@ -13,6 +13,9 @@ class CashController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
+        $isStaff = !$user->isSuperAdmin() && !$user->isAdmin();
+
         // Default to today if no date range is set
         $startDate = $request->input('start_date', Carbon::today()->toDateString());
         $endDate = $request->input('end_date', Carbon::today()->toDateString());
@@ -20,15 +23,21 @@ class CashController extends Controller
         
         $registerType = $request->input('register_type', 'combined'); // pos, service, combined
         
-        // Salesman role constraint: Only allow POS cash register
-        if (auth()->user()->isSalesman()) {
-            $registerType = 'pos';
+        // Staff role constraint: Force date to TODAY ONLY and lock register type
+        if ($isStaff) {
+            $startDate = Carbon::today()->toDateString();
+            $endDate = Carbon::today()->toDateString();
+            if ($user->isSalesman()) {
+                $registerType = 'pos';
+            } elseif ($user->isTechnician()) {
+                $registerType = 'service';
+            }
         }
         
-        // Expenses toggle - default true
+        // Expenses toggle - default false so general shop expenses don't subtract from counter cash
         $includeExpenses = $request->has('include_expenses') 
             ? $request->boolean('include_expenses') 
-            : true;
+            : false;
 
         // Calculate opening balance (cumulative inflow - outflow before start_date)
         $posInflowBefore = 0;
@@ -56,14 +65,29 @@ class CashController extends Controller
                 });
         }
 
-        if ($includeExpenses && $paymentMethod === 'Cash') {
+        if ($paymentMethod === 'Cash') {
             $expensesQuery = Expense::where('expense_date', '<', $startDate);
             if ($registerType === 'pos') {
                 $expensesQuery->where('register_type', 'pos');
             } elseif ($registerType === 'service') {
                 $expensesQuery->where('register_type', 'service');
             }
-            $expensesBefore = $expensesQuery->sum('amount');
+
+            if (!$includeExpenses) {
+                $expensesQuery->where(function($q) {
+                    $q->where('amount', '<', 0)
+                      ->orWhereIn('category', ['Cash Deposit', 'Opening Float']);
+                });
+            }
+
+            $expensesList = $expensesQuery->get();
+            foreach ($expensesList as $exp) {
+                if ($exp->amount < 0 || in_array($exp->category, ['Cash Deposit', 'Opening Float'])) {
+                    $expensesBefore -= abs($exp->amount); // Increases opening balance
+                } else {
+                    $expensesBefore += abs($exp->amount); // Decreases opening balance
+                }
+            }
         }
 
         $openingBalance = ($posInflowBefore + $repairAdvanceBefore + $repairFinalBefore) - $expensesBefore;
@@ -132,23 +156,32 @@ class CashController extends Controller
         }
 
         $expenses = collect();
-        if ($includeExpenses && $paymentMethod === 'Cash') {
+        if ($paymentMethod === 'Cash') {
             $expensesQuery = Expense::whereBetween('expense_date', [$startDate, $endDate]);
             if ($registerType === 'pos') {
                 $expensesQuery->where('register_type', 'pos');
             } elseif ($registerType === 'service') {
                 $expensesQuery->where('register_type', 'service');
             }
+
+            if (!$includeExpenses) {
+                $expensesQuery->where(function($q) {
+                    $q->where('amount', '<', 0)
+                      ->orWhereIn('category', ['Cash Deposit', 'Opening Float']);
+                });
+            }
             
             $expenses = $expensesQuery->get()
                 ->map(function($expense) {
+                    $isInflow = $expense->amount < 0 || in_array($expense->category, ['Cash Deposit', 'Opening Float']);
+                    $absAmount = abs($expense->amount);
                     return [
                         'date' => Carbon::parse($expense->expense_date)->startOfDay(),
-                        'type' => 'Expense (' . $expense->category . ')',
+                        'type' => $isInflow ? 'Cash Deposit (' . $expense->category . ')' : 'Expense (' . $expense->category . ')',
                         'ref' => 'EXP-' . $expense->id,
                         'customer' => ($expense->register_type ? '[' . strtoupper($expense->register_type) . ' Cash] ' : '') . ($expense->description ?? 'No Description'),
-                        'inflow' => 0,
-                        'outflow' => $expense->amount,
+                        'inflow' => $isInflow ? $absAmount : 0,
+                        'outflow' => $isInflow ? 0 : $absAmount,
                         'payment_method' => 'Cash'
                     ];
                 });
@@ -207,5 +240,33 @@ class CashController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Cash outflow recorded successfully.');
+    }
+
+    public function storeInflow(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user->isSuperAdmin() && !$user->isAdmin()) {
+            return redirect()->back()->with('error', 'Only Admins can record cash deposits.');
+        }
+
+        $request->validate([
+            'category' => 'required|string|max:100',
+            'amount' => 'required|numeric|min:0.01',
+            'description' => 'nullable|string|max:1000',
+            'expense_date' => 'required|date',
+            'register_type' => 'required|string|in:pos,service,general',
+        ]);
+
+        $registerType = $request->input('register_type');
+
+        Expense::create([
+            'category' => $request->input('category'),
+            'amount' => -abs($request->input('amount')), // Negative amount represents Cash Deposit / Inflow
+            'description' => $request->input('description'),
+            'expense_date' => $request->input('expense_date'),
+            'register_type' => $registerType === 'general' ? null : $registerType,
+        ]);
+
+        return redirect()->back()->with('success', 'Cash deposit/inflow recorded successfully.');
     }
 }

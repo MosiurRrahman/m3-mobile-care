@@ -1,12 +1,54 @@
 @extends('layouts/blankLayout')
 
-@section('title', 'Book a Mobile Repair Request - M3 Mobile Care')
+@section('title', 'Book Online Smartphone Repair Appointment - M3 Mobile Care')
+@section('meta_description', 'Book an online repair appointment with M3 Mobile Care for fast iPhone, Samsung, Xiaomi, Realme, Oppo, Vivo, OnePlus screen, battery & motherboard repairs in Bangladesh.')
+@section('meta_keywords', 'Book Mobile Repair, Online Phone Repair Appointment, Smartphone Repair Booking Bangladesh, iPhone Screen Repair Booking')
+
+@section('head_extra')
+<!-- BreadcrumbList & Service JSON-LD Schema -->
+<script type="application/ld+json">
+{!! json_encode([
+  '@context' => 'https://schema.org',
+  '@graph' => [
+    [
+      '@type' => 'BreadcrumbList',
+      'itemListElement' => [
+        [
+          '@type' => 'ListItem',
+          'position' => 1,
+          'name' => 'Home',
+          'item' => url('/')
+        ],
+        [
+          '@type' => 'ListItem',
+          'position' => 2,
+          'name' => 'Book Repair',
+          'item' => route('book.form')
+        ]
+      ]
+    ],
+    [
+      '@type' => 'Service',
+      'name' => 'Online Mobile Repair Appointment Booking',
+      'provider' => [
+        '@type' => 'MobilePhoneRepairStore',
+        'name' => 'M3 Mobile Care',
+        'url' => url('/')
+      ],
+      'areaServed' => 'BD',
+      'description' => 'Book phone repairs online for screen display replacement, battery swap, micro-soldering, and software flashing.'
+    ]
+  ]
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endsection
 
 @section('content')
 <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" aria-label="Booking Page Header Navigation">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}" aria-label="M3 Mobile Care Homepage">
+            <img src="{{ asset('assets/img/branding/logo-dark-icon.png') }}" alt="M3 Logo" width="32" height="32" class="me-2">
             <span class="fs-4 fw-bold text-primary">M3</span>
             <span class="fs-4 fw-bold text-white ms-1">Mobile Care</span>
         </a>
@@ -14,14 +56,14 @@
     </div>
 </nav>
 
-<div class="py-5 bg-light" style="min-height: 90vh;">
+<main class="py-5 bg-light" style="min-height: 90vh;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="text-center mb-4">
                     <span class="badge bg-label-primary px-3 py-1 mb-2">Booking Request</span>
-                    <h2 class="fw-bold">Online Repair Booking</h2>
-                    <p class="text-muted">Fill out the details below to book your repair appointment. We will contact you immediately.</p>
+                    <h1 class="fw-bold h2 text-dark">Online Repair Booking</h1>
+                    <p class="text-muted">Fill out the details below to book your phone repair appointment. We will contact you immediately.</p>
                 </div>
 
                 <div class="card border-0 shadow-sm rounded-4">
@@ -30,7 +72,7 @@
                             @csrf
 
                             <!-- Section 1: Customer Info -->
-                            <h4 class="fw-bold mb-4 text-primary"><i class="ti tabler-user me-2"></i>1. Customer Information</h4>
+                            <h2 class="h5 fw-bold mb-4 text-primary"><i class="ti tabler-user me-2"></i>1. Customer Information</h2>
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="customer_name">Full Name <span class="text-danger">*</span></label>
@@ -52,7 +94,7 @@
                             <hr class="my-4 text-muted opacity-25">
 
                             <!-- Section 2: Device Info -->
-                            <h4 class="fw-bold mb-4 text-primary"><i class="ti tabler-device-mobile me-2"></i>2. Device & Issue Information</h4>
+                            <h2 class="h5 fw-bold mb-4 text-primary"><i class="ti tabler-device-mobile me-2"></i>2. Device & Issue Information</h2>
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3 mb-md-0">
                                     <label class="form-label fw-semibold" for="device_brand">Device Brand <span class="text-danger">*</span></label>
@@ -113,7 +155,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

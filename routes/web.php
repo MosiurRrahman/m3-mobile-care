@@ -18,9 +18,11 @@ use App\Http\Controllers\SocialMediaController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CashController;
 use App\Http\Controllers\PartnerLedgerController;
+use App\Http\Controllers\SitemapController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/track', [HomeController::class, 'index'])->name('track.form');
 Route::post('/track', [HomeController::class, 'track'])->name('track.search');
 Route::get('/track-ajax', [HomeController::class, 'trackAjax'])->name('track.ajax');
@@ -116,6 +118,8 @@ Route::middleware(['auth'])->group(function () {
     // Expense Management (Accessible by users with the expenses permission, which is granted to Super Admin and toggled for Admin Manager)
     Route::middleware(['permission:expenses'])->group(function () {
         Route::get('/admin/expenses', [FinancialController::class, 'indexExpenses'])->name('admin.expenses.index');
+        Route::get('/admin/expenses/export/excel', [FinancialController::class, 'exportExcel'])->name('admin.expenses.export.excel');
+        Route::get('/admin/expenses/export/pdf', [FinancialController::class, 'exportPdf'])->name('admin.expenses.export.pdf');
         Route::post('/admin/expenses', [FinancialController::class, 'storeExpense'])->name('admin.expenses.store');
         Route::put('/admin/expenses/{id}', [FinancialController::class, 'updateExpense'])->name('admin.expenses.update');
         Route::delete('/admin/expenses/{id}', [FinancialController::class, 'destroyExpense'])->name('admin.expenses.destroy');
@@ -130,6 +134,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['permission:cash'])->group(function () {
         Route::get('/admin/cash', [CashController::class, 'index'])->name('admin.cash.index');
         Route::post('/admin/cash/outflow', [CashController::class, 'storeOutflow'])->name('admin.cash.outflow');
+        Route::post('/admin/cash/inflow', [CashController::class, 'storeInflow'])->name('admin.cash.inflow');
     });
 
     // Super-Admin Only Operations (Staff Accounts, Settings)

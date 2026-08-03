@@ -1,19 +1,21 @@
 @extends('layouts/blankLayout')
 
 @section('title', 'Booking Successful - M3 Mobile Care')
+@section('meta_robots', 'noindex, follow')
 
 @section('content')
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+            <img src="{{ asset('assets/img/branding/logo-dark-icon.png') }}" alt="M3 Logo" width="32" height="32" class="me-2">
             <span class="fs-4 fw-bold text-primary">M3</span>
             <span class="fs-4 fw-bold text-white ms-1">Mobile Care</span>
         </a>
     </div>
 </nav>
 
-<div class="py-5 bg-light d-flex align-items-center" style="min-height: 90vh;">
+<main class="py-5 bg-light d-flex align-items-center" style="min-height: 90vh;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-7 text-center">
@@ -24,7 +26,7 @@
                             <i class="ti tabler-circle-check fs-1"></i>
                         </div>
                         
-                        <h2 class="fw-bold text-success mb-2">Booking Confirmed!</h2>
+                        <h1 class="h2 fw-bold text-success mb-2">Booking Confirmed!</h1>
                         <p class="text-muted leading-relaxed">Thank you, {{ $repair->customer ? $repair->customer->name : 'Customer' }}. Your booking request for the <strong>{{ $repair->device_brand }} {{ $repair->device_model }}</strong> repair has been registered successfully.</p>
                         
                         <div class="my-5 p-4 bg-light rounded-3 border">
@@ -36,11 +38,11 @@
                         </div>
 
                         <div class="text-start mb-4">
-                            <h5 class="fw-bold mb-3"><i class="ti tabler-help text-primary me-2"></i>What's Next?</h5>
+                            <h3 class="h5 fw-bold mb-3"><i class="ti tabler-help text-primary me-2"></i>What's Next?</h3>
                             <ol class="text-muted small ps-3">
-                                <li class="mb-2"><strong>Bring your device:</strong> Visit our shop with the Ticket ID, or ship the device to our store address listed below.</li>
-                                <li class="mb-2"><strong>Technician Diagnosis:</strong> Once we receive your device, a technician will be assigned to examine the device and update the status notes.</li>
-                                <li class="mb-2"><strong>Live Status:</strong> You can enter this Ticket ID on our homepage anytime to track the live progress, technician notes, and final cost.</li>
+                                <li class="mb-2"><strong>Bring your device:</strong> Visit our shop with the Ticket ID, or ship the device to our store address.</li>
+                                <li class="mb-2"><strong>Technician Diagnosis:</strong> Once we receive your device, a technician will examine it and update status notes.</li>
+                                <li class="mb-2"><strong>Live Status:</strong> Enter this Ticket ID on our homepage anytime to track live progress, technician notes, and final cost.</li>
                             </ol>
                         </div>
 
@@ -57,7 +59,7 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <script>
     function copyTicketId() {

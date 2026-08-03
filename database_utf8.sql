@@ -1,435 +1,482 @@
-﻿-- MySQL dump 10.13  Distrib 8.4.3, for Win64 (x86_64)
---
--- Host: localhost    Database: m3-mobile-care
--- ------------------------------------------------------
--- Server version	8.4.3
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Current Database: `m3-mobile-care`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `m3-mobile-care` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `m3-mobile-care`;
-
---
--- Table structure for table `activity_logs`
---
+SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `activity_logs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `activity_logs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint unsigned DEFAULT NULL,
-  `loggable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `loggable_id` bigint unsigned NOT NULL,
-  `action` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `changes` json DEFAULT NULL,
-  `description` varchar(1000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `loggable_type` varchar(255) NOT NULL,
+  `loggable_id` bigint(20) unsigned NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `changes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`changes`)),
+  `description` varchar(1000) DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `activity_logs_user_id_foreign` (`user_id`),
   KEY `activity_logs_loggable_type_loggable_id_index` (`loggable_type`,`loggable_id`),
   CONSTRAINT `activity_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `activity_logs`
---
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('1', '1', 'App\\Models\\InventoryItem', '1', 'created', '[]', 'created Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5) with quantity 1', '103.129.246.101', '2026-07-21 11:31:41', '2026-07-21 11:31:41');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('2', '1', 'App\\Models\\InventoryItem', '1', 'updated', '{\"category\":{\"old\":\"Button Mobile Battery\",\"new\":\"Androied Battry\"}}', 'updated Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5): Expense Category from \'Button Mobile Battery\' to \'Androied Battry\'', '103.129.246.101', '2026-07-21 11:32:27', '2026-07-21 11:32:27');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('3', '1', 'App\\Models\\Purchase', '1', 'created', '[]', 'created Purchase Record #PUR-20260721-IEWK with total 480.00 BDT', '103.129.246.101', '2026-07-21 11:33:20', '2026-07-21 11:33:20');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('4', '1', 'App\\Models\\InventoryItem', '1', 'updated', '{\"quantity\":{\"old\":1,\"new\":2}}', 'updated Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5): Stock Quantity from \'1\' to \'2\'', '103.129.246.101', '2026-07-21 11:33:20', '2026-07-21 11:33:20');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('5', '1', 'App\\Models\\Expense', '1', 'created', '[]', 'created Expense of category \'Purchase\' with amount 480.00 BDT', '103.129.246.101', '2026-07-21 11:33:20', '2026-07-21 11:33:20');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('6', '1', 'App\\Models\\InventoryItem', '1', 'updated', '{\"quantity\":{\"old\":2,\"new\":\"1\"}}', 'updated Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5): Stock Quantity from \'2\' to \'1\'', '103.129.246.101', '2026-07-21 11:35:33', '2026-07-21 11:35:33');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('7', '1', 'App\\Models\\InventoryItem', '1', 'updated', '{\"quantity\":{\"old\":1,\"new\":0}}', 'updated Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5): Stock Quantity from \'1\' to \'0\'', '103.129.246.101', '2026-07-21 11:35:46', '2026-07-21 11:35:46');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('8', '1', 'App\\Models\\InventoryItem', '1', 'updated', '{\"quantity\":{\"old\":0,\"new\":1}}', 'updated Inventory Item \'Android\' (SKU: ACCS-BUTT-RKKH5): Stock Quantity from \'0\' to \'1\'', '103.129.246.101', '2026-07-21 11:35:46', '2026-07-21 11:35:46');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('9', '1', 'App\\Models\\InventoryItem', '2', 'created', '[]', 'created Inventory Item \'BN46A\' (SKU: ACCS-ANDR-HUB6Y) with quantity 1', '103.129.246.101', '2026-07-21 11:38:08', '2026-07-21 11:38:08');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('10', '1', 'App\\Models\\InventoryItem', '3', 'created', '[]', 'created Inventory Item \'Battrey 805\' (SKU: ACCS-ANDR-FAAMA) with quantity 1', '103.129.246.101', '2026-07-21 11:41:14', '2026-07-21 11:41:14');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('11', '1', 'App\\Models\\InventoryItem', '4', 'created', '[]', 'created Inventory Item \'Battrey 803\' (SKU: ACCS-ANDR-PVTGZ) with quantity 1', '103.129.246.101', '2026-07-21 11:43:27', '2026-07-21 11:43:27');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('12', '1', 'App\\Models\\InventoryItem', '5', 'created', '[]', 'created Inventory Item \'Battrey 673\' (SKU: ACCS-ANDR-5VXAN) with quantity 1', '103.129.246.101', '2026-07-21 11:44:34', '2026-07-21 11:44:34');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('13', '1', 'App\\Models\\InventoryItem', '6', 'created', '[]', 'created Inventory Item \'Battrey B-G7\' (SKU: ACCS-ANDR-TBPRR) with quantity 1', '103.129.246.101', '2026-07-21 11:45:39', '2026-07-21 11:45:39');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('14', '1', 'App\\Models\\InventoryItem', '7', 'created', '[]', 'created Inventory Item \'Battrey B-S1\' (SKU: ACCS-ANDR-OYDVU) with quantity 1', '103.129.246.101', '2026-07-21 11:46:32', '2026-07-21 11:46:32');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('15', '1', 'App\\Models\\InventoryItem', '5', 'updated', '{\"sale_price\":{\"old\":\"700.00\",\"new\":\"650.00\"}}', 'updated Inventory Item \'Battrey 673\' (SKU: ACCS-ANDR-5VXAN): Sale Price from \'700.00 BDT\' to \'650.00 BDT\'', '103.129.246.101', '2026-07-21 11:47:03', '2026-07-21 11:47:03');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('16', '1', 'App\\Models\\InventoryItem', '8', 'created', '[]', 'created Inventory Item \'Battrey 49Fi/49FT\' (SKU: ACCS-ANDR-0ADAZ) with quantity 1', '103.129.246.101', '2026-07-21 11:48:55', '2026-07-21 11:48:55');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('17', '1', 'App\\Models\\InventoryItem', '9', 'created', '[]', 'created Inventory Item \'Battrey B9Li\' (SKU: ACCS-ANDR-DOKXR) with quantity 1', '103.129.246.101', '2026-07-21 11:50:03', '2026-07-21 11:50:03');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('18', '1', 'App\\Models\\InventoryItem', '10', 'created', '[]', 'created Inventory Item \'Battrey BN53\' (SKU: ACCS-ANDR-225UX) with quantity 1', '103.129.246.101', '2026-07-21 12:16:02', '2026-07-21 12:16:02');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('19', '1', 'App\\Models\\InventoryItem', '11', 'created', '[]', 'created Inventory Item \'Battrey BN54\' (SKU: ACCS-ANDR-7FOIC) with quantity 1', '103.129.246.101', '2026-07-21 12:17:00', '2026-07-21 12:17:00');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('20', '1', 'App\\Models\\InventoryItem', '12', 'created', '[]', 'created Inventory Item \'Battrey BN56\' (SKU: ACCS-ANDR-JRRLP) with quantity 1', '103.129.246.101', '2026-07-21 12:17:41', '2026-07-21 12:17:41');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('21', '1', 'App\\Models\\InventoryItem', '13', 'created', '[]', 'created Inventory Item \'Battrey  BN59\' (SKU: ACCS-ANDR-LMK9W) with quantity 1', '103.129.246.101', '2026-07-21 12:18:30', '2026-07-21 12:18:30');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('22', '1', 'App\\Models\\InventoryItem', '14', 'created', '[]', 'created Inventory Item \'Battrey 817\' (SKU: ACCS-ANDR-TXFT8) with quantity 1', '103.129.246.101', '2026-07-21 12:19:15', '2026-07-21 12:19:15');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('23', '1', 'App\\Models\\InventoryItem', '15', 'created', '[]', 'created Inventory Item \'Battrey BM 5R\' (SKU: ACCS-ANDR-TYQSI) with quantity 1', '103.129.246.101', '2026-07-21 12:21:03', '2026-07-21 12:21:03');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('24', '1', 'App\\Models\\InventoryItem', '16', 'created', '[]', 'created Inventory Item \'Battrey B 05\' (SKU: ACCS-ANDR-R1UAD) with quantity 1', '103.129.246.101', '2026-07-21 12:21:42', '2026-07-21 12:21:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('25', '1', 'App\\Models\\InventoryItem', '17', 'created', '[]', 'created Inventory Item \'Battrey Z 42\' (SKU: ACCS-ANDR-NGLBU) with quantity 1', '103.129.246.101', '2026-07-21 12:23:01', '2026-07-21 12:23:01');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('26', '1', 'App\\Models\\InventoryItem', '18', 'created', '[]', 'created Inventory Item \'Battrey ATOM 2\' (SKU: ACCS-ANDR-CSGHS) with quantity 1', '103.129.246.101', '2026-07-21 12:23:50', '2026-07-21 12:23:50');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('27', '1', 'App\\Models\\InventoryItem', '19', 'created', '[]', 'created Inventory Item \'Battrey Z 18\' (SKU: ACCS-ANDR-CLXGG) with quantity 1', '103.129.246.101', '2026-07-21 12:42:32', '2026-07-21 12:42:32');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('28', '1', 'App\\Models\\InventoryItem', '20', 'created', '[]', 'created Inventory Item \'Battrey Z 22\' (SKU: ACCS-ANDR-GCWHP) with quantity 1', '103.129.246.101', '2026-07-21 12:43:03', '2026-07-21 12:43:03');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('29', '1', 'App\\Models\\InventoryItem', '21', 'created', '[]', 'created Inventory Item \'Battrey 801\' (SKU: ACCS-ANDR-MFEWB) with quantity 1', '103.129.246.101', '2026-07-21 12:44:37', '2026-07-21 12:44:37');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('30', '1', 'App\\Models\\InventoryItem', '22', 'created', '[]', 'created Inventory Item \'Battrey 809\' (SKU: ACCS-ANDR-HI4OZ) with quantity 1', '103.129.246.101', '2026-07-21 12:45:07', '2026-07-21 12:45:07');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('31', '1', 'App\\Models\\InventoryItem', '23', 'created', '[]', 'created Inventory Item \'Battrey 799\' (SKU: ACCS-ANDR-LWQOF) with quantity 1', '103.129.246.101', '2026-07-21 12:45:43', '2026-07-21 12:45:43');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('32', '1', 'App\\Models\\InventoryItem', '24', 'created', '[]', 'created Inventory Item \'Battrey MC MAX\' (SKU: ACCS-BUTT-MIEND) with quantity 10', '103.129.246.101', '2026-07-21 12:47:07', '2026-07-21 12:47:07');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('33', '1', 'App\\Models\\InventoryItem', '25', 'created', '[]', 'created Inventory Item \'Battrey MC (800)\' (SKU: ACCS-BUTT-M1CJ5) with quantity 30', '103.129.246.101', '2026-07-21 12:48:09', '2026-07-21 12:48:09');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('34', '1', 'App\\Models\\InventoryItem', '26', 'created', '[]', 'created Inventory Item \'Battrey 4C\' (SKU: ACCS-BUTT-Z3V5L) with quantity 5', '103.129.246.101', '2026-07-21 12:49:25', '2026-07-21 12:49:25');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('35', '1', 'App\\Models\\InventoryItem', '27', 'created', '[]', 'created Inventory Item \'Battrey 25 Bi\' (SKU: ACCS-BUTT-X1QLP) with quantity 2', '103.129.246.101', '2026-07-21 12:50:15', '2026-07-21 12:50:15');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('36', '1', 'App\\Models\\InventoryItem', '28', 'created', '[]', 'created Inventory Item \'Battrey BL120/19Ci/D48\' (SKU: ACCS-BUTT-5HDUU) with quantity 6', '103.129.246.101', '2026-07-21 12:52:20', '2026-07-21 12:52:20');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('37', '1', 'App\\Models\\InventoryItem', '29', 'created', '[]', 'created Inventory Item \'Battrey BL132/L290/L23i\' (SKU: ACCS-BUTT-NYW9K) with quantity 6', '103.129.246.101', '2026-07-21 12:53:35', '2026-07-21 12:53:35');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('38', '1', 'App\\Models\\InventoryItem', '30', 'created', '[]', 'created Inventory Item \'Battrey L65/L19/4Ui/610/10Ai\' (SKU: ACCS-BUTT-ELLS8) with quantity 10', '103.129.246.101', '2026-07-21 12:56:02', '2026-07-21 12:56:02');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('39', '1', 'App\\Models\\InventoryItem', '31', 'created', '[]', 'created Inventory Item \'Battrey G80/607/10Ci\' (SKU: ACCS-BUTT-PFYFB) with quantity 6', '103.129.246.101', '2026-07-21 12:56:58', '2026-07-21 12:56:58');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('40', '1', 'App\\Models\\InventoryItem', '32', 'created', '[]', 'created Inventory Item \'Battrey X200/D43/D69/D52i/D89\' (SKU: ACCS-BUTT-FJHJM) with quantity 10', '103.129.246.101', '2026-07-21 12:58:17', '2026-07-21 12:58:17');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('41', '1', 'App\\Models\\Expense', '2', 'created', '[]', 'created Expense of category \'advance\' with amount 150,000.00 BDT', '160.202.146.69', '2026-07-21 15:22:15', '2026-07-21 15:22:15');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('42', '1', 'App\\Models\\Expense', '3', 'created', '[]', 'created Expense of category \'advance\' with amount 50,000.00 BDT', '160.202.146.69', '2026-07-21 15:23:08', '2026-07-21 15:23:08');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('43', '1', 'App\\Models\\Expense', '1', 'deleted', '[]', 'deleted Expense of category \'Purchase\' worth 480.00 BDT', '160.202.146.69', '2026-07-21 15:23:42', '2026-07-21 15:23:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('44', '1', 'App\\Models\\Expense', '4', 'created', '[]', 'created Expense of category \'Purchase\' with amount 108,000.00 BDT', '160.202.146.69', '2026-07-21 17:29:21', '2026-07-21 17:29:21');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('45', '1', 'App\\Models\\Expense', '5', 'created', '[]', 'created Expense of category \'Purchase\' with amount 20,385.00 BDT', '160.202.146.69', '2026-07-21 17:30:48', '2026-07-21 17:30:48');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('46', '1', 'App\\Models\\Expense', '6', 'created', '[]', 'created Expense of category \'Purchase\' with amount 2,800.00 BDT', '160.202.146.69', '2026-07-21 17:31:21', '2026-07-21 17:31:21');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('47', '1', 'App\\Models\\Expense', '7', 'created', '[]', 'created Expense of category \'Purchase\' with amount 13,000.00 BDT', '160.202.146.69', '2026-07-21 18:07:00', '2026-07-21 18:07:00');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('48', '1', 'App\\Models\\Expense', '8', 'created', '[]', 'created Expense of category \'Purchase\' with amount 4,772.00 BDT', '160.202.146.69', '2026-07-21 18:09:49', '2026-07-21 18:09:49');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('49', '1', 'App\\Models\\Expense', '9', 'created', '[]', 'created Expense of category \'Other\' with amount 5,520.00 BDT', '160.202.146.69', '2026-07-21 18:10:45', '2026-07-21 18:10:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('50', '1', 'App\\Models\\Expense', '10', 'created', '[]', 'created Expense of category \'Other\' with amount 830.00 BDT', '160.202.146.69', '2026-07-21 18:11:55', '2026-07-21 18:11:55');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('51', '1', 'App\\Models\\Expense', '11', 'created', '[]', 'created Expense of category \'Purchase\' with amount 4,950.00 BDT', '160.202.146.69', '2026-07-21 18:12:57', '2026-07-21 18:12:57');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('52', '1', 'App\\Models\\Expense', '12', 'created', '[]', 'created Expense of category \'Courier Service\' with amount 570.00 BDT', '160.202.146.69', '2026-07-21 18:15:27', '2026-07-21 18:15:27');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('53', '1', 'App\\Models\\Expense', '13', 'created', '[]', 'created Expense of category \'Other\' with amount 200.00 BDT', '160.202.146.69', '2026-07-21 18:15:48', '2026-07-21 18:15:48');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('54', '1', 'App\\Models\\Expense', '4', 'updated', '{\"category\":{\"old\":\"Purchase\",\"new\":\"equipments\"}}', 'updated Expense (Category: equipments): Expense Category from \'Purchase\' to \'equipments\'', '160.202.146.69', '2026-07-21 18:24:23', '2026-07-21 18:24:23');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('55', '1', 'App\\Models\\InventoryItem', '33', 'created', '[]', 'created Inventory Item \'Nokia 3110c বা সমমানের ফোনের রিংগার/স্পিকার\' (SKU: PART-MICR-TRVQW) with quantity 10', '103.129.246.101', '2026-07-23 06:34:55', '2026-07-23 06:34:55');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('56', '1', 'App\\Models\\InventoryItem', '34', 'created', '[]', 'created Inventory Item \'Nokia 2030 মডেলের স্পিকার\' (SKU: PART-MICR-C4ASK) with quantity 10', '103.129.246.101', '2026-07-23 06:36:04', '2026-07-23 06:36:04');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('57', '1', 'App\\Models\\InventoryItem', '35', 'created', '[]', 'created Inventory Item \'okia 3110c মডেলের মাউথ মাইক\' (SKU: PART-MICR-MYVWI) with quantity 10', '103.129.246.101', '2026-07-23 06:36:57', '2026-07-23 06:36:57');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('58', '1', 'App\\Models\\InventoryItem', '36', 'created', '[]', 'created Inventory Item \'Samsung Galaxy M20 ফোনের চার্জিং পিন\' (SKU: PART-CHAR-YPCTH) with quantity 10', '103.129.246.101', '2026-07-23 06:38:16', '2026-07-23 06:38:16');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('59', '1', 'App\\Models\\InventoryItem', '37', 'created', '[]', 'created Inventory Item \'Samsung Galaxy A10s ফোনের চার্জিং পিন\' (SKU: PART-CHAR-RPELU) with quantity 10', '103.129.246.101', '2026-07-23 06:39:11', '2026-07-23 06:39:11');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('60', '1', 'App\\Models\\InventoryItem', '38', 'created', '[]', 'created Inventory Item \'Nokia 2030 মডেলের স্পিকার (D গ্রেড)\' (SKU: PART-MICR-TKB5Y) with quantity 10', '103.129.246.101', '2026-07-23 06:40:13', '2026-07-23 06:40:13');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('61', '1', 'App\\Models\\InventoryItem', '39', 'created', '[]', 'created Inventory Item \'ফোনের চার্জিং পিন\' (SKU: PART-CHAR-7SCGG) with quantity 10', '103.129.246.101', '2026-07-23 06:40:52', '2026-07-23 06:40:52');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('62', '1', 'App\\Models\\InventoryItem', '40', 'created', '[]', 'created Inventory Item \'Xiaomi Redmi Note 7 এর চার্জিং পিন\' (SKU: PART-CHAR-OEYLF) with quantity 10', '103.129.246.101', '2026-07-23 06:41:47', '2026-07-23 06:41:47');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('63', '1', 'App\\Models\\InventoryItem', '41', 'created', '[]', 'created Inventory Item \'Samsung i754 মডেলের চার্জিং পিন\' (SKU: PART-CHAR-HYLPY) with quantity 10', '103.129.246.101', '2026-07-23 06:42:45', '2026-07-23 06:42:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('64', '1', 'App\\Models\\InventoryItem', '42', 'created', '[]', 'created Inventory Item \'Samsung Metro B310E বাটন ফোনের চার্জিং পিন\' (SKU: PART-CHAR-JHRRC) with quantity 10', '103.129.246.101', '2026-07-23 06:43:22', '2026-07-23 06:43:22');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('65', '1', 'App\\Models\\InventoryItem', '43', 'created', '[]', 'created Inventory Item \'স্মার্টফোনের চার্জিং পিন\' (SKU: PART-CHAR-31KFY) with quantity 100', '103.129.246.101', '2026-07-23 06:44:33', '2026-07-23 06:44:33');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('66', '1', 'App\\Models\\InventoryItem', '44', 'created', '[]', 'created Inventory Item \'B-5U মডেলের চার্জিং পিন\' (SKU: PART-CHAR-HENKO) with quantity 200', '103.129.246.101', '2026-07-23 06:45:41', '2026-07-23 06:45:41');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('67', '1', 'App\\Models\\InventoryItem', '45', 'created', '[]', 'created Inventory Item \'ইউনিভার্সাল চায়না মাউথ মাইক (China Mic)\' (SKU: PART-MICR-NSYQQ) with quantity 250', '103.129.246.101', '2026-07-23 06:46:42', '2026-07-23 06:46:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('68', '1', 'App\\Models\\InventoryItem', '46', 'created', '[]', 'created Inventory Item \'614 মডেলের চার্জিং পোর্ট\' (SKU: PART-CHAR-KZAG6) with quantity 20', '103.129.246.101', '2026-07-23 06:47:51', '2026-07-23 06:47:51');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('69', '1', 'App\\Models\\InventoryItem', '47', 'created', '[]', 'created Inventory Item \'Nokia 110 বাটন ফোনের চার্জিং পিন\' (SKU: PART-CHAR-5QFIJ) with quantity 20', '103.129.246.101', '2026-07-23 06:48:30', '2026-07-23 06:48:30');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('70', '1', 'App\\Models\\InventoryItem', '48', 'created', '[]', 'created Inventory Item \'Samsung Galaxy M12 এর চার্জিং পিন\' (SKU: PART-CHAR-MQRZA) with quantity 10', '103.129.246.101', '2026-07-23 07:07:28', '2026-07-23 07:07:28');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('71', '1', 'App\\Models\\InventoryItem', '49', 'created', '[]', 'created Inventory Item \'Samsung Galaxy J7 এর চার্জিং পিন\' (SKU: PART-CHAR-7SRKB) with quantity 10', '103.129.246.101', '2026-07-23 07:08:12', '2026-07-23 07:08:12');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('72', '1', 'App\\Models\\InventoryItem', '50', 'created', '[]', 'created Inventory Item \'বাটন ফোনের কিপ্যাড বা পাওয়ার সুইচ\' (SKU: PART-BUTT-K8WES) with quantity 20', '103.129.246.101', '2026-07-23 07:09:24', '2026-07-23 07:09:24');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('73', '1', 'App\\Models\\InventoryItem', '51', 'created', '[]', 'created Inventory Item \'D01 মডেলের চার্জিং পিন\' (SKU: PART-CHAR-GDKK5) with quantity 20', '103.129.246.101', '2026-07-23 07:10:28', '2026-07-23 07:10:28');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('74', '1', 'App\\Models\\InventoryItem', '50', 'updated', '{\"purchase_price\":{\"old\":3,\"new\":\"5\"}}', 'updated Inventory Item \'বাটন ফোনের কিপ্যাড বা পাওয়ার সুইচ\' (SKU: PART-BUTT-K8WES): Purchase Price from \'3.00 BDT\' to \'5.00 BDT\'', '103.129.246.101', '2026-07-23 07:10:47', '2026-07-23 07:10:47');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('75', '1', 'App\\Models\\InventoryItem', '52', 'created', '[]', 'created Inventory Item \'Vivo Y20 স্মার্টফোনের চার্জিং পিন\' (SKU: PART-CHAR-IIRCW) with quantity 20', '103.129.246.101', '2026-07-23 07:11:38', '2026-07-23 07:11:38');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('76', '1', 'App\\Models\\InventoryItem', '53', 'created', '[]', 'created Inventory Item \'Samsung Galaxy A20 এর চার্জিং পিন\' (SKU: PART-CHAR-P5PE8) with quantity 10', '103.129.246.101', '2026-07-23 07:12:25', '2026-07-23 07:12:25');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('77', '1', 'App\\Models\\InventoryItem', '54', 'created', '[]', 'created Inventory Item \'P6MW মডেলের চার্জিং পিন\' (SKU: PART-CHAR-QT7FK) with quantity 60', '103.129.246.101', '2026-07-23 07:13:01', '2026-07-23 07:13:01');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('78', '1', 'App\\Models\\InventoryItem', '55', 'created', '[]', 'created Inventory Item \'সিম পিন / চার্জিং কানেক্টর পিন\' (SKU: PART-CHAR-J8CEK) with quantity 5', '103.129.246.101', '2026-07-23 07:13:59', '2026-07-23 07:13:59');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('79', '1', 'App\\Models\\InventoryItem', '56', 'created', '[]', 'created Inventory Item \'Samsung Galaxy J2 এর চার্জিং পিন\' (SKU: PART-CHAR-JXT4Z) with quantity 5', '103.129.246.101', '2026-07-23 07:14:58', '2026-07-23 07:14:58');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('80', '1', 'App\\Models\\InventoryItem', '57', 'created', '[]', 'created Inventory Item \'Symphony / Walton Atom মডেলের পার্টস\' (SKU: PART-CHAR-DMUDS) with quantity 5', '103.129.246.101', '2026-07-23 07:15:42', '2026-07-23 07:15:42');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('81', '1', 'App\\Models\\InventoryItem', '58', 'created', '[]', 'created Inventory Item \'Samsung J2 Micro USB চার্জিং পোর্ট\' (SKU: PART-CHAR-C1QK2) with quantity 20', '103.129.246.101', '2026-07-23 07:16:41', '2026-07-23 07:16:41');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('82', '1', 'App\\Models\\SocialPost', '1', 'created', '[]', 'created a new post for Facebook', '103.129.246.101', '2026-07-27 09:32:23', '2026-07-27 09:32:23');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('83', '1', 'App\\Models\\User', '6', 'updated', '{\"email\":{\"old\":\"kaif@gmail.com\",\"new\":\"emon@gmail.com\"},\"password\":{\"old\":\"$2y$12$Rljkeq8gA9LGf8IhgHUGN.uHZfP2TcaVB62DFTAihUmYrGSE3I1v2\",\"new\":\"$2y$12$tGAUFPaDpkjP08JjBah3m.e8e8yG3pzm024Wlbh01EBM\\/74nvYJCS\"},\"permissions\":{\"old\":{\"pos\":false,\"repairs\":false,\"inventory\":false,\"purchases\":false,\"expenses\":false,\"reports\":false,\"settings\":false,\"social_media\":false,\"cash\":false},\"new\":\"{\\\"pos\\\":false,\\\"repairs\\\":false,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":true,\\\"cash\\\":false}\"}}', 'updated User account \'emon\': Email from \'kaif@gmail.com\' to \'emon@gmail.com\', Password from \'[hidden]\' to \'[changed]\', Permissions from \'None\' to \'None\'', '103.129.246.101', '2026-07-27 09:35:45', '2026-07-27 09:35:45');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('84', '1', 'App\\Models\\User', '6', 'updated', '{\"password\":{\"old\":\"$2y$12$tGAUFPaDpkjP08JjBah3m.e8e8yG3pzm024Wlbh01EBM\\/74nvYJCS\",\"new\":\"$2y$12$soQyCbpYTVYiJ6OlwqCTFu4cWXiXcD6QLMcOVP4YJJvEDN\\/KLKpiy\"}}', 'updated User account \'emon\': Password from \'[hidden]\' to \'[changed]\'', '103.129.246.101', '2026-07-27 09:37:25', '2026-07-27 09:37:25');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('85', '1', 'App\\Models\\User', '1', 'updated', '{\"password\":{\"old\":\"$2y$12$f3lq1oFMHUzgEJhRFQfe5uZOlY9tu1pN5iijJXi2MTBkKLaWs95lq\",\"new\":\"$2y$12$D\\/ufcxJVpNxP.fw4HcShvemYSdd2Wge3akbxDBQ3X.FUZDdqEu9\\/S\"}}', 'updated User account \'M3 Super Admin\': Password from \'[hidden]\' to \'[changed]\'', '103.129.246.101', '2026-07-27 09:41:11', '2026-07-27 09:41:11');
+INSERT INTO `activity_logs` (`id`, `user_id`, `loggable_type`, `loggable_id`, `action`, `changes`, `description`, `ip_address`, `created_at`, `updated_at`) VALUES ('86', '6', 'App\\Models\\SocialPost', '1', 'updated', '{\"status\":{\"old\":\"scheduled\",\"new\":\"published\"}}', 'updated post metrics/content for Facebook: Status from \'Scheduled\' to \'Published\'', '103.129.246.101', '2026-07-27 09:44:21', '2026-07-27 09:44:21');
 
-LOCK TABLES `activity_logs` WRITE;
-/*!40000 ALTER TABLE `activity_logs` DISABLE KEYS */;
-INSERT INTO `activity_logs` VALUES (1,1,'App\\Models\\Repair',1,'updated','{\"status\": {\"new\": \"repairing\", \"old\": \"pending\"}}','updated Job Card (Ticket: M3-202607-TEST): Status from \'Pending\' to \'Repairing\'','127.0.0.1','2026-07-13 05:04:17','2026-07-13 05:04:17'),(2,1,'App\\Models\\SocialPost',1,'created',NULL,'created a new post for Facebook','127.0.0.1','2026-07-13 05:04:17','2026-07-13 05:04:17'),(3,5,'App\\Models\\Repair',2,'updated','{\"actual_cost\": {\"new\": \"3600.00\", \"old\": \"3500.00\"}}','updated Job Card (Ticket: M3-202607-0002): Actual Cost from \'3,500.00 BDT\' to \'3,600.00 BDT\'','127.0.0.1','2026-07-13 05:08:39','2026-07-13 05:08:39'),(4,5,'App\\Models\\Sale',5,'created','[]','created Sale Invoice #INV-20260713-RAQK with total 450.00 BDT','127.0.0.1','2026-07-13 05:17:56','2026-07-13 05:17:56'),(5,5,'App\\Models\\InventoryItem',77,'updated','{\"quantity\": {\"new\": 28, \"old\": 29}}','updated Inventory Item \'Anker Galaxy S23 Power Management IC Chip PM8953\' (SKU: PART-IC-0077): Stock Quantity from \'29\' to \'28\'','127.0.0.1','2026-07-13 05:17:56','2026-07-13 05:17:56'),(6,4,'App\\Models\\Sale',6,'created','[]','created Sale Invoice #INV-20260713-ESUH with total 450.00 BDT','127.0.0.1','2026-07-13 05:20:24','2026-07-13 05:20:24'),(7,4,'App\\Models\\InventoryItem',77,'updated','{\"quantity\": {\"new\": 27, \"old\": 28}}','updated Inventory Item \'Anker Galaxy S23 Power Management IC Chip PM8953\' (SKU: PART-IC-0077): Stock Quantity from \'28\' to \'27\'','127.0.0.1','2026-07-13 05:20:24','2026-07-13 05:20:24'),(8,4,'App\\Models\\Sale',7,'created','[]','created Sale Invoice #INV-20260713-IRZW with total 5,300.00 BDT','127.0.0.1','2026-07-13 05:21:15','2026-07-13 05:21:15'),(9,4,'App\\Models\\InventoryItem',87,'updated','{\"quantity\": {\"new\": 15, \"old\": 16}}','updated Inventory Item \'Anker 9D Tempered Glass Screen Protector\' (SKU: ACCS-GLAS-0087): Stock Quantity from \'16\' to \'15\'','127.0.0.1','2026-07-13 05:21:15','2026-07-13 05:21:15'),(10,4,'App\\Models\\InventoryItem',77,'updated','{\"quantity\": {\"new\": 26, \"old\": 27}}','updated Inventory Item \'Anker Galaxy S23 Power Management IC Chip PM8953\' (SKU: PART-IC-0077): Stock Quantity from \'27\' to \'26\'','127.0.0.1','2026-07-13 05:21:15','2026-07-13 05:21:15'),(11,4,'App\\Models\\InventoryItem',37,'updated','{\"quantity\": {\"new\": 34, \"old\": 35}}','updated Inventory Item \'Anker iPhone 14 USB-C Charging Port Flex Ribbon\' (SKU: PART-CHAR-0037): Stock Quantity from \'35\' to \'34\'','127.0.0.1','2026-07-13 05:21:15','2026-07-13 05:21:15'),(12,4,'App\\Models\\InventoryItem',57,'updated','{\"quantity\": {\"new\": 31, \"old\": 32}}','updated Inventory Item \'Anker iPhone 15 Pro Max Replacement High Capacity Battery\' (SKU: PART-BATT-0057): Stock Quantity from \'32\' to \'31\'','127.0.0.1','2026-07-13 05:21:15','2026-07-13 05:21:15'),(13,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":false,\\\"repairs\\\":true,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": null}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 05:27:13','2026-07-13 05:27:13'),(14,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"1000\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": null}, \"commission_rate\": {\"new\": 10, \"old\": \"0.00\"}, \"commission_type\": {\"new\": \"percentage\", \"old\": null}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 260, \"old\": \"0.00\"}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Type from \'\' to \'percentage\', Commission Rate from \'0.00\' to \'10\', Commission Amount from \'0.00 BDT\' to \'260.00 BDT\', Installed Spare Parts from \'\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"1000\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 05:40:08','2026-07-13 05:40:08'),(15,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"1000\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":null,\\\"name\\\":\\\"sad\\\",\\\"buying_price\\\":\\\"200\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":null,\\\"name\\\":\\\"sda\\\",\\\"buying_price\\\":\\\"3000\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"1000\", \"inventory_id\": null}]}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 0, \"old\": \"260.00\"}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Amount from \'260.00 BDT\' to \'0.00 BDT\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"1000\",\"inventory_id\":null}]\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"1000\",\"quantity\":\"1\"},{\"inventory_id\":null,\"name\":\"sad\",\"buying_price\":\"200\",\"quantity\":\"1\"},{\"inventory_id\":null,\"name\":\"sda\",\"buying_price\":\"3000\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 05:40:52','2026-07-13 05:40:52'),(16,4,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"1000\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":null,\\\"name\\\":\\\"sad\\\",\\\"buying_price\\\":\\\"200\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":null,\\\"name\\\":\\\"sda\\\",\\\"buying_price\\\":\\\"3000\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"1000\", \"inventory_id\": null}, {\"name\": \"sad\", \"quantity\": \"1\", \"buying_price\": \"200\", \"inventory_id\": null}, {\"name\": \"sda\", \"quantity\": \"1\", \"buying_price\": \"3000\", \"inventory_id\": null}]}, \"estimated_cost\": {\"new\": \"500.00\", \"old\": \"3500.00\"}, \"commission_rate\": {\"new\": 5, \"old\": \"10.00\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}}','updated Job Card (Ticket: M3-202607-0002): Estimated Cost from \'3,500.00 BDT\' to \'500.00 BDT\', Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Rate from \'10.00\' to \'5\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"1000\",\"inventory_id\":null},{\"name\":\"sad\",\"quantity\":\"1\",\"buying_price\":\"200\",\"inventory_id\":null},{\"name\":\"sda\",\"quantity\":\"1\",\"buying_price\":\"3000\",\"inventory_id\":null}]\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"1000\",\"quantity\":\"1\"},{\"inventory_id\":null,\"name\":\"sad\",\"buying_price\":\"200\",\"quantity\":\"1\"},{\"inventory_id\":null,\"name\":\"sda\",\"buying_price\":\"3000\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 05:42:25','2026-07-13 05:42:25'),(17,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"1000\", \"inventory_id\": null}, {\"name\": \"sad\", \"quantity\": \"1\", \"buying_price\": \"200\", \"inventory_id\": null}, {\"name\": \"sda\", \"quantity\": \"1\", \"buying_price\": \"3000\", \"inventory_id\": null}]}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 180, \"old\": \"0.00\"}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Amount from \'0.00 BDT\' to \'180.00 BDT\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"1000\",\"inventory_id\":null},{\"name\":\"sad\",\"quantity\":\"1\",\"buying_price\":\"200\",\"inventory_id\":null},{\"name\":\"sda\",\"quantity\":\"1\",\"buying_price\":\"3000\",\"inventory_id\":null}]\' to \'[]\'','127.0.0.1','2026-07-13 05:47:15','2026-07-13 05:47:15'),(18,4,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"200\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": []}, \"repair_charge\": {\"new\": 3400, \"old\": \"0.00\"}, \"estimated_cost\": {\"new\": 200, \"old\": \"500.00\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 170, \"old\": \"180.00\"}}','updated Job Card (Ticket: M3-202607-0002): Repair Charge from \'0.00\' to \'3400\', Estimated Cost from \'500.00 BDT\' to \'200.00 BDT\', Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Amount from \'180.00 BDT\' to \'170.00 BDT\', Installed Spare Parts from \'[]\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"200\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 06:03:43','2026-07-13 06:03:43'),(19,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"200\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"200\", \"inventory_id\": null}]}, \"commission_rate\": {\"new\": 40, \"old\": \"5.00\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 1360, \"old\": \"170.00\"}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Rate from \'5.00\' to \'40\', Commission Amount from \'170.00 BDT\' to \'1,360.00 BDT\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"200\",\"inventory_id\":null}]\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"200\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 06:08:22','2026-07-13 06:08:22'),(20,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":null,\\\"name\\\":\\\"dispalu\\\",\\\"buying_price\\\":\\\"200\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"200\", \"inventory_id\": null}]}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"200\",\"inventory_id\":null}]\' to \'[{\"inventory_id\":null,\"name\":\"dispalu\",\"buying_price\":\"200\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 06:08:58','2026-07-13 06:08:58'),(21,5,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"61\\\",\\\"name\\\":\\\"Apple Super Fast Charging Cable\\\",\\\"buying_price\\\":\\\"300.00\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"dispalu\", \"quantity\": \"1\", \"buying_price\": \"200\", \"inventory_id\": null}]}, \"repair_charge\": {\"new\": 2800, \"old\": \"3400.00\"}, \"commission_rate\": {\"new\": 0, \"old\": \"40.00\"}, \"commission_type\": {\"new\": null, \"old\": \"percentage\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}, \"commission_amount\": {\"new\": 0, \"old\": \"1360.00\"}}','updated Job Card (Ticket: M3-202607-0002): Repair Charge from \'3400.00\' to \'2800\', Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Commission Type from \'percentage\' to \'\', Commission Rate from \'40.00\' to \'0\', Commission Amount from \'1,360.00 BDT\' to \'0.00 BDT\', Installed Spare Parts from \'[{\"name\":\"dispalu\",\"quantity\":\"1\",\"buying_price\":\"200\",\"inventory_id\":null}]\' to \'[{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"61\",\"name\":\"Apple Super Fast Charging Cable\",\"buying_price\":\"300.00\",\"quantity\":\"1\"}]\'','127.0.0.1','2026-07-13 06:14:00','2026-07-13 06:14:00'),(22,5,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"61\\\",\\\"name\\\":\\\"Apple Super Fast Charging Cable\\\",\\\"buying_price\\\":\\\"300.00\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Super Fast Charging Cable\", \"quantity\": \"1\", \"buying_price\": \"300.00\", \"inventory_id\": \"61\"}]}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}}','updated Job Card (Ticket: M3-202607-0002): Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Installed Spare Parts from \'[{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"1\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"1\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Super Fast Charging Cable\",\"quantity\":\"1\",\"buying_price\":\"300.00\",\"inventory_id\":\"61\"}]\' to \'[{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"61\",\"name\":\"Apple Super Fast Charging Cable\",\"buying_price\":\"300.0...','127.0.0.1','2026-07-13 06:14:34','2026-07-13 06:14:34'),(23,1,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"3\\\"},{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"61\\\",\\\"name\\\":\\\"Apple Super Fast Charging Cable\\\",\\\"buying_price\\\":\\\"300.00\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Super Fast Charging Cable\", \"quantity\": \"1\", \"buying_price\": \"300.00\", \"inventory_id\": \"61\"}]}, \"estimated_cost\": {\"new\": 4100, \"old\": \"200.00\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}}','updated Job Card (Ticket: M3-202607-0002): Estimated Cost from \'200.00 BDT\' to \'4,100.00 BDT\', Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Installed Spare Parts from \'[{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"1\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"1\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Super Fast Charging Cable\",\"quantity\":\"1\",\"buying_price\":\"300.00\",\"inventory_id\":\"61\"}]\' to \'[{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"3\"},{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"61\",\"name\":\"Ap...','127.0.0.1','2026-07-13 06:19:24','2026-07-13 06:19:24'),(24,5,'App\\Models\\Repair',2,'updated','{\"used_parts\": {\"new\": \"[{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"3\\\"},{\\\"inventory_id\\\":\\\"31\\\",\\\"name\\\":\\\"Apple Premium Silicone Protective Case\\\",\\\"buying_price\\\":\\\"250.00\\\",\\\"quantity\\\":\\\"1\\\"},{\\\"inventory_id\\\":\\\"61\\\",\\\"name\\\":\\\"Apple Super Fast Charging Cable\\\",\\\"buying_price\\\":\\\"300.03\\\",\\\"quantity\\\":\\\"1\\\"}]\", \"old\": [{\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"3\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Super Fast Charging Cable\", \"quantity\": \"1\", \"buying_price\": \"300.00\", \"inventory_id\": \"61\"}]}, \"estimated_cost\": {\"new\": 4100.03, \"old\": \"4100.00\"}, \"device_checklist\": {\"new\": \"{\\\"scratches\\\":\\\"yes\\\",\\\"display_ok\\\":\\\"yes\\\",\\\"touch_ok\\\":\\\"yes\\\",\\\"camera_ok\\\":\\\"yes\\\",\\\"audio_ok\\\":\\\"yes\\\",\\\"buttons_ok\\\":\\\"yes\\\"}\", \"old\": {\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}}}','updated Job Card (Ticket: M3-202607-0002): Estimated Cost from \'4,100.00 BDT\' to \'4,100.03 BDT\', Device Checklist from \'{\"audio_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"scratches\":\"yes\",\"buttons_ok\":\"yes\",\"display_ok\":\"yes\"}\' to \'{\"scratches\":\"yes\",\"display_ok\":\"yes\",\"touch_ok\":\"yes\",\"camera_ok\":\"yes\",\"audio_ok\":\"yes\",\"buttons_ok\":\"yes\"}\', Installed Spare Parts from \'[{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"3\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Premium Silicone Protective Case\",\"quantity\":\"1\",\"buying_price\":\"250.00\",\"inventory_id\":\"31\"},{\"name\":\"Apple Super Fast Charging Cable\",\"quantity\":\"1\",\"buying_price\":\"300.00\",\"inventory_id\":\"61\"}]\' to \'[{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"3\"},{\"inventory_id\":\"31\",\"name\":\"Apple Premium Silicone Protective Case\",\"buying_price\":\"250.00\",\"quantity\":\"1\"},{\"inventory_id\":\"61\",\"name\":\"...','127.0.0.1','2026-07-13 06:48:50','2026-07-13 06:48:50'),(25,1,'App\\Models\\Expense',6,'created','[]','created Expense of category \'Other\' with amount 50.00 BDT','127.0.0.1','2026-07-13 06:54:33','2026-07-13 06:54:33'),(26,1,'App\\Models\\InventoryItem',37,'updated','{\"quantity\": {\"new\": 33, \"old\": 34}}','updated Inventory Item \'Anker iPhone 14 USB-C Charging Port Flex Ribbon\' (SKU: PART-CHAR-0037): Stock Quantity from \'34\' to \'33\'','127.0.0.1','2026-07-13 06:55:01','2026-07-13 06:55:01'),(27,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":true,\\\"inventory\\\":true,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": {\"pos\": false, \"repairs\": true, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:00:54','2026-07-13 07:00:54'),(28,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":false,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": {\"pos\": true, \"repairs\": true, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": true, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:01:19','2026-07-13 07:01:19'),(29,1,'App\\Models\\Expense',7,'created','[]','created Expense of category \'Cash Outflow\' with amount 500.00 BDT','127.0.0.1','2026-07-13 07:01:48','2026-07-13 07:01:48'),(30,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":false,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": {\"pos\": true, \"repairs\": false, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:03:50','2026-07-13 07:03:50'),(31,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":false,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": {\"pos\": true, \"repairs\": false, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:04:06','2026-07-13 07:04:06'),(32,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":true,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false}\", \"old\": {\"pos\": true, \"repairs\": false, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:04:27','2026-07-13 07:04:27'),(33,1,'App\\Models\\User',5,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":false,\\\"repairs\\\":false,\\\"inventory\\\":true,\\\"purchases\\\":false,\\\"expenses\\\":true,\\\"reports\\\":true,\\\"settings\\\":false,\\\"social_media\\\":false,\\\"cash\\\":true}\", \"old\": null}}','updated User account \'Manager Admin\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:05:36','2026-07-13 07:05:36'),(34,1,'App\\Models\\User',4,'updated','{\"permissions\": {\"new\": \"{\\\"pos\\\":true,\\\"repairs\\\":true,\\\"inventory\\\":false,\\\"purchases\\\":false,\\\"expenses\\\":false,\\\"reports\\\":false,\\\"settings\\\":false,\\\"social_media\\\":false,\\\"cash\\\":true}\", \"old\": {\"pos\": true, \"repairs\": true, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}}}','updated User account \'Kamal Salesman\': Permissions from \'None\' to \'None\'','127.0.0.1','2026-07-13 07:06:17','2026-07-13 07:06:17'),(35,4,'App\\Models\\Expense',8,'created','[]','created Expense of category \'Cash Outflow\' with amount 500.00 BDT','127.0.0.1','2026-07-13 07:07:00','2026-07-13 07:07:00');
-/*!40000 ALTER TABLE `activity_logs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cache`
---
 
 DROP TABLE IF EXISTS `cache`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cache` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL,
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL,
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `cache`
---
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES ('m3_mobile_care_cache_92d906212bc289d1833b92b1ad4bb6c1fc2e7f68', 'i:1;', '1784654936');
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES ('m3_mobile_care_cache_92d906212bc289d1833b92b1ad4bb6c1fc2e7f68:timer', 'i:1784654936;', '1784654936');
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES ('m3_mobile_care_cache_9639ae02ac9093c46f262d925f4addb562c9fb31', 'i:1;', '1785145418');
+INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES ('m3_mobile_care_cache_9639ae02ac9093c46f262d925f4addb562c9fb31:timer', 'i:1785145418;', '1785145418');
 
-LOCK TABLES `cache` WRITE;
-/*!40000 ALTER TABLE `cache` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cache` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cache_locks`
---
 
 DROP TABLE IF EXISTS `cache_locks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL,
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int(11) NOT NULL,
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `cache_locks`
---
 
-LOCK TABLES `cache_locks` WRITE;
-/*!40000 ALTER TABLE `cache_locks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cache_locks` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `categories`
---
 
 DROP TABLE IF EXISTS `categories`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `categories_slug_unique` (`slug`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `categories`
---
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('1', 'Button Mobile Battery', 'button-mobile-battery', 'active', '2026-07-21 11:20:15', '2026-07-21 11:20:15');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('2', 'Androied Battry', 'androied-battry', 'active', '2026-07-21 11:32:17', '2026-07-21 11:32:17');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('3', 'Charging Pins', 'charging-pins', 'active', '2026-07-23 06:29:12', '2026-07-23 06:29:12');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('4', 'Microphones & Speakers', 'microphones-speakers', 'active', '2026-07-23 06:29:23', '2026-07-23 06:29:23');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('5', 'Buttons & Pins', 'buttons-pins', 'active', '2026-07-23 06:29:51', '2026-07-23 06:29:51');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('6', 'Earphone / Headphone', 'earphone-headphone', 'active', '2026-07-23 07:23:05', '2026-07-23 07:23:05');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('7', 'Mobile Connector', 'mobile-connector', 'active', '2026-07-23 07:24:07', '2026-07-23 07:24:07');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('8', 'Charging Port', 'charging-port', 'active', '2026-07-23 07:25:06', '2026-07-23 07:25:06');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('9', 'Charging Data Cable', 'charging-data-cable', 'active', '2026-07-23 07:25:47', '2026-07-23 07:25:47');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('10', 'Fast Charger', 'fast-charger', 'active', '2026-07-23 07:26:01', '2026-07-23 07:26:01');
+INSERT INTO `categories` (`id`, `name`, `slug`, `status`, `created_at`, `updated_at`) VALUES ('11', 'Bluetooth Neckband', 'bluetooth-neckband', 'active', '2026-07-23 07:26:21', '2026-07-23 07:26:21');
 
-LOCK TABLES `categories` WRITE;
-/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Display','display','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,'Battery','battery','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(3,'Charging Port','charging-port','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(4,'Back Glass','back-glass','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(5,'IC','ic','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(6,'Charger','charger','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(7,'Cable','cable','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(8,'Earphone','earphone','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(9,'Power Bank','power-bank','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(10,'Cover','cover','active','2026-07-13 04:48:39','2026-07-13 04:48:39'),(11,'Glass Protector','glass-protector','active','2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `customers`
---
 
 DROP TABLE IF EXISTS `customers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customers` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alt_phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci,
-  `district` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `alt_phone` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `district` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `customers`
---
 
-LOCK TABLES `customers` WRITE;
-/*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES (1,'Rahim Ali','01711223344','01811223344','rahim@gmail.com','12/A, Dhanmondi','Dhaka','2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,'Karim Ahmed','01922334455',NULL,'karim@yahoo.com','Mirpur 10, Block C','Dhaka','2026-07-13 04:48:39','2026-07-13 04:48:39'),(3,'Sultana Begum','01633445566',NULL,NULL,'Oxygen, Bayezid Bostami','Chittagong','2026-07-13 04:48:39','2026-07-13 04:48:39'),(4,'Tanvir Rahman','01544556677',NULL,NULL,'Zindabazar','Sylhet','2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `customers` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `expenses`
---
 
 DROP TABLE IF EXISTS `expenses`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `expenses` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `category` varchar(255) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `description` text DEFAULT NULL,
   `expense_date` date NOT NULL,
-  `register_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `register_type` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `expenses`
---
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('2', 'advance', '150000.00', '2nd advance', '2026-07-21', NULL, '2026-07-21 15:22:15', '2026-07-21 15:23:29');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('3', 'advance', '50000.00', 'first advance', '2026-06-15', NULL, '2026-07-21 15:23:08', '2026-07-21 17:28:10');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('4', 'equipments', '108000.00', 'Hakim Talecom', '2026-07-18', NULL, '2026-07-21 17:29:21', '2026-07-21 18:24:23');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('5', 'Purchase', '20385.00', 'Samir Talecom', '2026-07-18', NULL, '2026-07-21 17:30:48', '2026-07-21 17:30:48');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('6', 'Purchase', '2800.00', 'Hridoy Talecom =\r\nGlass', '2026-07-18', NULL, '2026-07-21 17:31:21', '2026-07-21 18:07:49');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('7', 'Purchase', '13000.00', 'Headphone, charger', '2026-07-18', NULL, '2026-07-21 18:07:00', '2026-07-21 18:07:00');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('8', 'Purchase', '4772.00', 'WEB Hoisting, Dmaoin', '2026-07-21', NULL, '2026-07-21 18:09:49', '2026-07-21 18:09:49');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('9', 'Other', '5520.00', 'Donan Avvabce Transports and others', '2026-06-14', NULL, '2026-07-21 18:10:45', '2026-07-21 18:10:45');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('10', 'Other', '830.00', 'Mal kinar somoy vara and others', '2026-07-18', NULL, '2026-07-21 18:11:55', '2026-07-21 18:11:55');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('11', 'Purchase', '4950.00', 'Arhan Talecom = Charger Pin', '2026-07-18', NULL, '2026-07-21 18:12:57', '2026-07-21 18:12:57');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('12', 'Courier Service', '570.00', 'Korota Couriar', '2026-07-22', NULL, '2026-07-21 18:15:27', '2026-07-21 18:15:27');
+INSERT INTO `expenses` (`id`, `category`, `amount`, `description`, `expense_date`, `register_type`, `created_at`, `updated_at`) VALUES ('13', 'Other', '200.00', 'Mobile Sim', '2026-07-22', NULL, '2026-07-21 18:15:48', '2026-07-21 18:15:48');
 
-LOCK TABLES `expenses` WRITE;
-/*!40000 ALTER TABLE `expenses` DISABLE KEYS */;
-INSERT INTO `expenses` VALUES (1,'Rent',15000.00,'Multiplan Center Shop Rent for June 2026','2026-07-06',NULL,'2026-07-06 04:48:39','2026-07-06 04:48:39'),(2,'Salary',12000.00,'Salary advance to Abir Tech','2026-07-08',NULL,'2026-07-08 04:48:39','2026-07-08 04:48:39'),(3,'Utility',2300.00,'Electricity bill Shop 14','2026-07-09',NULL,'2026-07-09 04:48:39','2026-07-09 04:48:39'),(4,'Purchase',12500.00,'Purchased Display & Battery stock - PUR-202607-0001','2026-07-03',NULL,'2026-07-03 04:48:39','2026-07-03 04:48:39'),(5,'Rent',3600.00,'shop rent of juny','2026-07-13',NULL,'2026-07-13 05:10:56','2026-07-13 05:11:12'),(6,'Other',50.00,'tea','2026-07-13',NULL,'2026-07-13 06:54:33','2026-07-13 06:54:33'),(7,'Cash Outflow',500.00,'cash','2026-07-13',NULL,'2026-07-13 07:01:48','2026-07-13 07:01:48'),(8,'Cash Outflow',500.00,'currentbil','2026-07-13','pos','2026-07-13 07:07:00','2026-07-13 07:07:00');
-/*!40000 ALTER TABLE `expenses` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `failed_jobs`
---
 
 DROP TABLE IF EXISTS `failed_jobs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `failed_jobs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `failed_jobs`
---
 
-LOCK TABLES `failed_jobs` WRITE;
-/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `inventory_items`
---
 
 DROP TABLE IF EXISTS `inventory_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `inventory_items` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sku` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `barcode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `quantity` int NOT NULL DEFAULT '0',
-  `alert_quantity` int NOT NULL DEFAULT '5',
-  `purchase_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `sale_price` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `sku` varchar(255) NOT NULL,
+  `barcode` varchar(255) DEFAULT NULL,
+  `type` varchar(255) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `alert_quantity` int(11) NOT NULL DEFAULT 5,
+  `purchase_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `sale_price` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `min_sale_price` decimal(10,2) DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `supplier_id` bigint unsigned DEFAULT NULL,
-  `category_id` bigint unsigned DEFAULT NULL,
-  `sub_category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `brand` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `product_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'single',
-  `discount_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `images` text COLLATE utf8mb4_unicode_ci,
-  `warranties` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `manufacturer` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `supplier_id` bigint(20) unsigned DEFAULT NULL,
+  `category_id` bigint(20) unsigned DEFAULT NULL,
+  `sub_category` varchar(255) DEFAULT NULL,
+  `brand` varchar(255) DEFAULT NULL,
+  `model` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `product_type` varchar(255) NOT NULL DEFAULT 'single',
+  `discount_type` varchar(255) DEFAULT NULL,
+  `images` text DEFAULT NULL,
+  `warranties` varchar(255) DEFAULT NULL,
+  `manufacturer` varchar(255) DEFAULT NULL,
   `expiry` date DEFAULT NULL,
-  `variants` text COLLATE utf8mb4_unicode_ci,
-  `discount_value` decimal(10,2) DEFAULT '0.00',
+  `variants` text DEFAULT NULL,
+  `discount_value` decimal(10,2) DEFAULT 0.00,
   PRIMARY KEY (`id`),
   UNIQUE KEY `inventory_items_sku_unique` (`sku`),
   KEY `inventory_items_barcode_index` (`barcode`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `inventory_items`
---
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('1', 'Battrey  BN46', 'ACCS-BUTT-RKKH5', NULL, 'accessory', 'Androied Battry', '1', '1', '480.00', '600.00', NULL, 'Dhaka Main', '2026-07-21 11:31:41', '2026-07-21 11:40:07', '7', '2', NULL, 'None Brand', 'BN46', NULL, 'single', 'flat', '[]', 'none', NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('2', 'Battrey BN46A', 'ACCS-ANDR-HUB6Y', NULL, 'accessory', 'Androied Battry', '1', '1', '480.00', '600.00', NULL, 'Dhaka Main', '2026-07-21 11:38:08', '2026-07-21 11:40:00', '7', '2', NULL, 'None Brand', 'BN46A', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('3', 'Battrey 805', 'ACCS-ANDR-FAAMA', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '700.00', NULL, 'Dhaka Main', '2026-07-21 11:41:14', '2026-07-21 11:41:14', '7', '2', NULL, 'None Brand', '805', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('4', 'Battrey 803', 'ACCS-ANDR-PVTGZ', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '700.00', NULL, 'Dhaka Main', '2026-07-21 11:43:27', '2026-07-21 11:43:27', '7', '2', NULL, 'None Brand', '803', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('5', 'Battrey 673', 'ACCS-ANDR-5VXAN', NULL, 'accessory', 'Androied Battry', '1', '1', '500.00', '650.00', NULL, 'Dhaka Main', '2026-07-21 11:44:34', '2026-07-21 11:47:03', '7', '2', NULL, 'None Brand', '673', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('6', 'Battrey B-G7', 'ACCS-ANDR-TBPRR', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '700.00', NULL, 'Dhaka Main', '2026-07-21 11:45:39', '2026-07-21 11:45:39', '7', '2', NULL, 'None Brand', 'B-G7', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('7', 'Battrey B-S1', 'ACCS-ANDR-OYDVU', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '700.00', NULL, 'Dhaka Main', '2026-07-21 11:46:32', '2026-07-21 11:46:32', '7', '2', NULL, 'None Brand', 'B-S1', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('8', 'Battrey 49Fi/49FT', 'ACCS-ANDR-0ADAZ', NULL, 'accessory', 'Androied Battry', '1', '1', '530.00', '690.00', NULL, 'Dhaka Main', '2026-07-21 11:48:55', '2026-07-21 11:48:55', '7', '2', NULL, 'None Brand', '49Fi/49FT', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('9', 'Battrey B9Li', 'ACCS-ANDR-DOKXR', NULL, 'accessory', 'Androied Battry', '1', '1', '480.00', '650.00', NULL, 'Dhaka Main', '2026-07-21 11:50:03', '2026-07-21 11:50:03', '7', '2', NULL, 'None Brand', 'B9li', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('10', 'Battrey BN53', 'ACCS-ANDR-225UX', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '750.00', NULL, 'Dhaka Main', '2026-07-21 12:16:02', '2026-07-21 12:16:02', '7', '2', NULL, 'None Brand', 'BN53', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('11', 'Battrey BN54', 'ACCS-ANDR-7FOIC', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '750.00', NULL, 'Dhaka Main', '2026-07-21 12:17:00', '2026-07-21 12:17:00', '7', '2', NULL, 'None Brand', 'BN54', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('12', 'Battrey BN56', 'ACCS-ANDR-JRRLP', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '750.00', NULL, 'Dhaka Main', '2026-07-21 12:17:41', '2026-07-21 12:17:41', '7', '2', NULL, 'None Brand', 'BN56', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('13', 'Battrey  BN59', 'ACCS-ANDR-LMK9W', NULL, 'accessory', 'Androied Battry', '1', '1', '580.00', '780.00', NULL, 'Dhaka Main', '2026-07-21 12:18:30', '2026-07-21 12:18:30', '7', '2', NULL, 'None Brand', 'BN59', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('14', 'Battrey 817', 'ACCS-ANDR-TXFT8', NULL, 'accessory', 'Androied Battry', '1', '1', '500.00', '700.00', NULL, 'Dhaka Main', '2026-07-21 12:19:15', '2026-07-21 12:19:15', '7', '2', NULL, 'None Brand', '817', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('15', 'Battrey BM 5R', 'ACCS-ANDR-TYQSI', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '750.00', NULL, 'Dhaka Main', '2026-07-21 12:21:03', '2026-07-21 12:21:03', '7', '2', NULL, 'None Brand', 'BM 5R', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('16', 'Battrey B 05', 'ACCS-ANDR-R1UAD', NULL, 'accessory', 'Androied Battry', '1', '1', '550.00', '750.00', NULL, 'Dhaka Main', '2026-07-21 12:21:42', '2026-07-21 12:21:42', '7', '2', NULL, 'None Brand', 'B 05', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('17', 'Battrey Z 42', 'ACCS-ANDR-NGLBU', NULL, 'accessory', 'Androied Battry', '1', '1', '530.00', '730.00', NULL, 'Dhaka Main', '2026-07-21 12:23:01', '2026-07-21 12:23:01', '7', '2', NULL, 'None Brand', 'Z 42', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('18', 'Battrey ATOM 2', 'ACCS-ANDR-CSGHS', NULL, 'accessory', 'Androied Battry', '1', '1', '530.00', '730.00', NULL, 'Dhaka Main', '2026-07-21 12:23:50', '2026-07-21 12:23:50', '7', '2', NULL, 'None Brand', 'ATOM 2', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('19', 'Battrey Z 18', 'ACCS-ANDR-CLXGG', NULL, 'accessory', 'Androied Battry', '1', '1', '530.00', '730.00', NULL, 'Dhaka Main', '2026-07-21 12:42:32', '2026-07-21 12:42:32', '7', '2', NULL, 'None Brand', 'Z 18', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('20', 'Battrey Z 22', 'ACCS-ANDR-GCWHP', NULL, 'accessory', 'Androied Battry', '1', '1', '530.00', '730.00', NULL, 'Dhaka Main', '2026-07-21 12:43:03', '2026-07-21 12:43:03', NULL, '2', NULL, 'None Brand', 'Z 22', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('21', 'Battrey 801', 'ACCS-ANDR-MFEWB', NULL, 'accessory', 'Androied Battry', '1', '1', '1000.00', '1300.00', NULL, 'Dhaka Main', '2026-07-21 12:44:37', '2026-07-21 12:44:37', '7', '2', NULL, 'None Brand', '801', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('22', 'Battrey 809', 'ACCS-ANDR-HI4OZ', NULL, 'accessory', 'Androied Battry', '1', '1', '100.00', '1300.00', NULL, 'Dhaka Main', '2026-07-21 12:45:07', '2026-07-21 12:45:07', '7', '2', NULL, 'None Brand', '809', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('23', 'Battrey 799', 'ACCS-ANDR-LWQOF', NULL, 'accessory', 'Androied Battry', '1', '1', '1000.00', '1300.00', NULL, 'Dhaka Main', '2026-07-21 12:45:43', '2026-07-21 12:45:43', '7', '2', NULL, 'None Brand', '799', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('24', 'Battrey MC MAX', 'ACCS-BUTT-MIEND', NULL, 'accessory', 'Button Mobile Battery', '10', '5', '65.00', '150.00', NULL, 'Dhaka Main', '2026-07-21 12:47:07', '2026-07-21 12:47:07', '7', '1', NULL, 'None Brand', 'MC MAX', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('25', 'Battrey MC (800)', 'ACCS-BUTT-M1CJ5', NULL, 'accessory', 'Button Mobile Battery', '30', '5', '65.00', '150.00', NULL, 'Dhaka Main', '2026-07-21 12:48:09', '2026-07-21 12:48:09', '7', '1', NULL, 'None Brand', 'MC (800)', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('26', 'Battrey 4C', 'ACCS-BUTT-Z3V5L', NULL, 'accessory', 'Button Mobile Battery', '5', '2', '65.00', '150.00', NULL, 'Dhaka Main', '2026-07-21 12:49:25', '2026-07-21 12:49:25', '7', '1', NULL, 'None Brand', '4C', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('27', 'Battrey 25 Bi', 'ACCS-BUTT-X1QLP', NULL, 'accessory', 'Button Mobile Battery', '2', '1', '90.00', '200.00', NULL, 'Dhaka Main', '2026-07-21 12:50:15', '2026-07-21 12:50:15', '7', '1', NULL, 'None Brand', '25 Bi', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('28', 'Battrey BL120/19Ci/D48', 'ACCS-BUTT-5HDUU', NULL, 'accessory', 'Button Mobile Battery', '6', '3', '100.00', '200.00', NULL, 'Dhaka Main', '2026-07-21 12:52:20', '2026-07-21 12:52:20', '7', '1', NULL, 'None Brand', 'BL120/19Ci/D48', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('29', 'Battrey BL132/L290/L23i', 'ACCS-BUTT-NYW9K', NULL, 'accessory', 'Button Mobile Battery', '6', '3', '100.00', '200.00', NULL, 'Dhaka Main', '2026-07-21 12:53:35', '2026-07-21 12:53:35', '7', '1', NULL, 'None Brand', 'BL132/L290/L23i', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('30', 'Battrey L65/L19/4Ui/610/10Ai', 'ACCS-BUTT-ELLS8', NULL, 'accessory', 'Button Mobile Battery', '10', '3', '90.00', '180.00', NULL, 'Dhaka Main', '2026-07-21 12:56:02', '2026-07-21 12:56:02', '7', '1', NULL, 'None Brand', 'L65/L19/4Ui/610/10Ai', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('31', 'Battrey G80/607/10Ci', 'ACCS-BUTT-PFYFB', NULL, 'accessory', 'Button Mobile Battery', '6', '2', '110.00', '200.00', NULL, 'Dhaka Main', '2026-07-21 12:56:58', '2026-07-21 12:56:58', '7', '1', NULL, 'None Brand', 'G80/607/10Ci', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('32', 'Battrey X200/D43/D69/D52i/D89', 'ACCS-BUTT-FJHJM', NULL, 'accessory', 'Button Mobile Battery', '10', '4', '90.00', '180.00', NULL, 'Dhaka Main', '2026-07-21 12:58:17', '2026-07-21 12:58:17', '7', '1', NULL, 'None Brand', 'X200/D43/D69/D52i/D89', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('33', 'Nokia 3110c বা সমমানের ফোনের রিংগার/স্পিকার', 'PART-MICR-TRVQW', NULL, 'spare_part', 'Microphones & Speakers', '10', '5', '20.00', '100.00', '80.00', 'Dhaka Main', '2026-07-23 06:34:55', '2026-07-23 06:34:55', '4', '4', NULL, 'none brand', 'spk.only - 3110 (D)', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('34', 'Nokia 2030 মডেলের স্পিকার', 'PART-MICR-C4ASK', NULL, 'spare_part', 'Microphones & Speakers', '10', '5', '18.00', '150.00', '10.00', 'Dhaka Main', '2026-07-23 06:36:04', '2026-07-23 06:36:04', '4', '4', NULL, 'none brand', '2030', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('35', 'okia 3110c মডেলের মাউথ মাইক', 'PART-MICR-MYVWI', NULL, 'spare_part', 'Microphones & Speakers', '10', '5', '23.00', '150.00', '100.00', 'Dhaka Main', '2026-07-23 06:36:57', '2026-07-23 06:36:57', NULL, '4', NULL, NULL, '3110 mic', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('36', 'Samsung Galaxy M20 ফোনের চার্জিং পিন', 'PART-CHAR-YPCTH', NULL, 'spare_part', 'Charging Pins', '10', '5', '16.00', '150.00', '10.00', 'Dhaka Main', '2026-07-23 06:38:16', '2026-07-23 06:38:16', '4', '3', NULL, 'none brand', 'M20', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('37', 'Samsung Galaxy A10s ফোনের চার্জিং পিন', 'PART-CHAR-RPELU', NULL, 'spare_part', 'Charging Pins', '10', '5', '26.00', '150.00', '10.00', 'Dhaka Main', '2026-07-23 06:39:11', '2026-07-23 06:39:11', '4', '3', NULL, 'none brand', 'A10.S', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('38', 'Nokia 2030 মডেলের স্পিকার (D গ্রেড)', 'PART-MICR-TKB5Y', NULL, 'spare_part', 'Microphones & Speakers', '10', '5', '16.00', '150.00', '100.00', 'Dhaka Main', '2026-07-23 06:40:13', '2026-07-23 06:40:13', '4', '4', NULL, 'none brand', '2030 (D)', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('39', 'ফোনের চার্জিং পিন', 'PART-CHAR-7SCGG', NULL, 'spare_part', 'Charging Pins', '10', '5', '15.00', '150.00', NULL, 'Dhaka Main', '2026-07-23 06:40:52', '2026-07-23 06:40:52', '4', '3', NULL, 'none brand', 'H.W', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('40', 'Xiaomi Redmi Note 7 এর চার্জিং পিন', 'PART-CHAR-OEYLF', NULL, 'spare_part', 'Charging Pins', '10', '5', '15.00', '150.00', '80.00', 'Dhaka Main', '2026-07-23 06:41:47', '2026-07-23 06:41:47', '4', '3', NULL, 'none brand', 'Note.7', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('41', 'Samsung i754 মডেলের চার্জিং পিন', 'PART-CHAR-HYLPY', NULL, 'spare_part', 'Charging Pins', '10', '5', '27.00', '150.00', '100.00', 'Dhaka Main', '2026-07-23 06:42:45', '2026-07-23 06:42:45', '4', '3', NULL, 'none brand', 'S.I754', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('42', 'Samsung Metro B310E বাটন ফোনের চার্জিং পিন', 'PART-CHAR-JHRRC', NULL, 'spare_part', 'Charging Pins', '10', '5', '13.00', '150.00', '10.00', 'Dhaka Main', '2026-07-23 06:43:22', '2026-07-23 06:43:22', '4', '3', NULL, 'none brand', 'B310', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('43', 'স্মার্টফোনের চার্জিং পিন', 'PART-CHAR-31KFY', NULL, 'spare_part', 'Charging Pins', '100', '5', '2.50', '100.00', NULL, 'Dhaka Main', '2026-07-23 06:44:33', '2026-07-23 06:44:33', NULL, '3', NULL, 'none brand', 'O.A16', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('44', 'B-5U মডেলের চার্জিং পিন', 'PART-CHAR-HENKO', NULL, 'spare_part', 'Charging Pins', '200', '10', '2.80', '100.00', '80.00', 'Dhaka Main', '2026-07-23 06:45:41', '2026-07-23 06:45:41', '4', '3', NULL, 'none brand', 'R.B-5U', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('45', 'ইউনিভার্সাল চায়না মাউথ মাইক (China Mic)', 'PART-MICR-NSYQQ', NULL, 'spare_part', 'Microphones & Speakers', '250', '10', '2.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 06:46:42', '2026-07-23 06:46:42', '4', '4', NULL, 'none brand', 'Chi. mic', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('46', '614 মডেলের চার্জিং পোর্ট', 'PART-CHAR-KZAG6', NULL, 'spare_part', 'Charging Pins', '20', '10', '3.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 06:47:51', '2026-07-23 06:47:51', '4', '3', NULL, NULL, 'Port - 614 ON', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('47', 'Nokia 110 বাটন ফোনের চার্জিং পিন', 'PART-CHAR-5QFIJ', NULL, 'spare_part', 'Charging Pins', '20', '5', '2.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 06:48:30', '2026-07-23 06:48:30', '4', '3', NULL, NULL, '110', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('48', 'Samsung Galaxy M12 এর চার্জিং পিন', 'PART-CHAR-MQRZA', NULL, 'spare_part', 'Charging Pins', '10', '5', '2.00', '100.00', '80.00', 'Dhaka Main', '2026-07-23 07:07:28', '2026-07-23 07:07:28', NULL, '3', NULL, 'none brand', 'M12', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('49', 'Samsung Galaxy J7 এর চার্জিং পিন', 'PART-CHAR-7SRKB', NULL, 'spare_part', 'Charging Pins', '10', '5', '3.00', '100.00', '80.00', 'Dhaka Main', '2026-07-23 07:08:12', '2026-07-23 07:08:12', '4', '3', NULL, 'none brand', 'J.7', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('50', 'বাটন ফোনের কিপ্যাড বা পাওয়ার সুইচ', 'PART-BUTT-K8WES', NULL, 'spare_part', 'Buttons & Pins', '20', '5', '5.00', '100.00', '80.00', 'Dhaka Main', '2026-07-23 07:09:24', '2026-07-23 07:10:47', '4', '5', NULL, 'none brand', 'BuTon-16-6', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('51', 'D01 মডেলের চার্জিং পিন', 'PART-CHAR-GDKK5', NULL, 'spare_part', 'Charging Pins', '20', '5', '3.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:10:28', '2026-07-23 07:10:28', '4', '3', NULL, 'none brand', 'D01', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('52', 'Vivo Y20 স্মার্টফোনের চার্জিং পিন', 'PART-CHAR-IIRCW', NULL, 'spare_part', 'Charging Pins', '20', '5', '4.00', '150.00', NULL, 'Dhaka Main', '2026-07-23 07:11:38', '2026-07-23 07:11:38', '4', '3', NULL, 'none brand', 'Y.20', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('53', 'Samsung Galaxy A20 এর চার্জিং পিন', 'PART-CHAR-P5PE8', NULL, 'spare_part', 'Charging Pins', '10', '5', '5.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:12:25', '2026-07-23 07:12:25', '4', '3', NULL, 'none brand', 'A20', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('54', 'P6MW মডেলের চার্জিং পিন', 'PART-CHAR-QT7FK', NULL, 'spare_part', 'Charging Pins', '60', '5', '3.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:13:01', '2026-07-23 07:13:01', NULL, '3', NULL, 'none brand', 'P.6MW', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('55', 'সিম পিন / চার্জিং কানেক্টর পিন', 'PART-CHAR-J8CEK', NULL, 'spare_part', 'Charging Pins', '5', '1', '10.00', '10.00', NULL, 'Dhaka Main', '2026-07-23 07:13:59', '2026-07-23 07:13:59', '4', '3', NULL, 'none brand', 'S.PIN', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('56', 'Samsung Galaxy J2 এর চার্জিং পিন', 'PART-CHAR-JXT4Z', NULL, 'spare_part', 'Charging Pins', '5', '3', '3.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:14:58', '2026-07-23 07:14:58', NULL, '3', NULL, 'none brand', 'J2', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('57', 'Symphony / Walton Atom মডেলের পার্টস', 'PART-CHAR-DMUDS', NULL, 'spare_part', 'Charging Pins', '5', '5', '20.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:15:42', '2026-07-23 07:15:42', '4', '3', NULL, 'none brand', 'Atom', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
+INSERT INTO `inventory_items` (`id`, `name`, `sku`, `barcode`, `type`, `category`, `quantity`, `alert_quantity`, `purchase_price`, `sale_price`, `min_sale_price`, `branch`, `created_at`, `updated_at`, `supplier_id`, `category_id`, `sub_category`, `brand`, `model`, `description`, `product_type`, `discount_type`, `images`, `warranties`, `manufacturer`, `expiry`, `variants`, `discount_value`) VALUES ('58', 'Samsung J2 Micro USB চার্জিং পোর্ট', 'PART-CHAR-C1QK2', NULL, 'spare_part', 'Charging Pins', '20', '5', '9.00', '100.00', NULL, 'Dhaka Main', '2026-07-23 07:16:41', '2026-07-23 07:16:41', '4', '3', NULL, 'none brand', 'J2 - micro', NULL, 'single', NULL, '[]', NULL, NULL, NULL, NULL, '0.00');
 
-LOCK TABLES `inventory_items` WRITE;
-/*!40000 ALTER TABLE `inventory_items` DISABLE KEYS */;
-INSERT INTO `inventory_items` VALUES (1,'Apple iPhone 13 OLED Screen Display Assembly','PART-DISP-0001','69402681001','spare_part','Display',39,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 05:07:48',1,1,NULL,'Apples',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-DISP-0001-OR\",\"quantity\":\"20\",\"price\":\"12000\"},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-DISP-0001-OE\",\"quantity\":\"5\",\"price\":\"7500\"},{\"variation\":\"Quality\",\"value\":\"Copy\",\"sku\":\"PART-DISP-0001-CO\",\"quantity\":\"14\",\"price\":\"4500\"}]',0.00),(2,'Samsung iPhone 13 Pro Replacement High Capacity Battery','PART-BATT-0002','69402681002','spare_part','Battery',26,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(3,'Google iPhone 14 Back Glass Housing Cover Panel','PART-BACK-0003','69402681003','spare_part','Back Glass',47,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(4,'Xiaomi iPhone 14 Pro Max USB-C Charging Port Flex Ribbon','PART-CHAR-0004','69402681004','spare_part','Charging Port',44,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Xiaomi',NULL,'variable',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-CHAR-0004-OR\",\"quantity\":21,\"price\":1800},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-CHAR-0004-OE\",\"quantity\":23,\"price\":1000}]',0.00),(5,'OnePlus PD Fast Charging Wall Adapter','ACCS-CHAR-0005','69402681005','accessory','Charger',19,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(6,'Realme Super Fast Charging Cable','ACCS-CABL-0006','69402681006','accessory','Cable',16,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(7,'Anker TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0007','69402681007','accessory','Earphone',25,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Anker',NULL,'variable',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-EARP-0007-WH\",\"quantity\":13,\"price\":2450},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-EARP-0007-BL\",\"quantity\":12,\"price\":2450}]',0.00),(8,'Baseus Fast Charging Power Bank','ACCS-POWE-0008','69402681008','accessory','Power Bank',36,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(9,'Joyroom Premium Silicone Protective Case','ACCS-COVE-0009','69402681009','accessory','Cover',38,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(10,'Remax 9D Tempered Glass Screen Protector','ACCS-GLAS-0010','69402681010','accessory','Glass Protector',20,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Remax',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Pack Size\",\"value\":\"Single Pack\",\"sku\":\"ACCS-GLAS-0010-SI\",\"quantity\":11,\"price\":250},{\"variation\":\"Pack Size\",\"value\":\"Double Pack\",\"sku\":\"ACCS-GLAS-0010-DO\",\"quantity\":9,\"price\":450}]',0.00),(11,'Apple Galaxy S24 Power Management IC Chip PM8953','PART-IC-0011','69402681011','spare_part','IC',30,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(12,'Samsung Pixel 6 Pro OLED Screen Display Assembly','PART-DISP-0012','69402681012','spare_part','Display',16,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(13,'Google Pixel 7 Pro Replacement High Capacity Battery','PART-BATT-0013','69402681013','spare_part','Battery',36,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Google',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-BATT-0013-OR\",\"quantity\":6,\"price\":2800},{\"variation\":\"Quality\",\"value\":\"Premium Copy\",\"sku\":\"PART-BATT-0013-PR\",\"quantity\":30,\"price\":1500}]',0.00),(14,'Xiaomi Pixel 8 Pro Back Glass Housing Cover Panel','PART-BACK-0014','69402681014','spare_part','Back Glass',12,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(15,'OnePlus Redmi Note 11 USB-C Charging Port Flex Ribbon','PART-CHAR-0015','69402681015','spare_part','Charging Port',29,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(16,'Realme PD Fast Charging Wall Adapter','ACCS-CHAR-0016','69402681016','accessory','Charger',29,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Realme',NULL,'variable',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-CHAR-0016-WH\",\"quantity\":24,\"price\":1850},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-CHAR-0016-BL\",\"quantity\":5,\"price\":1850}]',0.00),(17,'Anker Super Fast Charging Cable','ACCS-CABL-0017','69402681017','accessory','Cable',25,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(18,'Baseus TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0018','69402681018','accessory','Earphone',37,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(19,'Joyroom Fast Charging Power Bank','ACCS-POWE-0019','69402681019','accessory','Power Bank',48,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Joyroom',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Capacity\",\"value\":\"10000mAh\",\"sku\":\"ACCS-POWE-0019-10\",\"quantity\":18,\"price\":1250},{\"variation\":\"Capacity\",\"value\":\"20000mAh\",\"sku\":\"ACCS-POWE-0019-20\",\"quantity\":30,\"price\":1950}]',0.00),(20,'Remax Premium Silicone Protective Case','ACCS-COVE-0020','69402681020','accessory','Cover',34,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(21,'Apple 9D Tempered Glass Screen Protector','ACCS-GLAS-0021','69402681021','accessory','Glass Protector',42,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(22,'Samsung iPhone 15 Power Management IC Chip PM8953','PART-IC-0022','69402681022','spare_part','IC',47,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Samsung',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-IC-0022-OR\",\"quantity\":25,\"price\":450},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-IC-0022-OE\",\"quantity\":22,\"price\":300}]',0.00),(23,'Google iPhone 15 Pro Max OLED Screen Display Assembly','PART-DISP-0023','69402681023','spare_part','Display',16,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(24,'Xiaomi Galaxy S22 Replacement High Capacity Battery','PART-BATT-0024','69402681024','spare_part','Battery',37,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(25,'OnePlus Galaxy S22 Ultra Back Glass Housing Cover Panel','PART-BACK-0025','69402681025','spare_part','Back Glass',52,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'OnePlus',NULL,'variable',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Titanium Gray\",\"sku\":\"PART-BACK-0025-TI\",\"quantity\":20,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Black\",\"sku\":\"PART-BACK-0025-TI\",\"quantity\":26,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Silver\",\"sku\":\"PART-BACK-0025-TI\",\"quantity\":6,\"price\":4500}]',0.00),(26,'Realme Galaxy S23 USB-C Charging Port Flex Ribbon','PART-CHAR-0026','69402681026','spare_part','Charging Port',24,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(27,'Anker PD Fast Charging Wall Adapter','ACCS-CHAR-0027','69402681027','accessory','Charger',33,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(28,'Baseus Super Fast Charging Cable','ACCS-CABL-0028','69402681028','accessory','Cable',39,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Baseus',NULL,'variable',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Length\",\"value\":\"1 Meter\",\"sku\":\"ACCS-CABL-0028-1M\",\"quantity\":18,\"price\":500},{\"variation\":\"Length\",\"value\":\"2 Meter\",\"sku\":\"ACCS-CABL-0028-2M\",\"quantity\":21,\"price\":650}]',0.00),(29,'Joyroom TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0029','69402681029','accessory','Earphone',15,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(30,'Remax Fast Charging Power Bank','ACCS-POWE-0030','69402681030','accessory','Power Bank',24,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(31,'Apple Premium Silicone Protective Case','ACCS-COVE-0031','69402681031','accessory','Cover',37,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Apple',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Midnight Black\",\"sku\":\"ACCS-COVE-0031-MI\",\"quantity\":24,\"price\":450},{\"variation\":\"Color\",\"value\":\"Navy Blue\",\"sku\":\"ACCS-COVE-0031-NA\",\"quantity\":8,\"price\":450},{\"variation\":\"Color\",\"value\":\"Forest Green\",\"sku\":\"ACCS-COVE-0031-FO\",\"quantity\":5,\"price\":450}]',0.00),(32,'Samsung 9D Tempered Glass Screen Protector','ACCS-GLAS-0032','69402681032','accessory','Glass Protector',42,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(33,'Google Redmi Note 12 Pro Power Management IC Chip PM8953','PART-IC-0033','69402681033','spare_part','IC',32,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(34,'Xiaomi Realme GT 3 OLED Screen Display Assembly','PART-DISP-0034','69402681034','spare_part','Display',49,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Xiaomi',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-DISP-0034-OR\",\"quantity\":13,\"price\":12000},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-DISP-0034-OE\",\"quantity\":28,\"price\":7500},{\"variation\":\"Quality\",\"value\":\"Copy\",\"sku\":\"PART-DISP-0034-CO\",\"quantity\":8,\"price\":4500}]',0.00),(35,'OnePlus iPhone 13 Replacement High Capacity Battery','PART-BATT-0035','69402681035','spare_part','Battery',41,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(36,'Realme iPhone 13 Pro Back Glass Housing Cover Panel','PART-BACK-0036','69402681036','spare_part','Back Glass',36,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(37,'Anker iPhone 14 USB-C Charging Port Flex Ribbon','PART-CHAR-0037','69402681037','spare_part','Charging Port',33,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 06:55:01',1,3,NULL,'Anker',NULL,'variable',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-CHAR-0037-OR\",\"quantity\":14,\"price\":1800},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-CHAR-0037-OE\",\"quantity\":21,\"price\":1000}]',0.00),(38,'Baseus PD Fast Charging Wall Adapter','ACCS-CHAR-0038','69402681038','accessory','Charger',48,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(39,'Joyroom Super Fast Charging Cable','ACCS-CABL-0039','69402681039','accessory','Cable',12,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(40,'Remax TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0040','69402681040','accessory','Earphone',37,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Remax',NULL,'variable',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-EARP-0040-WH\",\"quantity\":15,\"price\":2450},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-EARP-0040-BL\",\"quantity\":22,\"price\":2450}]',0.00),(41,'Apple Fast Charging Power Bank','ACCS-POWE-0041','69402681041','accessory','Power Bank',38,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(42,'Samsung Premium Silicone Protective Case','ACCS-COVE-0042','69402681042','accessory','Cover',23,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(43,'Google 9D Tempered Glass Screen Protector','ACCS-GLAS-0043','69402681043','accessory','Glass Protector',38,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Google',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Pack Size\",\"value\":\"Single Pack\",\"sku\":\"ACCS-GLAS-0043-SI\",\"quantity\":14,\"price\":250},{\"variation\":\"Pack Size\",\"value\":\"Double Pack\",\"sku\":\"ACCS-GLAS-0043-DO\",\"quantity\":24,\"price\":450}]',0.00),(44,'Xiaomi Galaxy S23 Ultra Power Management IC Chip PM8953','PART-IC-0044','69402681044','spare_part','IC',14,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(45,'OnePlus Galaxy S24 OLED Screen Display Assembly','PART-DISP-0045','69402681045','spare_part','Display',33,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(46,'Realme Pixel 6 Pro Replacement High Capacity Battery','PART-BATT-0046','69402681046','spare_part','Battery',43,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Realme',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-BATT-0046-OR\",\"quantity\":18,\"price\":2800},{\"variation\":\"Quality\",\"value\":\"Premium Copy\",\"sku\":\"PART-BATT-0046-PR\",\"quantity\":25,\"price\":1500}]',0.00),(47,'Anker Pixel 7 Pro Back Glass Housing Cover Panel','PART-BACK-0047','69402681047','spare_part','Back Glass',18,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:50:28',1,4,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(48,'Baseus Pixel 8 Pro USB-C Charging Port Flex Ribbon','PART-CHAR-0048','69402681048','spare_part','Charging Port',27,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(49,'Joyroom PD Fast Charging Wall Adapter','ACCS-CHAR-0049','69402681049','accessory','Charger',34,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Joyroom',NULL,'variable',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-CHAR-0049-WH\",\"quantity\":10,\"price\":1850},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-CHAR-0049-BL\",\"quantity\":24,\"price\":1850}]',0.00),(50,'Remax Super Fast Charging Cable','ACCS-CABL-0050','69402681050','accessory','Cable',22,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(51,'Apple TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0051','69402681051','accessory','Earphone',48,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(52,'Samsung Fast Charging Power Bank','ACCS-POWE-0052','69402681052','accessory','Power Bank',26,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Samsung',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Capacity\",\"value\":\"10000mAh\",\"sku\":\"ACCS-POWE-0052-10\",\"quantity\":12,\"price\":1250},{\"variation\":\"Capacity\",\"value\":\"20000mAh\",\"sku\":\"ACCS-POWE-0052-20\",\"quantity\":14,\"price\":1950}]',0.00),(53,'Google Premium Silicone Protective Case','ACCS-COVE-0053','69402681053','accessory','Cover',25,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(54,'Xiaomi 9D Tempered Glass Screen Protector','ACCS-GLAS-0054','69402681054','accessory','Glass Protector',36,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(55,'OnePlus iPhone 14 Pro Max Power Management IC Chip PM8953','PART-IC-0055','69402681055','spare_part','IC',42,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'OnePlus',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-IC-0055-OR\",\"quantity\":17,\"price\":450},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-IC-0055-OE\",\"quantity\":25,\"price\":300}]',0.00),(56,'Realme iPhone 15 OLED Screen Display Assembly','PART-DISP-0056','69402681056','spare_part','Display',13,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(57,'Anker iPhone 15 Pro Max Replacement High Capacity Battery','PART-BATT-0057','69402681057','spare_part','Battery',31,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 05:21:15',1,2,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(58,'Baseus Galaxy S22 Back Glass Housing Cover Panel','PART-BACK-0058','69402681058','spare_part','Back Glass',53,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Baseus',NULL,'variable',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Titanium Gray\",\"sku\":\"PART-BACK-0058-TI\",\"quantity\":14,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Black\",\"sku\":\"PART-BACK-0058-TI\",\"quantity\":30,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Silver\",\"sku\":\"PART-BACK-0058-TI\",\"quantity\":9,\"price\":4500}]',0.00),(59,'Joyroom Galaxy S22 Ultra USB-C Charging Port Flex Ribbon','PART-CHAR-0059','69402681059','spare_part','Charging Port',39,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(60,'Remax PD Fast Charging Wall Adapter','ACCS-CHAR-0060','69402681060','accessory','Charger',12,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(61,'Apple Super Fast Charging Cable','ACCS-CABL-0061','69402681061','accessory','Cable',12,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Apple',NULL,'variable',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Length\",\"value\":\"1 Meter\",\"sku\":\"ACCS-CABL-0061-1M\",\"quantity\":7,\"price\":500},{\"variation\":\"Length\",\"value\":\"2 Meter\",\"sku\":\"ACCS-CABL-0061-2M\",\"quantity\":5,\"price\":650}]',0.00),(62,'Samsung TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0062','69402681062','accessory','Earphone',28,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(63,'Google Fast Charging Power Bank','ACCS-POWE-0063','69402681063','accessory','Power Bank',25,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(64,'Xiaomi Premium Silicone Protective Case','ACCS-COVE-0064','69402681064','accessory','Cover',67,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Xiaomi',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Midnight Black\",\"sku\":\"ACCS-COVE-0064-MI\",\"quantity\":25,\"price\":450},{\"variation\":\"Color\",\"value\":\"Navy Blue\",\"sku\":\"ACCS-COVE-0064-NA\",\"quantity\":27,\"price\":450},{\"variation\":\"Color\",\"value\":\"Forest Green\",\"sku\":\"ACCS-COVE-0064-FO\",\"quantity\":15,\"price\":450}]',0.00),(65,'OnePlus 9D Tempered Glass Screen Protector','ACCS-GLAS-0065','69402681065','accessory','Glass Protector',13,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(66,'Realme Redmi Note 11 Power Management IC Chip PM8953','PART-IC-0066','69402681066','spare_part','IC',42,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(67,'Anker Redmi Note 12 Pro OLED Screen Display Assembly','PART-DISP-0067','69402681067','spare_part','Display',57,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Anker',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-DISP-0067-OR\",\"quantity\":21,\"price\":12000},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-DISP-0067-OE\",\"quantity\":13,\"price\":7500},{\"variation\":\"Quality\",\"value\":\"Copy\",\"sku\":\"PART-DISP-0067-CO\",\"quantity\":23,\"price\":4500}]',0.00),(68,'Baseus Realme GT 3 Replacement High Capacity Battery','PART-BATT-0068','69402681068','spare_part','Battery',27,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(69,'Joyroom iPhone 13 Back Glass Housing Cover Panel','PART-BACK-0069','69402681069','spare_part','Back Glass',13,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(70,'Remax iPhone 13 Pro USB-C Charging Port Flex Ribbon','PART-CHAR-0070','69402681070','spare_part','Charging Port',20,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Remax',NULL,'variable',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-CHAR-0070-OR\",\"quantity\":8,\"price\":1800},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-CHAR-0070-OE\",\"quantity\":12,\"price\":1000}]',0.00),(71,'Apple PD Fast Charging Wall Adapter','ACCS-CHAR-0071','69402681071','accessory','Charger',49,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(72,'Samsung Super Fast Charging Cable','ACCS-CABL-0072','69402681072','accessory','Cable',39,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(73,'Google TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0073','69402681073','accessory','Earphone',27,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Google',NULL,'variable',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-EARP-0073-WH\",\"quantity\":9,\"price\":2450},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-EARP-0073-BL\",\"quantity\":18,\"price\":2450}]',0.00),(74,'Xiaomi Fast Charging Power Bank','ACCS-POWE-0074','69402681074','accessory','Power Bank',37,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(75,'OnePlus Premium Silicone Protective Case','ACCS-COVE-0075','69402681075','accessory','Cover',30,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(76,'Realme 9D Tempered Glass Screen Protector','ACCS-GLAS-0076','69402681076','accessory','Glass Protector',17,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Realme',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Pack Size\",\"value\":\"Single Pack\",\"sku\":\"ACCS-GLAS-0076-SI\",\"quantity\":8,\"price\":250},{\"variation\":\"Pack Size\",\"value\":\"Double Pack\",\"sku\":\"ACCS-GLAS-0076-DO\",\"quantity\":9,\"price\":450}]',0.00),(77,'Anker Galaxy S23 Power Management IC Chip PM8953','PART-IC-0077','69402681077','spare_part','IC',26,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 05:21:15',1,5,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(78,'Baseus Galaxy S23 Ultra OLED Screen Display Assembly','PART-DISP-0078','69402681078','spare_part','Display',17,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(79,'Joyroom Galaxy S24 Replacement High Capacity Battery','PART-BATT-0079','69402681079','spare_part','Battery',34,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Joyroom',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-BATT-0079-OR\",\"quantity\":21,\"price\":2800},{\"variation\":\"Quality\",\"value\":\"Premium Copy\",\"sku\":\"PART-BATT-0079-PR\",\"quantity\":13,\"price\":1500}]',0.00),(80,'Remax Pixel 6 Pro Back Glass Housing Cover Panel','PART-BACK-0080','69402681080','spare_part','Back Glass',25,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,NULL,0.00),(81,'Apple Pixel 7 Pro USB-C Charging Port Flex Ribbon','PART-CHAR-0081','69402681081','spare_part','Charging Port',49,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Apple',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(82,'Samsung PD Fast Charging Wall Adapter','ACCS-CHAR-0082','69402681082','accessory','Charger',17,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Samsung',NULL,'variable',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"White\",\"sku\":\"ACCS-CHAR-0082-WH\",\"quantity\":5,\"price\":1850},{\"variation\":\"Color\",\"value\":\"Black\",\"sku\":\"ACCS-CHAR-0082-BL\",\"quantity\":12,\"price\":1850}]',0.00),(83,'Google Super Fast Charging Cable','ACCS-CABL-0083','69402681083','accessory','Cable',33,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,NULL,0.00),(84,'Xiaomi TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0084','69402681084','accessory','Earphone',29,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'Xiaomi',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(85,'OnePlus Fast Charging Power Bank','ACCS-POWE-0085','69402681085','accessory','Power Bank',39,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'OnePlus',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Capacity\",\"value\":\"10000mAh\",\"sku\":\"ACCS-POWE-0085-10\",\"quantity\":25,\"price\":1250},{\"variation\":\"Capacity\",\"value\":\"20000mAh\",\"sku\":\"ACCS-POWE-0085-20\",\"quantity\":14,\"price\":1950}]',0.00),(86,'Realme Premium Silicone Protective Case','ACCS-COVE-0086','69402681086','accessory','Cover',22,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(87,'Anker 9D Tempered Glass Screen Protector','ACCS-GLAS-0087','69402681087','accessory','Glass Protector',15,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 05:21:15',2,11,NULL,'Anker',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(88,'Baseus iPhone 14 Power Management IC Chip PM8953','PART-IC-0088','69402681088','spare_part','IC',35,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Baseus',NULL,'variable',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-IC-0088-OR\",\"quantity\":27,\"price\":450},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-IC-0088-OE\",\"quantity\":8,\"price\":300}]',0.00),(89,'Joyroom iPhone 14 Pro Max OLED Screen Display Assembly','PART-DISP-0089','69402681089','spare_part','Display',33,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(90,'Remax iPhone 15 Replacement High Capacity Battery','PART-BATT-0090','69402681090','spare_part','Battery',12,5,1800.00,2800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,2,NULL,'Remax',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(91,'Apple iPhone 15 Pro Max Back Glass Housing Cover Panel','PART-BACK-0091','69402681091','spare_part','Back Glass',57,5,3000.00,4500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,4,NULL,'Apple',NULL,'variable',NULL,'[\"inventory\\/iphone15pm_back_glass.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Titanium Gray\",\"sku\":\"PART-BACK-0091-TI\",\"quantity\":19,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Black\",\"sku\":\"PART-BACK-0091-TI\",\"quantity\":16,\"price\":4500},{\"variation\":\"Color\",\"value\":\"Titanium Silver\",\"sku\":\"PART-BACK-0091-TI\",\"quantity\":22,\"price\":4500}]',0.00),(92,'Samsung Galaxy S22 USB-C Charging Port Flex Ribbon','PART-CHAR-0092','69402681092','spare_part','Charging Port',26,5,1100.00,1800.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,3,NULL,'Samsung',NULL,'single',NULL,'[\"inventory\\/ipad_pro_charging_port.png\"]',NULL,NULL,NULL,NULL,0.00),(93,'Google PD Fast Charging Wall Adapter','ACCS-CHAR-0093','69402681093','accessory','Charger',12,5,1200.00,1850.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,6,NULL,'Google',NULL,'single',NULL,'[\"inventory\\/anker_nano_charger.png\"]',NULL,NULL,NULL,NULL,0.00),(94,'Xiaomi Super Fast Charging Cable','ACCS-CABL-0094','69402681094','accessory','Cable',22,5,300.00,500.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,7,NULL,'Xiaomi',NULL,'variable',NULL,'[\"inventory\\/baseus_typec_cable.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Length\",\"value\":\"1 Meter\",\"sku\":\"ACCS-CABL-0094-1M\",\"quantity\":15,\"price\":500},{\"variation\":\"Length\",\"value\":\"2 Meter\",\"sku\":\"ACCS-CABL-0094-2M\",\"quantity\":7,\"price\":650}]',0.00),(95,'OnePlus TWS Bluetooth ANC Wireless Earbuds','ACCS-EARP-0095','69402681095','accessory','Earphone',49,5,1600.00,2450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,8,NULL,'OnePlus',NULL,'single',NULL,'[\"inventory\\/joyroom_t03s_earbuds.png\"]',NULL,NULL,NULL,NULL,0.00),(96,'Realme Fast Charging Power Bank','ACCS-POWE-0096','69402681096','accessory','Power Bank',20,5,800.00,1250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,9,NULL,'Realme',NULL,'single',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,NULL,0.00),(97,'Anker Premium Silicone Protective Case','ACCS-COVE-0097','69402681097','accessory','Cover',33,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,10,NULL,'Anker',NULL,'variable',NULL,'[\"inventory\\/remax_powerbank.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Color\",\"value\":\"Midnight Black\",\"sku\":\"ACCS-COVE-0097-MI\",\"quantity\":13,\"price\":450},{\"variation\":\"Color\",\"value\":\"Navy Blue\",\"sku\":\"ACCS-COVE-0097-NA\",\"quantity\":7,\"price\":450},{\"variation\":\"Color\",\"value\":\"Forest Green\",\"sku\":\"ACCS-COVE-0097-FO\",\"quantity\":13,\"price\":450}]',0.00),(98,'Baseus 9D Tempered Glass Screen Protector','ACCS-GLAS-0098','69402681098','accessory','Glass Protector',38,5,120.00,250.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',2,11,NULL,'Baseus',NULL,'single',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,NULL,0.00),(99,'Joyroom Pixel 8 Pro Power Management IC Chip PM8953','PART-IC-0099','69402681099','spare_part','IC',17,5,250.00,450.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,5,NULL,'Joyroom',NULL,'single',NULL,'[\"inventory\\/pixel7_pro_battery.png\"]',NULL,NULL,NULL,NULL,0.00),(100,'Remax Redmi Note 11 OLED Screen Display Assembly','PART-DISP-0100','69402681100','spare_part','Display',71,5,9000.00,12000.00,NULL,'2026-07-13 04:48:39','2026-07-13 04:48:39',1,1,NULL,'Remax',NULL,'variable',NULL,'[\"inventory\\/s23u_display_assembly.png\"]',NULL,NULL,NULL,'[{\"variation\":\"Quality\",\"value\":\"Original\",\"sku\":\"PART-DISP-0100-OR\",\"quantity\":26,\"price\":12000},{\"variation\":\"Quality\",\"value\":\"OEM\",\"sku\":\"PART-DISP-0100-OE\",\"quantity\":26,\"price\":7500},{\"variation\":\"Quality\",\"value\":\"Copy\",\"sku\":\"PART-DISP-0100-CO\",\"quantity\":19,\"price\":4500}]',0.00);
-/*!40000 ALTER TABLE `inventory_items` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `job_batches`
---
 
 DROP TABLE IF EXISTS `job_batches`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `job_batches` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `total_jobs` int NOT NULL,
-  `pending_jobs` int NOT NULL,
-  `failed_jobs` int NOT NULL,
-  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `options` mediumtext COLLATE utf8mb4_unicode_ci,
-  `cancelled_at` int DEFAULT NULL,
-  `created_at` int NOT NULL,
-  `finished_at` int DEFAULT NULL,
+  `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int(11) NOT NULL,
+  `pending_jobs` int(11) NOT NULL,
+  `failed_jobs` int(11) NOT NULL,
+  `failed_job_ids` longtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `cancelled_at` int(11) DEFAULT NULL,
+  `created_at` int(11) NOT NULL,
+  `finished_at` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `job_batches`
---
 
-LOCK TABLES `job_batches` WRITE;
-/*!40000 ALTER TABLE `job_batches` DISABLE KEYS */;
-/*!40000 ALTER TABLE `job_batches` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `jobs`
---
 
 DROP TABLE IF EXISTS `jobs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `jobs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attempts` tinyint unsigned NOT NULL,
-  `reserved_at` int unsigned DEFAULT NULL,
-  `available_at` int unsigned NOT NULL,
-  `created_at` int unsigned NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) unsigned NOT NULL,
+  `reserved_at` int(10) unsigned DEFAULT NULL,
+  `available_at` int(10) unsigned NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `jobs_queue_index` (`queue`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `jobs`
---
 
-LOCK TABLES `jobs` WRITE;
-/*!40000 ALTER TABLE `jobs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `jobs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `migrations`
---
 
 DROP TABLE IF EXISTS `migrations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `migrations` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `migrations`
---
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('1', '0001_01_01_000000_create_users_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('2', '0001_01_01_000001_create_cache_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('3', '0001_01_01_000002_create_jobs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('4', '2026_07_07_050000_create_customers_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('5', '2026_07_07_051000_create_suppliers_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('6', '2026_07_07_052000_create_inventory_items_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('7', '2026_07_07_053000_create_purchases_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('8', '2026_07_07_054000_create_sales_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('9', '2026_07_07_055000_create_expenses_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('10', '2026_07_07_060106_create_repairs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('11', '2026_07_07_060106_create_services_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('12', '2026_07_08_051820_add_avatar_to_users_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('13', '2026_07_08_055427_create_settings_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('14', '2026_07_08_055704_add_branch_to_tables', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('15', '2026_07_08_060719_add_permissions_to_users_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('16', '2026_07_08_062500_create_social_posts_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('17', '2026_07_08_103101_create_categories_and_update_inventory_items_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('18', '2026_07_08_105448_add_discount_value_to_inventory_items_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('19', '2026_07_09_125857_add_checklist_and_commission_to_repairs_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('20', '2026_07_13_071605_add_paid_and_due_amount_to_sales_table', '1');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('21', '2026_07_13_180000_create_activity_logs_table', '2');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('22', '2026_07_13_190000_add_used_parts_to_repairs_table', '3');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('23', '2026_07_13_200000_add_repair_charge_to_repairs_table', '4');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('24', '2026_07_13_210000_add_payment_details_to_repairs_table', '5');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('25', '2026_07_13_220000_add_register_type_to_expenses_table', '6');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('26', '2026_07_15_084930_add_mobile_business_improvements_to_repairs_table', '7');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('27', '2026_07_15_154500_add_financial_fix_columns', '7');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('28', '2026_07_15_161500_change_details_foreign_keys_to_nullable_set_null', '7');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('29', '2026_07_15_190000_create_partner_ledgers_tables', '7');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('30', '2026_07_16_103515_add_is_active_to_users_table', '8');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('31', '2026_07_17_000000_add_due_and_paid_amount_to_repairs_table', '9');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('32', '2026_07_17_010000_create_payment_logs_table', '9');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('33', '2026_07_17_020000_add_transaction_reference_to_payment_logs_table', '9');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('34', '2026_07_21_000000_add_model_to_inventory_items_table', '10');
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES ('35', '2026_07_21_010000_add_min_sale_price_to_inventory_items_table', '11');
 
-LOCK TABLES `migrations` WRITE;
-/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2026_07_07_050000_create_customers_table',1),(5,'2026_07_07_051000_create_suppliers_table',1),(6,'2026_07_07_052000_create_inventory_items_table',1),(7,'2026_07_07_053000_create_purchases_table',1),(8,'2026_07_07_054000_create_sales_table',1),(9,'2026_07_07_055000_create_expenses_table',1),(10,'2026_07_07_060106_create_repairs_table',1),(11,'2026_07_07_060106_create_services_table',1),(12,'2026_07_08_051820_add_avatar_to_users_table',1),(13,'2026_07_08_055427_create_settings_table',1),(14,'2026_07_08_055704_add_branch_to_tables',1),(15,'2026_07_08_060719_add_permissions_to_users_table',1),(16,'2026_07_08_062500_create_social_posts_table',1),(17,'2026_07_08_103101_create_categories_and_update_inventory_items_table',1),(18,'2026_07_08_105448_add_discount_value_to_inventory_items_table',1),(19,'2026_07_09_125857_add_checklist_and_commission_to_repairs_table',1),(20,'2026_07_13_071605_add_paid_and_due_amount_to_sales_table',1),(21,'2026_07_13_180000_create_activity_logs_table',2),(22,'2026_07_13_190000_add_used_parts_to_repairs_table',3),(23,'2026_07_13_200000_add_repair_charge_to_repairs_table',4),(24,'2026_07_13_210000_add_payment_details_to_repairs_table',5),(25,'2026_07_13_220000_add_register_type_to_expenses_table',6);
-/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `password_reset_tokens`
---
+DROP TABLE IF EXISTS `partner_balances`;
+CREATE TABLE `partner_balances` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `partner_name` varchar(255) NOT NULL,
+  `capital_balance` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `accumulated_profit` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `payback_completed_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `partner_balances_partner_name_unique` (`partner_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `partner_balances` (`id`, `partner_name`, `capital_balance`, `accumulated_profit`, `payback_completed_at`, `created_at`, `updated_at`) VALUES ('1', 'Monowar Munna', '450000.00', '0.00', NULL, '2026-07-17 14:20:59', '2026-07-21 18:28:43');
+INSERT INTO `partner_balances` (`id`, `partner_name`, `capital_balance`, `accumulated_profit`, `payback_completed_at`, `created_at`, `updated_at`) VALUES ('2', 'Munna Raihan', '50000.00', '0.00', NULL, '2026-07-17 14:20:59', '2026-07-21 18:28:43');
+INSERT INTO `partner_balances` (`id`, `partner_name`, `capital_balance`, `accumulated_profit`, `payback_completed_at`, `created_at`, `updated_at`) VALUES ('3', 'Mosiur', '50000.00', '0.00', NULL, '2026-07-17 14:20:59', '2026-07-21 18:28:43');
+
+
+DROP TABLE IF EXISTS `partner_ledger_entries`;
+CREATE TABLE `partner_ledger_entries` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `partner_name` varchar(255) NOT NULL,
+  `account_type` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `amount` decimal(15,2) NOT NULL,
+  `balance_after` decimal(15,2) NOT NULL,
+  `month` varchar(7) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `created_by` bigint(20) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `partner_ledger_entries_created_by_foreign` (`created_by`),
+  KEY `partner_ledger_entries_partner_name_account_type_index` (`partner_name`,`account_type`),
+  CONSTRAINT `partner_ledger_entries_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 DROP TABLE IF EXISTS `password_reset_tokens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `password_reset_tokens`
---
 
-LOCK TABLES `password_reset_tokens` WRITE;
-/*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
-/*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `purchase_details`
---
+DROP TABLE IF EXISTS `payment_logs`;
+CREATE TABLE `payment_logs` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `payable_type` varchar(255) NOT NULL,
+  `payable_id` bigint(20) unsigned NOT NULL,
+  `payment_method` varchar(255) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `transaction_reference` varchar(255) DEFAULT NULL,
+  `transaction_type` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `payment_logs_payable_type_payable_id_index` (`payable_type`,`payable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 
 DROP TABLE IF EXISTS `purchase_details`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `purchase_details` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `purchase_id` bigint unsigned NOT NULL,
-  `inventory_item_id` bigint unsigned NOT NULL,
-  `quantity` int NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `purchase_id` bigint(20) unsigned NOT NULL,
+  `inventory_item_id` bigint(20) unsigned DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
   `cost_price` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `purchase_details_purchase_id_foreign` (`purchase_id`),
   KEY `purchase_details_inventory_item_id_foreign` (`inventory_item_id`),
-  CONSTRAINT `purchase_details_inventory_item_id_foreign` FOREIGN KEY (`inventory_item_id`) REFERENCES `inventory_items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `purchase_details_inventory_item_id_foreign` FOREIGN KEY (`inventory_item_id`) REFERENCES `inventory_items` (`id`) ON DELETE SET NULL,
   CONSTRAINT `purchase_details_purchase_id_foreign` FOREIGN KEY (`purchase_id`) REFERENCES `purchases` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `purchase_details`
---
+INSERT INTO `purchase_details` (`id`, `purchase_id`, `inventory_item_id`, `quantity`, `cost_price`, `created_at`, `updated_at`) VALUES ('2', '1', '1', '1', '480.00', '2026-07-21 11:35:46', '2026-07-21 11:35:46');
 
-LOCK TABLES `purchase_details` WRITE;
-/*!40000 ALTER TABLE `purchase_details` DISABLE KEYS */;
-INSERT INTO `purchase_details` VALUES (1,1,2,1,14000.00,'2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,1,3,1,1800.00,'2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `purchase_details` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `purchases`
---
 
 DROP TABLE IF EXISTS `purchases`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `purchases` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `purchase_no` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `supplier_id` bigint unsigned DEFAULT NULL,
-  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `total_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `purchase_no` varchar(255) NOT NULL,
+  `supplier_id` bigint(20) unsigned DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
+  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
   `purchase_date` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -438,95 +485,74 @@ CREATE TABLE `purchases` (
   KEY `purchases_supplier_id_foreign` (`supplier_id`),
   CONSTRAINT `purchases_supplier_id_foreign` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `purchases`
---
+INSERT INTO `purchases` (`id`, `purchase_no`, `supplier_id`, `branch`, `total_amount`, `purchase_date`, `created_at`, `updated_at`) VALUES ('1', 'PUR-20260721-IEWK', '7', NULL, '480.00', '2026-07-18', '2026-07-21 11:33:20', '2026-07-21 11:35:46');
 
-LOCK TABLES `purchases` WRITE;
-/*!40000 ALTER TABLE `purchases` DISABLE KEYS */;
-INSERT INTO `purchases` VALUES (1,'PUR-202607-0001',1,NULL,15800.00,'2026-07-03','2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `purchases` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `repairs`
---
 
 DROP TABLE IF EXISTS `repairs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `repairs` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `ticket_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_id` bigint unsigned DEFAULT NULL,
-  `device_brand` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `device_model` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `serial_imei` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `issue_description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password_pattern` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `repair_charge` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
-  `estimated_cost` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `advance_payment` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `advance_payment_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `ticket_id` varchar(255) NOT NULL,
+  `customer_id` bigint(20) unsigned DEFAULT NULL,
+  `device_brand` varchar(255) NOT NULL,
+  `device_model` varchar(255) NOT NULL,
+  `serial_imei` varchar(255) DEFAULT NULL,
+  `issue_description` text NOT NULL,
+  `password_pattern` varchar(255) DEFAULT NULL,
+  `pattern_lock_path` text DEFAULT NULL,
+  `data_loss_consent` tinyint(1) NOT NULL DEFAULT 0,
+  `repair_charge` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `is_stock_deducted` tinyint(1) NOT NULL DEFAULT 0,
+  `estimated_cost` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `advance_payment` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `advance_payment_method` varchar(255) DEFAULT NULL,
   `actual_cost` decimal(10,2) DEFAULT NULL,
-  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `due_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `warranty_days` int(11) NOT NULL DEFAULT 0,
+  `warranty_expiry_date` date DEFAULT NULL,
+  `payment_method` varchar(255) DEFAULT NULL,
   `cash_received` decimal(10,2) DEFAULT NULL,
   `change_returned` decimal(10,2) DEFAULT NULL,
-  `technician_notes` text COLLATE utf8mb4_unicode_ci,
-  `assigned_technician_id` bigint unsigned DEFAULT NULL,
-  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `technician_notes` text DEFAULT NULL,
+  `assigned_technician_id` bigint(20) unsigned DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
   `expected_delivery_date` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `device_checklist` json DEFAULT NULL,
-  `device_photos` json DEFAULT NULL,
-  `commission_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `commission_rate` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `commission_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `used_parts` json DEFAULT NULL,
+  `completed_at` timestamp NULL DEFAULT NULL,
+  `device_checklist` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`device_checklist`)),
+  `device_photos` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`device_photos`)),
+  `commission_type` varchar(255) DEFAULT NULL,
+  `commission_rate` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `commission_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `used_parts` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`used_parts`)),
   PRIMARY KEY (`id`),
   UNIQUE KEY `repairs_ticket_id_unique` (`ticket_id`),
   KEY `repairs_customer_id_foreign` (`customer_id`),
   KEY `repairs_assigned_technician_id_foreign` (`assigned_technician_id`),
   CONSTRAINT `repairs_assigned_technician_id_foreign` FOREIGN KEY (`assigned_technician_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `repairs_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `repairs`
---
 
-LOCK TABLES `repairs` WRITE;
-/*!40000 ALTER TABLE `repairs` DISABLE KEYS */;
-INSERT INTO `repairs` VALUES (1,'M3-202607-0001',1,'Apple','iPhone 13 Pro','357283920193847','Dropped in water, display flickering, touch not working.','Pattern: L-shape starting top-left, Pin: 4829',0.00,'repairing',6500.00,1000.00,NULL,NULL,NULL,NULL,NULL,'Opened phone. Found water residue. Board ultrasonic cleaning complete. Replacing display panel to test screen flicker.',2,NULL,'2026-07-16','2026-07-11 04:48:39','2026-07-12 04:48:39',NULL,NULL,NULL,0.00,0.00,NULL),(2,'M3-202607-0002',2,'Samsung','Galaxy S22','351938472918374','Back glass cracked, battery draining fast.','Pattern: None. Pin: 0000',2800.00,'delivered',4100.03,500.00,NULL,3600.00,NULL,NULL,0.00,'Assigned to diagnose battery degradation. Initial battery health reading: 68%. Waiting to approve battery replacement.asad',2,NULL,'2026-07-16','2026-07-12 23:48:39','2026-07-13 06:48:50','{\"audio_ok\": \"yes\", \"touch_ok\": \"yes\", \"camera_ok\": \"yes\", \"scratches\": \"yes\", \"buttons_ok\": \"yes\", \"display_ok\": \"yes\"}','[]',NULL,0.00,0.00,'[{\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"3\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Premium Silicone Protective Case\", \"quantity\": \"1\", \"buying_price\": \"250.00\", \"inventory_id\": \"31\"}, {\"name\": \"Apple Super Fast Charging Cable\", \"quantity\": \"1\", \"buying_price\": \"300.03\", \"inventory_id\": \"61\"}]'),(3,'M3-202607-0003',3,'Xiaomi','Redmi Note 10','863920193847291','USB port broken, doesn\'t charge at all.','No locks on device.',0.00,'delivered',800.00,0.00,NULL,800.00,NULL,NULL,NULL,'Replaced charging flex cable assembly. Tested draws 1.8A. Device delivered to customer and paid cash.',3,NULL,'2026-07-12','2026-07-09 04:48:39','2026-07-12 04:48:39',NULL,NULL,NULL,0.00,0.00,NULL),(4,'M3-202607-0004',4,'Realme','Realme GT',NULL,'Cracked screen.','Pattern: Diagonal slash top-left to bottom-right.',0.00,'waiting_for_approval',3000.00,1500.00,NULL,NULL,NULL,NULL,NULL,'Screen panel is cracked. Customer wants original display, but we only have OEM in stock. Waiting for approval to order original part.',3,NULL,'2026-07-18','2026-07-10 04:48:39','2026-07-11 04:48:39',NULL,NULL,NULL,0.00,0.00,NULL);
-/*!40000 ALTER TABLE `repairs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sales`
---
 
 DROP TABLE IF EXISTS `sales`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sales` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `invoice_no` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_id` bigint unsigned DEFAULT NULL,
-  `total_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `discount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `payable_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `paid_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `due_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `cash_received` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `change_returned` decimal(10,2) NOT NULL DEFAULT '0.00',
-  `payment_method` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Cash',
-  `salesman_id` bigint unsigned DEFAULT NULL,
-  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `invoice_no` varchar(255) NOT NULL,
+  `customer_id` bigint(20) unsigned DEFAULT NULL,
+  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `discount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `payable_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `due_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `cash_received` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `change_returned` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `payment_method` varchar(255) NOT NULL DEFAULT 'Cash',
+  `salesman_id` bigint(20) unsigned DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -535,242 +561,178 @@ CREATE TABLE `sales` (
   KEY `sales_salesman_id_foreign` (`salesman_id`),
   CONSTRAINT `sales_customer_id_foreign` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`) ON DELETE SET NULL,
   CONSTRAINT `sales_salesman_id_foreign` FOREIGN KEY (`salesman_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `sales`
---
 
-LOCK TABLES `sales` WRITE;
-/*!40000 ALTER TABLE `sales` DISABLE KEYS */;
-INSERT INTO `sales` VALUES (1,'INV-202607-0001',1,4300.00,300.00,4000.00,4000.00,0.00,0.00,0.00,'Cash',4,NULL,'2026-07-10 04:48:39','2026-07-13 04:48:39'),(2,'INV-202607-0002',NULL,1300.00,100.00,1200.00,1200.00,0.00,0.00,0.00,'bKash',4,NULL,'2026-07-13 00:48:39','2026-07-13 04:48:39'),(3,'INV-20260713-M9JH',NULL,4500.00,0.00,4500.00,4500.00,0.00,5000.00,500.00,'Cash',1,'Dhaka Main','2026-07-13 04:50:28','2026-07-13 04:50:28'),(4,'INV-20260713-RMLJ',NULL,250.00,0.00,250.00,250.00,0.00,250.00,0.00,'Cash',4,'Dhaka Main','2026-07-13 05:07:03','2026-07-13 05:07:03'),(5,'INV-20260713-RAQK',NULL,450.00,0.00,450.00,450.00,0.00,450.00,0.00,'Cash',5,'Dhaka Main','2026-07-13 05:17:56','2026-07-13 05:17:56'),(6,'INV-20260713-ESUH',NULL,450.00,0.00,450.00,450.00,0.00,500.00,50.00,'Cash',4,'Dhaka Main','2026-07-13 05:20:24','2026-07-13 05:20:24'),(7,'INV-20260713-IRZW',NULL,5300.00,0.00,5300.00,5300.00,0.00,5300.00,0.00,'bKash',4,'Dhaka Main','2026-07-13 05:21:15','2026-07-13 05:21:15'),(8,'INV-20260713-KM9P',NULL,1800.00,0.00,1800.00,1800.00,0.00,1800.00,0.00,'Cash',1,'Dhaka Main','2026-07-13 06:55:01','2026-07-13 06:55:01');
-/*!40000 ALTER TABLE `sales` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sales_details`
---
 
 DROP TABLE IF EXISTS `sales_details`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sales_details` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `sale_id` bigint unsigned NOT NULL,
-  `inventory_item_id` bigint unsigned NOT NULL,
-  `quantity` int NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `sale_id` bigint(20) unsigned NOT NULL,
+  `inventory_item_id` bigint(20) unsigned DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
   `sale_price` decimal(10,2) NOT NULL,
+  `purchase_price` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sales_details_sale_id_foreign` (`sale_id`),
   KEY `sales_details_inventory_item_id_foreign` (`inventory_item_id`),
-  CONSTRAINT `sales_details_inventory_item_id_foreign` FOREIGN KEY (`inventory_item_id`) REFERENCES `inventory_items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `sales_details_inventory_item_id_foreign` FOREIGN KEY (`inventory_item_id`) REFERENCES `inventory_items` (`id`) ON DELETE SET NULL,
   CONSTRAINT `sales_details_sale_id_foreign` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `sales_details`
---
 
-LOCK TABLES `sales_details` WRITE;
-/*!40000 ALTER TABLE `sales_details` DISABLE KEYS */;
-INSERT INTO `sales_details` VALUES (1,1,5,1,1850.00,'2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,1,7,1,2450.00,'2026-07-13 04:48:39','2026-07-13 04:48:39'),(3,2,6,2,650.00,'2026-07-13 04:48:39','2026-07-13 04:48:39'),(4,3,47,1,4500.00,'2026-07-13 04:50:28','2026-07-13 04:50:28'),(5,4,87,1,250.00,'2026-07-13 05:07:03','2026-07-13 05:07:03'),(6,5,77,1,450.00,'2026-07-13 05:17:56','2026-07-13 05:17:56'),(7,6,77,1,450.00,'2026-07-13 05:20:24','2026-07-13 05:20:24'),(8,7,87,1,250.00,'2026-07-13 05:21:15','2026-07-13 05:21:15'),(9,7,77,1,450.00,'2026-07-13 05:21:15','2026-07-13 05:21:15'),(10,7,37,1,1800.00,'2026-07-13 05:21:15','2026-07-13 05:21:15'),(11,7,57,1,2800.00,'2026-07-13 05:21:15','2026-07-13 05:21:15'),(12,8,37,1,1800.00,'2026-07-13 06:55:01','2026-07-13 06:55:01');
-/*!40000 ALTER TABLE `sales_details` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `services`
---
 
 DROP TABLE IF EXISTS `services`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `services` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `services`
---
 
-LOCK TABLES `services` WRITE;
-/*!40000 ALTER TABLE `services` DISABLE KEYS */;
-/*!40000 ALTER TABLE `services` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sessions`
---
 
 DROP TABLE IF EXISTS `sessions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sessions` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint unsigned DEFAULT NULL,
-  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_agent` text COLLATE utf8mb4_unicode_ci,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_activity` int NOT NULL,
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint(20) unsigned DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sessions_user_id_index` (`user_id`),
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `sessions`
---
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('0LlgrvArNXWN3zgVqSJMoH3yxolIYGNQtoJGq6dC', NULL, '43.130.110.130', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiczI2bk1TRnNIRlYwZlBYRXZsOFY3RGljMVlHUzNKS2p5NFkzaVRlUyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785183036');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('0NzRZIW1OzkbNdF825L0dbAIsxz9GBiKlC4Re5lx', NULL, '66.249.82.33', 'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36 Chrome-Lighthouse', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiR1FKS0NnRnNmV011VnRyU1JIWFdiMWQzRWNNd0hwTVowcG03NWl4cSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785220922');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('0sPlQmVoIs3hAUsCHRLhO3SFb7mH1y007xEezAYd', NULL, '43.153.76.247', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVU9hN2VqcExncGlZZjFxdExMNXdaamVnQkZ1V0t5bmx4aXV1aDhSTyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785211685');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('2aOtZamvIwE4noSBqgJ9dkkk0Ds9m3Q8TlDayKcx', NULL, '185.163.209.125', 'Mozilla/5.0 (X11; Linux i686; rv:109.0) Gecko/20100101 Firefox/120.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVHFTMUluTnQzWFl4QVNGSGZuWWF3OEJxWERxZWlGQkhFUnVUeWVKMCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785211380');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('2Ogxq5EU3Ogv5BaAM0wP9xe2LpYZ5pEnPPGy25eI', NULL, '43.165.170.119', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUUhRTXRhbUZKbzl2M3NVbnI2TkRDTXI5MlhsSXVmUklwRFZQdmZhMCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785201142');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('4UdvDPqHmxQsjTLtGiIsmUFotXiyPRkaYXCvSn2D', NULL, '66.249.66.164', 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiREVDak50MldzRXJGTmZsaDB3VnNWMHdPeWk2cEwwdkF6enE2RXMwRiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785194211');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('5G8yDAni8fvQUFn77qmcUwxD4oDiLzc2bNS9DEd1', NULL, '45.74.159.42', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieDRRMlltbjBpRklZQ2VMZkllaDVYU21VYUo1c2J1QjVPSVoxclREWiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785183214');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('5ZW3s69MCFN6NnFVP7zA1m2lxcSo41rvmPzVWZCk', NULL, '66.249.82.33', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Chrome-Lighthouse', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRUtaOXJlWFYyQ3VQQzhZZVF1NkIwVEdaVWREYTlUdzhsbVVhU1BnViI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785220923');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('6D5NZrHqmLGl12ncjVRsPiCefzqCJPbpgAvKmvma', NULL, '66.249.82.33', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36 Chrome-Lighthouse', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTUNvRHRMNjhMQXlBSHpGUFNGVkxzY1NiUGlOSGhyQ0tGdXhZUUhXeSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785220912');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('9n7iC62yVKJuG1W2GepP9spXim4H1mky75VdL0RT', NULL, '43.157.179.227', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVFIxNWl6SDZyRlhmTVQ3V0dVT1RzYWcwcnE2SlNlc05CRlRpRTBiQSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785215465');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('Aih1sPVc8wOB5DwXRrZsNUK6l6zDUGLpf3DrIbT9', NULL, '66.249.66.164', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZU5KTXVuY0gxdk5KSnQwVUtwRGl0V3Y2Z3ZOS2lpc3RrbWZRdFk1cyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785194211');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('aRALOqOJ2wyrwFXMCybh0kNZ2ub3OMJkk3uqCtVD', NULL, '43.130.150.80', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRzlXYUJDVUx2a01iaWRGeHhiZEVTUGpSa3Jha3pXS3huNWRJQ3g5USI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785207852');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('bwkwqOsoBaS9EjeXU3XMweEokrkJUQ4keqVvhUoY', NULL, '173.211.29.52', 'Mozilla/5.0 (X11; Linux i686; rv:109.0) Gecko/20100101 Firefox/120.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSXNyMFNjMktGdzlsQXdlNWcyTzFtSlp4NUFXR1p3UEFHeENLa2pkaiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785189792');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('csWfxLcTuupsw69uqm4PrICdG1KBz3fgu2naU29y', NULL, '113.31.186.196', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/601.1.27', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVXUzUmVVM1FCc0xnb29nVDUzZFRjdUdtVG0zcWJkNGs3bVUzOEVXYSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785188011');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('daoktCwndxOIYPcpyzGqZsGxfLFfD2nlUncGdWcX', NULL, '167.160.50.176', 'Mozilla/5.0 (X11; Linux i686; rv:109.0) Gecko/20100101 Firefox/120.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUEtaNUdudE9wRVdHRUFxYXc4Sk81UGdPSm5MYktTOWxUYXdIYmRBMSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785207769');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('DOCMUDyZU0bx06uQA5DDb2M6MrgoWJt2KJDZJ43W', NULL, '66.249.82.32', 'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36 Chrome-Lighthouse', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiY1VpMWE0YktSaVR6dU1veVJmSHBFVUEwWFdMUU0xYk5lYWQzZnlmbSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785220912');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('fZ4rQhfIod45pnOMWDCENQSbBzcpOH1r3FEAtoGC', NULL, '162.62.231.139', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRXN6NTVKakVVUkxLeVlKNHVJNjZybGtpN240bldkdDBCcnpVU2tLUSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785214296');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('g7HOhBezw6R7yPyUsDNVEJhbblzkQYMSefAkxw6M', NULL, '40.77.167.74', 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiV0dDMDE2N3NNZjJIdFRlMVB3TmdFYWdrakJBQ1ZDZ1E2OUN3dkYwWSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785177495');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('JSFrxwGR4LuWrJhFZw7g9gT09Jdfji6LKFM4Bsiz', NULL, '43.157.50.58', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZHFwSWMyVVhKM1p5SUJSdmxXSXljUmxTR3V6VE15RGM4RjZGUlk3SyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785200827');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('KI9HklMSmPQ9sNTlVSfbLklvcX9i6qxRGtAiDFXe', NULL, '180.153.236.22', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0; 360Spider', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic3RDQVF5akVxZ0FxZnVSNU13aG5YMEdtbVQ2MnlmVmN5RnpXalVIdiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785217696');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('lfYhJIzcl4YtKmknSE6aQucE8PJSP5DXId8QcK9C', NULL, '52.90.83.231', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.6 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidGZUUXZ4QVdhcjBXZ0tyZUlYNjJzWU5Fb1NVVzIwMmd3ZXB4NEk4MyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785218770');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('MMl7Ued17C4Vm6E4a55KQhRGWgfPwhySFKZIEBPE', NULL, '113.31.186.196', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.27 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/601.1.27', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZDliQ2ZlMVQwZkFMVGloak8zdkRhU3o3YzJ1MHJyMEtOR3d5ZE1yRyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785187817');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('MSKTNABESYaXqrQsg33e44EMtLbwIARBH8Led6jY', NULL, '52.55.234.237', 'Mozilla/5.0 (Linux; Android 16; SM-S921U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.7632.6 Mobile Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNDhTQmUyV3lqVkdZZDR2dmNRVm8zU3dXalpKQnpmeTJUZThDRkM1MSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785218758');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('NuRifLOy8EDKNVVv1mF9mXoX1cJzd8wpESUTFmmj', NULL, '43.153.74.75', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZlNPbTJqdWpIbUZEZW5iWnA2UzF4VzdLbWFKSHlvZXdXRExqeDNwWCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785200460');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('ofEEcK3XwCcUGHwZIfdHbnpOWmfI9T6USX6q5Vqn', NULL, '43.166.244.66', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZktKU2x2VkFhTGVZSlpBZ2lLaEoyWjNOSTd2R2pGdWVSR1JMajVpYyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785185831');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('OlidLekpt7CULRGG3boIM62koWecsslRR1drsbKk', NULL, '198.46.194.164', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieFRSVmxGMXlqSURSVU9ybWtSdktBVndjUDRFMlltMU9HMVB6SkY1OSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785218792');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('TSBnINO3yTGVrjR3fT7x7Z4czJcCn09W1dfaqFfJ', NULL, '43.165.170.119', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZEcyR045YnIxdGJDeWZsSG52TUNiM3gzNEFCQjRFRzJWR2t2RTFqeiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785183303');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('uqVHWzaaxjHzieSaeymgRxUAS2qZQr8lPy5Q0qhA', NULL, '40.77.167.30', 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWnJNRUhoZWhKS3hQYlJteWJxaXJ3ZkNScjBVUUhFNFVNeERpZkR4eCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785189538');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('UxYyppxEdVKvNj3JfYadk6vWQSSlBjbAF5Ldliir', NULL, '43.135.183.82', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMzE3VXRVVmp3MUk5VlBSdGJpbUlVZmhtMFBQQ2h4NjlYRVd2OWp2dSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785180706');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('v7DYUbCKomCiu6z6f44QcdwqsTNO9nGRdcoQwxkP', NULL, '111.230.233.46', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiaDhLVDV2dVRydGhVSjBCc3owRjE5eGVoWEkxa3h3SElxWTlObXJZUCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785190015');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('W6BbkDPd2sq9FQffDfQoYsu0uuyRhlguvKy52fNm', NULL, '49.51.72.76', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiM3NxNmFsWnNHS2JvRVExWU1WYTExcmxUUGVTcDg3Zkt0TmRBVWZvaCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjg6Imh0dHA6Ly93d3cubTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785208099');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('WhaoGO9GzSDQKZbTWTkOCaf0pEAorpK9Wv7SvcW9', NULL, '43.163.206.70', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoia2pFSDFqM2NEaDQ0VkgzN2RSUXlMMmFVa0UyZVo3Yk9DOWgzMko5UiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785197812');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('WOa0dITWFSfohg2yUYCS0IohS8s3XoBPBBIMiupg', NULL, '113.31.186.196', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.5) Gecko/20060831 Firefox/1.5.0.5', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSW5SSVBSS0I3MFNEcVRCUTFXUnNZY2x0VWhKbjFBRjFKU3l1V1BjWCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785187813');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('x5D0doT1WYk62OHo9uKmZeiH0mszGTBTIBII3JRE', NULL, '43.165.186.188', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYjdkdDZmUkVUS01EMmxSMnZaTDVNaHA2S3BKYkJpSUhtdHR5WE9OdSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785215198');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('xQH5nPRIuTjT8Lv41sM3de4kfrsfDDkAcwnELquw', NULL, '113.31.186.196', 'Dalvik/2.1.0 (Linux; U; Android 9.0; ZTE BA520 Build/MRA58K)', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNldkZmM1YkJmd2tDejY2NW1GSXZKQk5NRldOdDJLY2dJeG9YZDR1NSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785188000');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('ziAMWl12LSHHuPnht0TWMo0npYhj3vPMESLwEXqm', NULL, '113.31.186.196', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.3) Gecko/20041007 Debian/1.7.3-5', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiN21Oc3pIQkpwdTA4ZGg3dWZZUUlZNFJZZHdyQlNkOHh3WTlUeDVPeiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjU6Imh0dHBzOi8vbTNtb2JpbGVjYXJlcy5jb20iO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785187526');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('zsoGa6TXV3JS9grwVgheg2yqbOhryXl2iNGxy57T', NULL, '110.42.208.131', 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSHJxSzcxVGlxUFc3dGtrNElabG9nSTN6azAwWVhoWjk0RWFrYUxRdiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbSI7czo1OiJyb3V0ZSI7czo0OiJob21lIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', '1785208430');
+INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES ('ZvpO6Ji7lizUKX2bkCidJIl8GpDNvfbS7A38Opif', NULL, '34.74.3.71', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYThLbmlIczQ5VHpnZ0VRdlJKb2dCcWQwR0l3d1FhSlpZOGhlb3BCSSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzQ6Imh0dHA6Ly9tM21vYmlsZWNhcmVzLmNvbS8/YXV0aG9yPTIiO3M6NToicm91dGUiO3M6NDoiaG9tZSI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', '1785184072');
 
-LOCK TABLES `sessions` WRITE;
-/*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('72GXrEfnzZ8WkAnigQ14EfTz9NOLVUvI98MgCdUR',1,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','YTo0OntzOjY6Il90b2tlbiI7czo0MDoiRWxZUUFSeXNYT1BkRmZqYkdNSjhmN0JmSDF6WVJvcHQ1bTg2bmt1WiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHBzOi8vbTMtbW9iaWxlLWNhcmUudGVzdC9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6OToiZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9',1784008611),('v0bOZ11ZycCV6Ai8MlKwxUUiRCwzatuROeTkv4et',NULL,'127.0.0.1','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36','YTozOntzOjY6Il90b2tlbiI7czo0MDoiY0V6amthcXZUQmlhbHpKTGpneU1XbkNtaDNQY2cyY3F3MEh5Wm5pNyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzI6Imh0dHA6Ly9tMy1tb2JpbGUtY2FyZS50ZXN0L2xvZ2luIjtzOjU6InJvdXRlIjtzOjU6ImxvZ2luIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==',1784008539);
-/*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `settings`
---
 
 DROP TABLE IF EXISTS `settings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `settings` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) NOT NULL,
+  `value` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `settings_key_unique` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `settings`
---
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('1', 'shop_name', 'M3 Mobile Care', '2026-07-13 10:48:39', '2026-07-13 10:48:39');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('2', 'shop_slogan', 'Premium Mobile Repair & Retail', '2026-07-13 10:48:39', '2026-07-13 10:48:39');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('3', 'phone', '+880 1712-345678', '2026-07-13 10:48:39', '2026-07-13 10:48:39');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('4', 'email', 'info@m3mobilecare.com', '2026-07-13 10:48:39', '2026-07-13 10:48:39');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('5', 'address', 'Goffar Market, Ranisankail, Thakurgoan', '2026-07-13 10:48:39', '2026-07-16 06:49:58');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('6', 'receipt_footer', 'TERMS & CONDITIONS:\r\n1. 30 Days warranty on replaced spare parts (Except liquid/physical damage).\r\n2. No warranty on software flash or touch calibration adjustment.\r\n3. Please collect device within 30 days of repair completion.\r\n4. Show repair slip for pickup.', '2026-07-13 10:48:39', '2026-07-16 06:49:58');
+INSERT INTO `settings` (`id`, `key`, `value`, `created_at`, `updated_at`) VALUES ('7', 'logo', 'settings/I0as1qdRCF2NgwYKeC32FVB33dunlVGITtscTk1v.png', '2026-07-16 06:49:58', '2026-07-16 06:49:58');
 
-LOCK TABLES `settings` WRITE;
-/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'shop_name','M3 Mobile Care','2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,'shop_slogan','Premium Mobile Repair & Retail','2026-07-13 04:48:39','2026-07-13 04:48:39'),(3,'phone','+880 1712-345678','2026-07-13 04:48:39','2026-07-13 04:48:39'),(4,'email','info@m3mobilecare.com','2026-07-13 04:48:39','2026-07-13 04:48:39'),(5,'address','Shop 14, Level 3, Multiplan Center, Elephant Road, Dhaka','2026-07-13 04:48:39','2026-07-13 04:48:39'),(6,'receipt_footer','TERMS & CONDITIONS:\n1. 30 Days warranty on replaced spare parts (Except liquid/physical damage).\n2. No warranty on software flash or touch calibration adjustment.\n3. Please collect device within 30 days of repair completion.\n4. Show repair slip for pickup.','2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `social_posts`
---
 
 DROP TABLE IF EXISTS `social_posts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `social_posts` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `platform` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `media_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `platform` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `media_path` varchar(255) DEFAULT NULL,
   `scheduled_at` datetime DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
-  `reach` int NOT NULL DEFAULT '0',
-  `engagement` int NOT NULL DEFAULT '0',
+  `status` varchar(255) NOT NULL DEFAULT 'draft',
+  `reach` int(11) NOT NULL DEFAULT 0,
+  `engagement` int(11) NOT NULL DEFAULT 0,
   `published_at` datetime DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `social_posts`
---
+INSERT INTO `social_posts` (`id`, `platform`, `content`, `media_path`, `scheduled_at`, `status`, `reach`, `engagement`, `published_at`, `created_at`, `updated_at`) VALUES ('1', 'Facebook', '🔥 আমাদের সার্ভিস সেন্টারে যুক্ত হলো SOFTOP-7060PRO\r\n\r\nভালো সার্ভিস দেওয়ার জন্য শুধু দক্ষ টেকনিশিয়ানই যথেষ্ট নয়—প্রয়োজন আধুনিক ও নির্ভুল ইকুইপমেন্ট।\r\n\r\nতাই M3 Mobile Care-এ আমরা যুক্ত করেছি SOFTOP-7060PRO, যা প্রফেশনাল মোবাইল রিপেয়ারের জন্য অত্যাধুনিক একটি ইকুইপমেন্ট।\r\n\r\nএর মাধ্যমে আমরা নিশ্চিত করতে পারবো—\r\n\r\n✅ আরও নিরাপদ ও নিখুঁত রিপেয়ার\r\n✅ সংবেদনশীল পার্টসে কম ঝুঁকিতে কাজ\r\n✅ দ্রুত ও প্রফেশনাল সার্ভিস\r\n✅ আন্তর্জাতিক মানের রিপেয়ার প্রক্রিয়া\r\n\r\nআমরা এখনও আমাদের সার্ভিস সেন্টার চালুর প্রস্তুতি নিচ্ছি। শুরু থেকেই আপনাদের আস্থা অর্জনের লক্ষ্যেই আমরা একে একে যুক্ত করছি বিশ্বমানের টুলস ও প্রযুক্তি।\r\n\r\nM3 Mobile Care\r\nQuick Fix, Long-Term Trust.', 'social/8lXWczVkApj6D26waGjiMTifidchGRIgIyjhC2QJ.png', '2026-07-27 20:30:00', 'published', '8198', '444', '2026-07-27 09:44:21', '2026-07-27 09:32:23', '2026-07-27 09:44:21');
 
-LOCK TABLES `social_posts` WRITE;
-/*!40000 ALTER TABLE `social_posts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `social_posts` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `suppliers`
---
 
 DROP TABLE IF EXISTS `suppliers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `suppliers` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `address` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `suppliers`
---
+INSERT INTO `suppliers` (`id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES ('2', 'Hakim Telecom', '01924915598', '4/42,(4th Floor) ulisthan Shopping Complex (Hall Market),2.B.B Avenue Dhaka-1200', '2026-07-21 10:34:30', '2026-07-21 10:34:30');
+INSERT INTO `suppliers` (`id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES ('4', 'অরহান টেলিকম', '01933-098338, 01300-449305, 01315-161507', '3/125 Gulisthan shopping comlex', '2026-07-21 11:05:59', '2026-07-21 11:05:59');
+INSERT INTO `suppliers` (`id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES ('5', 'সাকিব টেলিকম', '01721-120351, 01646-363418', '3/169/70 Gulistan Shopping Complex', '2026-07-21 11:08:17', '2026-07-21 11:08:17');
+INSERT INTO `suppliers` (`id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES ('6', 'Hridoy Telecom', '01976-355439, 01988-893166', '4/93,94 Glistan shopping complex', '2026-07-21 11:10:12', '2026-07-21 11:10:12');
+INSERT INTO `suppliers` (`id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES ('7', 'সামির টেলিকম', '01647-267639, 01930-955392', '3/160 Gulistan Shopping complex', '2026-07-21 11:12:45', '2026-07-21 11:12:45');
 
-LOCK TABLES `suppliers` WRITE;
-/*!40000 ALTER TABLE `suppliers` DISABLE KEYS */;
-INSERT INTO `suppliers` VALUES (1,'Dhaka Parts Depot','01988888888','Motijheel C/A, Dhaka','2026-07-13 04:48:39','2026-07-13 04:48:39'),(2,'Smart Accessories Co.','01877777777','Chawkbazar, Dhaka','2026-07-13 04:48:39','2026-07-13 04:48:39');
-/*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
 
 DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'technician',
-  `permissions` json DEFAULT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `skill_level` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `experience` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `branch` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` varchar(255) NOT NULL DEFAULT 'technician',
+  `permissions` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`permissions`)),
+  `phone` varchar(255) DEFAULT NULL,
+  `skill_level` varchar(255) DEFAULT NULL,
+  `experience` varchar(255) DEFAULT NULL,
+  `branch` varchar(255) DEFAULT NULL,
+  `avatar` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `users`
---
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `permissions`, `phone`, `skill_level`, `experience`, `branch`, `avatar`, `is_active`, `remember_token`, `created_at`, `updated_at`) VALUES ('1', 'M3 Super Admin', 'admin@m3mobile.com', NULL, '$2y$12$D/ufcxJVpNxP.fw4HcShvemYSdd2Wge3akbxDBQ3X.FUZDdqEu9/S', 'super_admin', NULL, '01700000001', 'Master Technician', '8 years', 'Dhaka Main', NULL, '1', NULL, '2026-07-13 10:48:38', '2026-07-27 09:41:11');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `permissions`, `phone`, `skill_level`, `experience`, `branch`, `avatar`, `is_active`, `remember_token`, `created_at`, `updated_at`) VALUES ('2', 'Munna Technician Enginner', 'tech@m3mobile.com', NULL, '$2y$12$XUE/mFBbsbnkecL.tRHcYeguJZ0v8VGSxfjsC7jB6F5m7FtmFRSgm', 'technician', '{\"pos\":false,\"repairs\":false,\"inventory\":false,\"purchases\":false,\"expenses\":false,\"reports\":false,\"settings\":false,\"social_media\":false,\"cash\":false}', '01700000002', NULL, '4 years', 'M3MobileCare', 'avatars/hsLHVsETMpUW1hQYafmfGTpYlIKPKf8McmalmyfL.jpg', '1', NULL, '2026-07-13 10:48:38', '2026-07-16 06:54:20');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `permissions`, `phone`, `skill_level`, `experience`, `branch`, `avatar`, `is_active`, `remember_token`, `created_at`, `updated_at`) VALUES ('5', 'Munna Raihan', 'munna@m3mobilecares.com', NULL, '$2y$12$pj1GhOWccSSZhuXFWagi3eYGuP9WxHCEojK.w37WQfwvMrFgpcCdC', 'admin', '{\"pos\":true,\"repairs\":true,\"inventory\":true,\"purchases\":true,\"expenses\":true,\"reports\":false,\"settings\":false,\"social_media\":false,\"cash\":true}', '+880 1722-273918', NULL, NULL, 'M3MobileCare', 'avatars/o5M02HICIxWtFuHEgNH7lY5QkZDZ69VwOkv3SnGR.jpg', '1', 'urLmFavabOrCj06d1wFRnnGG0rOyesZG2EKYyJoatDen1qupBSVrhaxRmQpJ', '2026-07-13 10:48:39', '2026-07-16 13:27:34');
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `permissions`, `phone`, `skill_level`, `experience`, `branch`, `avatar`, `is_active`, `remember_token`, `created_at`, `updated_at`) VALUES ('6', 'emon', 'emon@gmail.com', NULL, '$2y$12$soQyCbpYTVYiJ6OlwqCTFu4cWXiXcD6QLMcOVP4YJJvEDN/KLKpiy', 'admin', '{\"pos\":false,\"repairs\":false,\"inventory\":false,\"purchases\":false,\"expenses\":false,\"reports\":false,\"settings\":false,\"social_media\":true,\"cash\":false}', NULL, 'Level 1 - Basic Diagnostics', NULL, NULL, NULL, '1', '1ksAJo816lia424X5cA3QF33isQVkTAkMgL7LCKyclAZQone4hb8f7Ki81Sj', '2026-07-16 08:08:51', '2026-07-27 09:37:25');
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'M3 Super Admin','admin@m3mobile.com',NULL,'$2y$12$f3lq1oFMHUzgEJhRFQfe5uZOlY9tu1pN5iijJXi2MTBkKLaWs95lq','super_admin',NULL,'01700000001','Master Technician','8 years','Dhaka Main',NULL,NULL,'2026-07-13 04:48:38','2026-07-13 04:48:38'),(2,'John Technician','tech@m3mobile.com',NULL,'$2y$12$XUE/mFBbsbnkecL.tRHcYeguJZ0v8VGSxfjsC7jB6F5m7FtmFRSgm','technician',NULL,'01700000002','Senior Technician (Level 2)','4 years','Dhaka Main',NULL,NULL,'2026-07-13 04:48:38','2026-07-13 04:48:38'),(3,'Abir Tech','abir@m3mobile.com',NULL,'$2y$12$aa1dr6haThazr3e2otRL2OJ4PbA8z0oFMgdH98OpejLkom7IruK1y','technician',NULL,'01700000003','Junior Technician (Level 1)','1.5 years','Dhaka Main',NULL,NULL,'2026-07-13 04:48:38','2026-07-13 04:48:38'),(4,'Kamal Salesman','sales@m3mobile.com',NULL,'$2y$12$czUL2b/JrqlXW2RiqMFNIu5y.C1h0QfnhWshcthCpvPB3aDWN6Phu','salesman','{\"pos\": true, \"cash\": true, \"repairs\": true, \"reports\": false, \"expenses\": false, \"settings\": false, \"inventory\": false, \"purchases\": false, \"social_media\": false}','01700000004',NULL,NULL,'Dhaka Main',NULL,NULL,'2026-07-13 04:48:38','2026-07-13 07:06:17'),(5,'Manager Admin','manager@m3mobile.com',NULL,'$2y$12$dvL1WnU/NkiH1dAG2ABTi.c3bkgUU8Eh/Hb5BSml35AosAWtOEFb2','admin','{\"pos\": false, \"cash\": true, \"repairs\": false, \"reports\": true, \"expenses\": true, \"settings\": false, \"inventory\": true, \"purchases\": false, \"social_media\": false}','01700000005',NULL,NULL,'Dhaka Main',NULL,NULL,'2026-07-13 04:48:39','2026-07-13 07:05:36');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-07-14 12:15:29
+SET FOREIGN_KEY_CHECKS=1;

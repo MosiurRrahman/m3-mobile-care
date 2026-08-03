@@ -1,2 +1,12 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /book
+Allow: /track
+Disallow: /admin/
+Disallow: /login
+Disallow: /logout
+Disallow: /track-ajax
+Disallow: /user/
+Disallow: /storage/*.php
+
+Sitemap: https://m3mobilecares.com/sitemap.xml

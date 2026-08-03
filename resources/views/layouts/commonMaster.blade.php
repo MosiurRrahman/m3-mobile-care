@@ -42,15 +42,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#060913" />
 
   <title>@yield('title', config('variables.templateName') . ' - ' . config('variables.templateSuffix'))</title>
   <meta name="description" content="@yield('meta_description', config('variables.templateDescription'))" />
   <meta name="keywords" content="@yield('meta_keywords', config('variables.templateKeyword'))" />
   <meta name="author" content="{{ config('variables.creatorName') }}" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="robots" content="@yield('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')" />
+
+  <!-- Local SEO Geo Meta Tags -->
+  <meta name="geo.region" content="BD-13" />
+  <meta name="geo.placename" content="Dhaka" />
+  <meta name="geo.position" content="23.8103;90.4125" />
+  <meta name="ICBM" content="23.8103, 90.4125" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:title" content="@yield('og_title', config('variables.ogTitle'))" />
   <meta property="og:description" content="@yield('og_description', config('variables.templateDescription'))" />
   <meta property="og:url" content="{{ url()->current() }}" />
@@ -68,11 +76,18 @@
   
   <!-- Canonical SEO -->
   <link rel="canonical" href="{{ url()->current() }}" />
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
+
+  <!-- Preconnect for CDNs and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Favicon Icons for All Devices -->
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/branding/logo-light-icon.png') }}?v=2" />
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/branding/logo-light-icon.png') }}?v=2" />
+  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/img/branding/logo-light-icon.png') }}?v=2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/branding/logo-light-icon.png') }}?v=2" />
 
   <!-- Include Styles -->
-  <!-- $isFront is used to append the front layout styles only on the front layout otherwise the variable will be blank -->
   @include('layouts/sections/styles' . $isFront)
 
   @if (
@@ -87,8 +102,9 @@
   @endif
 
   <!-- Include Scripts for customizer, helper, analytics, config -->
-  <!-- $isFront is used to append the front layout scriptsIncludes only on the front layout otherwise the variable will be blank -->
   @include('layouts/sections/scriptsIncludes' . $isFront)
+
+  @yield('head_extra')
 </head>
 
 <body>
@@ -96,10 +112,7 @@
   @yield('layoutContent')
   <!--/ Layout Content -->
 
-  
-
   <!-- Include Scripts -->
-  <!-- $isFront is used to append the front layout scripts only on the front layout otherwise the variable will be blank -->
   @include('layouts/sections/scripts' . $isFront)
 </body>
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Repair;
 use App\Models\Service;
 use App\Models\Customer;
+use App\Models\InventoryItem;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -44,7 +46,23 @@ class HomeController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        return view('home', compact('repair', 'searched', 'recentRepairs', 'repairsByStatus'));
+        // E-Commerce Inventory Products
+        $inventoryProducts = InventoryItem::where('quantity', '>', 0)
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // Dynamic Real Shop Settings from Database
+        $shopSettings = [
+            'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
+            'shop_slogan' => Setting::get('shop_slogan', 'Premium Mobile Repair & Retail'),
+            'phone' => Setting::get('phone', '+880 1712-345678'),
+            'email' => Setting::get('email', 'info@m3mobilecare.com'),
+            'address' => Setting::get('address', 'Goffar Market, Ranisankail, Thakurgoan'),
+            'logo' => Setting::get('logo'),
+        ];
+
+        return view('home', compact('repair', 'searched', 'recentRepairs', 'repairsByStatus', 'inventoryProducts', 'shopSettings'));
     }
 
     /**

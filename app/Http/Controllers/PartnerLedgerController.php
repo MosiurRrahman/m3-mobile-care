@@ -341,9 +341,9 @@ class PartnerLedgerController extends Controller
                 ]);
             }
 
-            // Log general outflow in the shop's cash register ledger
+            // Log outflow in cash register with explicit Partner Withdrawal category and withdraw type
             Expense::create([
-                'category' => 'Other',
+                'category' => 'Partner Withdrawal',
                 'amount' => $amount,
                 'description' => "Partner " . ucfirst($accountType) . " Withdrawal: {$partnerName}. Note: {$desc}",
                 'expense_date' => now()->toDateString(),
