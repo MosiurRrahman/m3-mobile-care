@@ -25,29 +25,42 @@
     <?php endif; ?>
 
     <!-- Filters Block -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form action="<?php echo e(route('admin.cash.index')); ?>" method="GET" class="row g-3 align-items-end">
-                <div class="col-md-3 col-sm-6">
-                    <label class="form-label fw-semibold" for="start_date">From Date</label>
-                    <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo e($startDate); ?>">
+    <?php if(!auth()->user()->isSuperAdmin() && !auth()->user()->isAdmin()): ?>
+        <div class="card border-0 shadow-sm mb-4 bg-primary bg-opacity-10 border-start border-4 border-primary">
+            <div class="card-body d-flex align-items-center justify-content-between py-3">
+                <div class="d-flex align-items-center">
+                    <div class="p-2 bg-primary text-white rounded-3 me-3">
+                        <i class="ti tabler-calendar-event fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-0">Today's Live Counter Cash Register</h6>
+                        <span class="small text-muted">Date: <strong><?php echo e(\Carbon\Carbon::parse($startDate)->format('d M, Y (l)')); ?></strong> &bull; Counter Register: <strong><?php echo e(strtoupper($registerType)); ?> Cash</strong></span>
+                    </div>
                 </div>
-                <div class="col-md-3 col-sm-6">
-                    <label class="form-label fw-semibold" for="end_date">To Date</label>
-                    <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo e($endDate); ?>">
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <label class="form-label fw-semibold" for="payment_method">Account / Payment Method</label>
-                    <select name="payment_method" id="payment_method" class="form-select">
-                        <option value="Cash" <?php echo e($paymentMethod == 'Cash' ? 'selected' : ''); ?>>Cash (Drawer/Hand)</option>
-                        <option value="bKash" <?php echo e($paymentMethod == 'bKash' ? 'selected' : ''); ?>>bKash Account</option>
-                        <option value="Card" <?php echo e($paymentMethod == 'Card' ? 'selected' : ''); ?>>Card Transactions</option>
-                    </select>
-                </div>
-                
-                <?php if(auth()->user()->isSalesman()): ?>
-                    <input type="hidden" name="register_type" value="pos">
-                <?php else: ?>
+                <span class="badge bg-primary px-3 py-2 fs-7"><i class="ti tabler-point-filled me-1 text-success"></i>Live Counter Mode</span>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <form action="<?php echo e(route('admin.cash.index')); ?>" method="GET" class="row g-3 align-items-end">
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label fw-semibold" for="start_date">From Date</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo e($startDate); ?>">
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label fw-semibold" for="end_date">To Date</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo e($endDate); ?>">
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label fw-semibold" for="payment_method">Account / Payment Method</label>
+                        <select name="payment_method" id="payment_method" class="form-select">
+                            <option value="Cash" <?php echo e($paymentMethod == 'Cash' ? 'selected' : ''); ?>>Cash (Drawer/Hand)</option>
+                            <option value="bKash" <?php echo e($paymentMethod == 'bKash' ? 'selected' : ''); ?>>bKash Account</option>
+                            <option value="Card" <?php echo e($paymentMethod == 'Card' ? 'selected' : ''); ?>>Card Transactions</option>
+                        </select>
+                    </div>
+                    
                     <div class="col-md-3 col-sm-6">
                         <label class="form-label fw-semibold" for="register_type">Register / Cash Type</label>
                         <select name="register_type" id="register_type" class="form-select">
@@ -56,26 +69,26 @@
                             <option value="service" <?php echo e($registerType == 'service' ? 'selected' : ''); ?>>Mobile Servicing Only</option>
                         </select>
                     </div>
-                <?php endif; ?>
-                
-                <div class="col-md-8">
-                    <?php if($paymentMethod === 'Cash'): ?>
-                    <div class="form-check form-switch mt-2">
-                        <input class="form-check-input" type="checkbox" name="include_expenses" id="include_expenses" value="1" <?php echo e($includeExpenses ? 'checked' : ''); ?>>
-                        <label class="form-check-label fw-semibold text-muted" for="include_expenses">
-                            Include Business Expenses (Subtract outflow from this balance)
-                        </label>
+                    
+                    <div class="col-md-8">
+                        <?php if($paymentMethod === 'Cash'): ?>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" name="include_expenses" id="include_expenses" value="1" <?php echo e($includeExpenses ? 'checked' : ''); ?>>
+                            <label class="form-check-label fw-semibold text-muted" for="include_expenses">
+                                Include Business Expenses (Subtract outflow from this balance)
+                            </label>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php endif; ?>
-                </div>
-                
-                <div class="col-md-4 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100"><i class="ti tabler-filter me-1"></i>Filter</button>
-                    <a href="<?php echo e(route('admin.cash.index')); ?>" class="btn btn-outline-secondary w-100">Reset</a>
-                </div>
-            </form>
+                    
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="ti tabler-filter me-1"></i>Filter</button>
+                        <a href="<?php echo e(route('admin.cash.index')); ?>" class="btn btn-outline-secondary w-100">Reset</a>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <!-- Summary KPI Cards -->
     <div class="row mb-4">
@@ -154,6 +167,11 @@
                 <?php endif; ?>
             </h5>
             <div class="d-flex align-items-center gap-2">
+                <?php if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin()): ?>
+                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#recordInflowModal">
+                    <i class="ti tabler-plus me-1"></i>Record Cash Deposit
+                </button>
+                <?php endif; ?>
                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#recordOutflowModal">
                     <i class="ti tabler-minus me-1"></i>Record Outflow
                 </button>
@@ -286,6 +304,65 @@
         </div>
     </div>
 </div>
+
+<!-- Record Inflow / Cash Deposit Modal -->
+<?php if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin()): ?>
+<div class="modal fade" id="recordInflowModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold text-success"><i class="ti tabler-arrow-up-right me-1"></i>Record Cash Deposit / Float</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="<?php echo e(route('admin.cash.inflow')); ?>" method="POST">
+                <?php echo csrf_field(); ?>
+                <div class="modal-body">
+                    <?php if(auth()->user()->isSalesman()): ?>
+                        <input type="hidden" name="register_type" value="pos">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Cash Register Target</label>
+                            <input type="text" class="form-control bg-light" value="POS Cash Register" readonly>
+                        </div>
+                    <?php else: ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="register_type_inflow">Cash Register Target</label>
+                            <select name="register_type" id="register_type_inflow" class="form-select" required>
+                                <option value="pos" <?php echo e($registerType == 'pos' ? 'selected' : ''); ?>>POS Cash Register</option>
+                                <option value="service" <?php echo e($registerType == 'service' ? 'selected' : ''); ?>>Mobile Servicing Cash Register</option>
+                                <option value="general" <?php echo e($registerType == 'combined' ? 'selected' : ''); ?>>General / Other Cash Drawer</option>
+                            </select>
+                        </div>
+                    <?php endif; ?>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="inflow_category">Deposit Type / Category</label>
+                        <select name="category" id="inflow_category" class="form-select" required>
+                            <option value="Cash Deposit">Owner Cash Deposit / Injection</option>
+                            <option value="Opening Float">Opening Counter Cash (Float)</option>
+                            <option value="Other Inflow">Other Cash Inflow</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="inflow_amount">Amount (BDT) *</label>
+                        <input type="number" name="amount" id="inflow_amount" class="form-control" step="0.01" min="0.01" placeholder="e.g. 5000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="inflow_expense_date">Date *</label>
+                        <input type="date" name="expense_date" id="inflow_expense_date" class="form-control" value="<?php echo e(date('Y-m-d')); ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="inflow_description">Description / Purpose</label>
+                        <textarea name="description" id="inflow_description" class="form-control" rows="3" placeholder="e.g. Starting counter cash from owner"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Confirm Deposit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts/layoutMaster', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH E:\laragon\www\m3-mobile-care\resources\views/cash/index.blade.php ENDPATH**/ ?>

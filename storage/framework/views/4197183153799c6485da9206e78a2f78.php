@@ -41,37 +41,53 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#060913" />
 
-  <title>
-    <?php echo $__env->yieldContent('title'); ?> | <?php echo e(config('variables.templateName') ? config('variables.templateName') : 'TemplateName'); ?>
+  <title><?php echo $__env->yieldContent('title', config('variables.templateName') . ' - ' . config('variables.templateSuffix')); ?></title>
+  <meta name="description" content="<?php echo $__env->yieldContent('meta_description', config('variables.templateDescription')); ?>" />
+  <meta name="keywords" content="<?php echo $__env->yieldContent('meta_keywords', config('variables.templateKeyword')); ?>" />
+  <meta name="author" content="<?php echo e(config('variables.creatorName')); ?>" />
+  <meta name="robots" content="<?php echo $__env->yieldContent('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'); ?>" />
 
-    - <?php echo e(config('variables.templateSuffix') ? config('variables.templateSuffix') : 'TemplateSuffix'); ?>
+  <!-- Local SEO Geo Meta Tags -->
+  <meta name="geo.region" content="BD-13" />
+  <meta name="geo.placename" content="Dhaka" />
+  <meta name="geo.position" content="23.8103;90.4125" />
+  <meta name="ICBM" content="23.8103, 90.4125" />
 
-  </title>
-  <meta name="description"
-    content="<?php echo e(config('variables.templateDescription') ? config('variables.templateDescription') : ''); ?>" />
-  <meta name="keywords"
-    content="<?php echo e(config('variables.templateKeyword') ? config('variables.templateKeyword') : ''); ?>" />
-  <meta property="og:title" content="<?php echo e(config('variables.ogTitle') ? config('variables.ogTitle') : ''); ?>" />
-  <meta property="og:type" content="<?php echo e(config('variables.ogType') ? config('variables.ogType') : ''); ?>" />
-  <meta property="og:url" content="<?php echo e(config('variables.productPage') ? config('variables.productPage') : ''); ?>" />
-  <meta property="og:image" content="<?php echo e(config('variables.ogImage') ? config('variables.ogImage') : ''); ?>" />
-  <meta property="og:description"
-    content="<?php echo e(config('variables.templateDescription') ? config('variables.templateDescription') : ''); ?>" />
-  <meta property="og:site_name"
-    content="<?php echo e(config('variables.creatorName') ? config('variables.creatorName') : ''); ?>" />
-  <meta name="robots" content="noindex, nofollow" />
-  <!-- laravel CRUD token -->
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="<?php echo $__env->yieldContent('og_title', config('variables.ogTitle')); ?>" />
+  <meta property="og:description" content="<?php echo $__env->yieldContent('og_description', config('variables.templateDescription')); ?>" />
+  <meta property="og:url" content="<?php echo e(url()->current()); ?>" />
+  <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', config('variables.ogImage')); ?>" />
+  <meta property="og:site_name" content="<?php echo e(config('variables.creatorName')); ?>" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<?php echo $__env->yieldContent('og_title', config('variables.ogTitle')); ?>" />
+  <meta name="twitter:description" content="<?php echo $__env->yieldContent('og_description', config('variables.templateDescription')); ?>" />
+  <meta name="twitter:image" content="<?php echo $__env->yieldContent('og_image', config('variables.ogImage')); ?>" />
+
+  <!-- CSRF Token -->
   <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+  
   <!-- Canonical SEO -->
-  <link rel="canonical" href="<?php echo e(config('variables.productPage') ? config('variables.productPage') : ''); ?>" />
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="<?php echo e(asset('assets/img/favicon/favicon.ico')); ?>" />
+  <link rel="canonical" href="<?php echo e(url()->current()); ?>" />
+
+  <!-- Preconnect for CDNs and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Favicon Icons for All Devices -->
+  <link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/branding/logo-light-icon.png')); ?>?v=2" />
+  <link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/branding/logo-light-icon.png')); ?>?v=2" />
+  <link rel="shortcut icon" type="image/x-icon" href="<?php echo e(asset('assets/img/branding/logo-light-icon.png')); ?>?v=2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('assets/img/branding/logo-light-icon.png')); ?>?v=2" />
 
   <!-- Include Styles -->
-  <!-- $isFront is used to append the front layout styles only on the front layout otherwise the variable will be blank -->
   <?php echo $__env->make('layouts/sections/styles' . $isFront, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
   <?php if(
@@ -87,8 +103,9 @@
   <?php endif; ?>
 
   <!-- Include Scripts for customizer, helper, analytics, config -->
-  <!-- $isFront is used to append the front layout scriptsIncludes only on the front layout otherwise the variable will be blank -->
   <?php echo $__env->make('layouts/sections/scriptsIncludes' . $isFront, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+  <?php echo $__env->yieldContent('head_extra'); ?>
 </head>
 
 <body>
@@ -96,10 +113,7 @@
   <?php echo $__env->yieldContent('layoutContent'); ?>
   <!--/ Layout Content -->
 
-  
-
   <!-- Include Scripts -->
-  <!-- $isFront is used to append the front layout scripts only on the front layout otherwise the variable will be blank -->
   <?php echo $__env->make('layouts/sections/scripts' . $isFront, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </body>
 

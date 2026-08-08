@@ -10,9 +10,51 @@
             <h4 class="fw-bold mb-0">Expense Management</h4>
             <span class="text-muted small">Log shop rent, utility bills, employee salaries, and stock purchase costs</span>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-            <i class="ti tabler-plus me-1"></i>Log New Expense
-        </button>
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="exportExpensesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ti tabler-download me-1"></i>Export Data
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="exportExpensesDropdown">
+                    <li class="dropdown-header text-uppercase fs-9 text-muted fw-bold">Quick Presets (CSV)</li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.excel', array_merge(request()->query(), ['period' => 'this_week']))); ?>">
+                            <i class="ti tabler-calendar-week me-2 text-primary"></i>This Week CSV
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.excel', array_merge(request()->query(), ['period' => 'last_week']))); ?>">
+                            <i class="ti tabler-calendar-time me-2 text-info"></i>Last Week CSV
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.excel', array_merge(request()->query(), ['period' => 'this_month']))); ?>">
+                            <i class="ti tabler-calendar me-2 text-success"></i>This Month CSV
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.excel', array_merge(request()->query(), ['period' => 'last_month']))); ?>">
+                            <i class="ti tabler-calendar-stats me-2 text-warning"></i>Last Month CSV
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="dropdown-header text-uppercase fs-9 text-muted fw-bold">Current Filtered Export</li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.excel', request()->query())); ?>">
+                            <i class="ti tabler-file-spreadsheet me-2 text-success"></i>Current View CSV
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="<?php echo e(route('admin.expenses.export.pdf', request()->query())); ?>" target="_blank">
+                            <i class="ti tabler-file-text me-2 text-danger"></i>Export / Print PDF
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+                <i class="ti tabler-plus me-1"></i>Log New Expense
+            </button>
+        </div>
     </div>
 
     <!-- Alert Notifications -->
@@ -66,15 +108,16 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input type="month" name="month" class="form-control form-control-sm" value="<?php echo e(request('month')); ?>">
+                        <select name="period" class="form-select form-select-sm">
+                            <option value="">Quick Presets</option>
+                            <option value="this_week" <?php echo e(request('period') == 'this_week' ? 'selected' : ''); ?>>This Week</option>
+                            <option value="last_week" <?php echo e(request('period') == 'last_week' ? 'selected' : ''); ?>>Last Week</option>
+                            <option value="this_month" <?php echo e(request('period') == 'this_month' ? 'selected' : ''); ?>>This Month</option>
+                            <option value="last_month" <?php echo e(request('period') == 'last_month' ? 'selected' : ''); ?>>Last Month</option>
+                        </select>
                     </div>
                     <div class="col-md-2">
-                        <select name="per_page" class="form-select form-select-sm">
-                            <option value="10" <?php echo e(request('per_page', '10') == '10' ? 'selected' : ''); ?>>10 / Page</option>
-                            <option value="25" <?php echo e(request('per_page') == '25' ? 'selected' : ''); ?>>25 / Page</option>
-                            <option value="50" <?php echo e(request('per_page') == '50' ? 'selected' : ''); ?>>50 / Page</option>
-                            <option value="100" <?php echo e(request('per_page') == '100' ? 'selected' : ''); ?>>100 / Page</option>
-                        </select>
+                        <input type="month" name="month" class="form-control form-control-sm" value="<?php echo e(request('month')); ?>" title="Pick Any Specific Month">
                     </div>
                     <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-sm btn-primary w-100"><i class="ti tabler-search me-0.5"></i>Filter</button>
