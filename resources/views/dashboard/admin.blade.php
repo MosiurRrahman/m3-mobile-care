@@ -503,6 +503,18 @@
                         </tbody>
                     </table>
                 </div>
+                @if($recentActivities->hasPages())
+                <div class="card-footer bg-transparent border-top pt-3 pb-2">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div class="text-muted small mb-2 mb-md-0">
+                            Showing {{ $recentActivities->firstItem() }} to {{ $recentActivities->lastItem() }} of {{ $recentActivities->total() }} activities
+                        </div>
+                        <div>
+                            {{ $recentActivities->appends(request()->query())->links() }}
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

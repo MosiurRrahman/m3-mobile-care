@@ -143,8 +143,7 @@ class DashboardController extends Controller
 
         $recentActivities = ActivityLog::with('user')
             ->latest()
-            ->limit(10)
-            ->get();
+            ->paginate(10);
 
         return view('dashboard.admin', compact(
             'totalRepairs',
