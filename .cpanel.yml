@@ -1,29 +1,37 @@
 ---
 deployment:
   tasks:
-    # Deploy target: public_html is the Laravel project root on this server
-    - export DEPLOYPATH=/home/mmobile2/public_html/
+    # Server paths:
+    #   PHP CLI   → /opt/alt/php83/usr/bin/php
+    #   Composer  → /home/mmobile2/composer.phar
+    #   Project   → /home/mmobile2/public_html (Laravel root)
 
-    # Use deploy SSH key for git
+    - export DEPLOYPATH=/home/mmobile2/public_html
+    - export PHP=/opt/alt/php83/usr/bin/php
+    - export COMPOSER=/home/mmobile2/composer.phar
+    - export HOME=/home/mmobile2
+    - export COMPOSER_HOME=/home/mmobile2/.composer
     - export GIT_SSH_COMMAND="ssh -i /home/mmobile2/.ssh/github_deploy -o StrictHostKeyChecking=no"
 
     # Pull latest changes from GitHub
-    - cd $DEPLOYPATH && git reset --hard HEAD
-    - cd $DEPLOYPATH && git pull origin main
+    - cd $DEPLOYPATH && git remote set-url origin git@github.com:MosiurRrahman/m3-mobile-care.git
+    - cd $DEPLOYPATH && git fetch origin main
+    - cd $DEPLOYPATH && git reset --hard origin/main
 
     # Install/update Composer dependencies (no dev)
-    - cd $DEPLOYPATH && /usr/local/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --quiet
+    - mkdir -p $COMPOSER_HOME
+    - cd $DEPLOYPATH && $PHP $COMPOSER install --no-dev --optimize-autoloader --no-interaction --quiet
 
     # Clear and rebuild caches
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan config:cache
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan route:cache
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan view:cache
+    - cd $DEPLOYPATH && $PHP artisan config:cache
+    - cd $DEPLOYPATH && $PHP artisan route:cache
+    - cd $DEPLOYPATH && $PHP artisan view:cache
 
     # Run database migrations
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan migrate --force
+    - cd $DEPLOYPATH && $PHP artisan migrate --force
 
     # Fix permissions
     - chmod -R 775 $DEPLOYPATH/storage $DEPLOYPATH/bootstrap/cache
 
     # Storage symlink
-    - cd $DEPLOYPATH && /usr/local/bin/php artisan storage:link 2>/dev/null || true
+    - cd $DEPLOYPATH && $PHP artisan storage:link 2>/dev/null || true
