@@ -547,9 +547,22 @@ class PartnerLedgerController extends Controller
 
         $totalIncome = $serviceIncome + $salesIncome;
 
-        // 3. Expenses Sum (excluding Purchase category and partner withdrawals)
+        // 3. Expenses Sum (excluding Purchase, Partner Withdrawal, and Capital/Investment Setup categories like Decoretions, Equipments, Advance)
+        $excludedCategories = [
+            'Purchase', 
+            'Partner Withdrawal', 
+            'Decoretions', 
+            'Decoration', 
+            'equipments', 
+            'Equipment', 
+            'advance', 
+            'Advance',
+            'Capital',
+            'Investment'
+        ];
+
         $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
-            ->where('category', '!=', 'Purchase')
+            ->whereNotIn('category', $excludedCategories)
             ->where(function($q) {
                 $q->whereNull('register_type')
                   ->orWhere('register_type', '!=', 'withdraw');
