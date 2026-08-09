@@ -49,7 +49,7 @@ class DashboardController extends Controller
         $totalRevenue = $serviceRevenue + $posRevenue;
         $totalSalesDues = Sale::sum('due_amount');
         
-        $totalExpenses = Expense::sum('amount');
+        $totalExpenses = Expense::where('category', '!=', 'Partner Withdrawal')->sum('amount');
 
         // 3. Stock warning alerts
         $stockAlertsCount = InventoryItem::whereColumn('quantity', '<=', 'alert_quantity')->count();
@@ -119,7 +119,8 @@ class DashboardController extends Controller
 
             $chartRevenues[] = $repRevenue + $slsRevenue;
 
-            $expSum = Expense::whereYear('expense_date', $year)
+            $expSum = Expense::where('category', '!=', 'Partner Withdrawal')
+                ->whereYear('expense_date', $year)
                 ->whereMonth('expense_date', $month)
                 ->sum('amount');
 
