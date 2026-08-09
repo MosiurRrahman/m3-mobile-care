@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('admin.pos.index');
         }
         return view('auth.login');
     }
@@ -39,7 +39,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'))
+            return redirect()->intended(route('admin.pos.index'))
                 ->with('success', 'Welcome back!');
         }
 
