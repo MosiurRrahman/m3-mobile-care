@@ -1,0 +1,30 @@
+---
+deployment:
+  tasks:
+    # ─── Step 1: Set deploy path (Laravel project root, NOT public_html) ───
+    - export DEPLOYPATH=/home/mmobile2/laravel/
+
+    # ─── Step 2: Copy repo files to Laravel project root ───
+    - /bin/cp -R . $DEPLOYPATH
+
+    # ─── Step 3: Install/update Composer dependencies (production only) ───
+    - cd $DEPLOYPATH && /usr/local/bin/php /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction --quiet
+
+    # ─── Step 4: Clear & rebuild caches ───
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan config:cache
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan route:cache
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan view:cache
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan event:cache
+
+    # ─── Step 5: Run database migrations ───
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan migrate --force
+
+    # ─── Step 6: Fix storage & cache permissions ───
+    - chmod -R 775 $DEPLOYPATH/storage
+    - chmod -R 775 $DEPLOYPATH/bootstrap/cache
+
+    # ─── Step 7: Create storage symlink (safe if already exists) ───
+    - cd $DEPLOYPATH && /usr/local/bin/php artisan storage:link 2>/dev/null || true
+
+    # ─── Step 8: Copy public folder to public_html ───
+    - /bin/cp -Rf $DEPLOYPATH/public/. /home/mmobile2/public_html/
