@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $document->document_number }} - {{ $document->title }} | {{ $shopSettings['name'] }}</title>
+    <title></title>
     
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
@@ -32,6 +32,7 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             position: relative;
+            z-index: 1;
         }
 
         .shop-brand-name {
@@ -52,9 +53,10 @@
         }
 
         .shop-header {
-            border-bottom: 2px solid #f37021;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
         }
 
         /* Logo Background Watermark (Full Page Size & Centered on Every Page) */
@@ -63,20 +65,22 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
-            height: 85vh;
-            max-width: 800px;
-            max-height: 950px;
+            width: 85%;
+            height: auto;
+            max-width: 700px;
+            max-height: 800px;
             object-fit: contain;
-            opacity: 0.08;
+            opacity: 0.12;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
             filter: grayscale(10%);
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         .document-body {
             position: relative;
-            z-index: 1;
+            z-index: 2;
             font-family: '{{ $document->font_family ?? "Hind Siliguri" }}', 'Hind Siliguri', sans-serif;
             font-size: {{ $document->font_size ?? "15px" }};
             line-height: 1.85;
@@ -110,20 +114,27 @@
             margin-top: 60px;
             padding-top: 20px;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         @media print {
             body {
-                background-color: #ffffff;
+                background-color: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .page-container {
-                width: 100%;
-                min-height: auto;
-                margin: 0;
-                padding: 5mm 0;
-                box-shadow: none;
+                width: 100% !important;
+                min-height: 297mm !important;
+                margin: 0 !important;
+                padding: 12mm 15mm !important;
+                background: transparent !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
             }
 
             .watermark-logo {
@@ -131,15 +142,20 @@
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
-                width: 92% !important;
-                height: 88vh !important;
-                max-width: 820px !important;
-                max-height: 980px !important;
-                object-fit: contain !important;
-                opacity: 0.08 !important;
-                z-index: -1 !important;
+                width: 85% !important;
+                max-width: 720px !important;
+                height: auto !important;
+                opacity: 0.12 !important;
+                z-index: 1 !important;
                 pointer-events: none !important;
                 display: block !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .shop-header, .document-body, .signature-section {
+                position: relative !important;
+                z-index: 2 !important;
             }
 
             .no-print {
@@ -148,7 +164,7 @@
 
             @page {
                 size: A4 portrait;
-                margin: 12mm 15mm;
+                margin: 0 !important;
             }
         }
     </style>
@@ -210,12 +226,10 @@
                     @endif
                 </div>
             </div>
-            <!-- Shop Brand Color Divider Line -->
-            <div style="height: 3px; background-color: #f37021; margin-top: 12px; border-radius: 2px;"></div>
         </div>
 
         <!-- Document Reference & Date Row -->
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 small" style="font-size: 13px;">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 small" style="font-size: 13px;">
             <div><strong style="color: #f37021;">স্মারক নং / Ref:</strong> <span style="font-family: 'Outfit', sans-serif; font-weight: 600;">{{ $document->document_number }}</span></div>
             <div><strong style="color: #f37021;">তারিখ / Date:</strong> <span style="font-weight: 600;">{{ $document->date ? $document->date->format('d/m/Y') : date('d/m/Y') }}</span></div>
         </div>
@@ -244,24 +258,13 @@
 
         <!-- Signature Lines Footer -->
         <div class="signature-section">
-            <div class="row text-center pt-4">
-                <div class="col-6">
-                    <div style="border-top: 1.5px dashed #333; width: 75%; margin: 0 auto; padding-top: 6px;">
-                        <strong class="d-block text-dark">গ্রহীতা / দ্বিতীয় পক্ষের স্বাক্ষর</strong>
-                        <small class="text-muted fs-9">Recipient / Party Signature</small>
-                    </div>
-                </div>
-                <div class="col-6 ms-auto">
-                    <div style="border-top: 1.5px dashed #f37021; width: 75%; margin: 0 auto; padding-top: 6px;">
+            <div class="row pt-4">
+                <div class="col-5 ms-auto text-center">
+                    <div style="border-top: 1.5px dashed #f37021; padding-top: 6px;">
                         <strong class="d-block text-dark" style="color: #f37021;">অনুমোদিত স্বাক্ষরকারী</strong>
                         <small class="text-muted fs-9">Authorized Signature ({{ $shopSettings['name'] }})</small>
                     </div>
                 </div>
-            </div>
-
-            <!-- Page Footer Note -->
-            <div class="text-center text-muted small mt-5 pt-3" style="font-size: 11px; border-top: 1px solid #eee;">
-                {{ $shopSettings['name'] }} | {{ $shopSettings['address'] }} | ফোন: {{ $shopSettings['phone'] }}
             </div>
         </div>
     </div>

@@ -42,7 +42,7 @@
           '@type' => 'OpeningHoursSpecification',
           'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
           'opens' => '09:00',
-          'closes': '21:30'
+          'closes' => '21:30'
         ]
       ],
       'sameAs' => ['https://www.facebook.com/m3mobilecare']

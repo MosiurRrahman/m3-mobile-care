@@ -46,7 +46,7 @@
     <div class="col-12 col-xl-10">
         <div class="card shadow border-0 overflow-hidden" style="background: #ffffff; font-family: '{{ $document->font_family ?? "Hind Siliguri" }}', 'Hind Siliguri', 'Outfit', sans-serif;">
             <!-- Shop Letterhead Header Pad Structure -->
-            <div class="card-header border-bottom py-4 px-5 bg-white position-relative" style="border-bottom-color: #f37021 !important;">
+            <div class="card-header border-bottom py-4 px-5 bg-white position-relative">
                 <div class="row align-items-center">
                     <div class="col-md-7">
                         <div class="d-flex align-items-center gap-3 mb-2">
@@ -67,7 +67,6 @@
                         @endif
                     </div>
                 </div>
-                <div class="w-100 mt-3" style="height: 3px; background-color: #f37021; border-radius: 2px;"></div>
             </div>
 
             <!-- Document Meta Sub-Header -->
@@ -119,21 +118,12 @@
             <!-- Signature & Letterhead Footer -->
             <div class="card-footer bg-white px-5 pt-5 pb-4 border-0">
                 <div class="row pt-5 mt-4">
-                    <div class="col-6">
-                        <div class="border-top border-dark pt-2 w-75">
-                            <p class="fw-bold mb-0 text-dark">গ্রহীতা / দ্বিতীয় পক্ষের স্বাক্ষর</p>
-                            <small class="text-muted">Recipient / Second Party Signature</small>
-                        </div>
-                    </div>
-                    <div class="col-6 text-end ms-auto d-flex justify-content-end">
-                        <div class="border-top pt-2 w-75 text-center ms-auto" style="border-top: 1.5px dashed #f37021;">
+                    <div class="col-5 ms-auto text-center">
+                        <div class="border-top pt-2 text-center ms-auto" style="border-top: 1.5px dashed #f37021;">
                             <p class="fw-bold mb-0" style="color: #f37021;">অনুমোদিত স্বাক্ষরকারী</p>
                             <small class="text-muted">Authorized Signature ({{ $shopSettings['name'] }})</small>
                         </div>
                     </div>
-                </div>
-                <div class="text-center text-muted fs-8 mt-5 pt-3 border-top">
-                    {{ $shopSettings['name'] }} | {{ $shopSettings['address'] }} | ফোন: {{ $shopSettings['phone'] }}
                 </div>
             </div>
         </div>
