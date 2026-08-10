@@ -103,7 +103,7 @@
             @endif
 
             <!-- Body Content -->
-            <div class="card-body p-5 position-relative" style="min-height: 400px; font-size: 15px; line-height: 1.85; color: #111111; font-family: '{{ $document->font_family ?? "Hind Siliguri" }}', 'Hind Siliguri', sans-serif;">
+            <div class="card-body p-5 position-relative" style="min-height: 400px; font-size: {{ $document->font_size ?? '15px' }}; line-height: 1.85; color: #111111; font-family: '{{ $document->font_family ?? "Hind Siliguri" }}', 'Hind Siliguri', sans-serif;">
                 <!-- Logo Watermark Background -->
                 @if(!empty($shopSettings['logo']))
                     <div class="position-absolute top-50 start-50 translate-middle opacity-10 pointer-events-none text-center select-none" style="z-index: 0; user-select: none;">

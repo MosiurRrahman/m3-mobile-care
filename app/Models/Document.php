@@ -22,6 +22,7 @@ class Document extends Model
         'notes',
         'status',
         'font_family',
+        'font_size',
         'created_by',
     ];
 

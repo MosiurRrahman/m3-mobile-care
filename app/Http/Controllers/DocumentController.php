@@ -70,6 +70,7 @@ class DocumentController extends Controller
             'notes' => 'nullable|string',
             'status' => 'required|in:draft,published',
             'font_family' => 'nullable|string|max:100',
+            'font_size' => 'nullable|string|max:20',
         ]);
 
         $prefix = strtoupper($request->type);
@@ -89,6 +90,7 @@ class DocumentController extends Controller
             'notes' => $request->notes,
             'status' => $request->status,
             'font_family' => $request->get('font_family', 'Hind Siliguri'),
+            'font_size' => $request->get('font_size', '15px'),
             'created_by' => auth()->id(),
         ]);
 
@@ -136,6 +138,7 @@ class DocumentController extends Controller
             'notes' => 'nullable|string',
             'status' => 'required|in:draft,published',
             'font_family' => 'nullable|string|max:100',
+            'font_size' => 'nullable|string|max:20',
         ]);
 
         $document->update([
@@ -149,6 +152,7 @@ class DocumentController extends Controller
             'notes' => $request->notes,
             'status' => $request->status,
             'font_family' => $request->get('font_family', 'Hind Siliguri'),
+            'font_size' => $request->get('font_size', '15px'),
         ]);
 
         return redirect()->route('admin.documents.show', $document->id)

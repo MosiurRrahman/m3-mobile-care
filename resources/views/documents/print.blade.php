@@ -63,9 +63,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 85%;
-            max-width: 700px;
-            max-height: 700px;
+            width: 90%;
+            height: 85vh;
+            max-width: 800px;
+            max-height: 950px;
+            object-fit: contain;
             opacity: 0.08;
             pointer-events: none;
             z-index: 0;
@@ -76,7 +78,7 @@
             position: relative;
             z-index: 1;
             font-family: '{{ $document->font_family ?? "Hind Siliguri" }}', 'Hind Siliguri', sans-serif;
-            font-size: 15px;
+            font-size: {{ $document->font_size ?? "15px" }};
             line-height: 1.85;
             min-height: 540px;
             color: #111111;
@@ -129,9 +131,11 @@
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
-                width: 85% !important;
-                max-width: 720px !important;
-                height: auto !important;
+                width: 92% !important;
+                height: 88vh !important;
+                max-width: 820px !important;
+                max-height: 980px !important;
+                object-fit: contain !important;
                 opacity: 0.08 !important;
                 z-index: -1 !important;
                 pointer-events: none !important;
@@ -152,8 +156,23 @@
 <body>
 
     <!-- Floating Print Control Bar (Screen View Only) -->
-    <div class="no-print bg-dark text-white p-3 text-center sticky-top shadow d-flex justify-content-center align-items-center gap-3">
-        <span><strong>{{ $document->document_number }}</strong> - অফিশিয়াল প্যাডে প্রিন্ট প্রিভিউ (ফন্ট: {{ $document->font_family ?? 'Hind Siliguri' }})</span>
+    <div class="no-print bg-dark text-white p-3 text-center sticky-top shadow d-flex justify-content-center align-items-center flex-wrap gap-3">
+        <span><strong>{{ $document->document_number }}</strong> - অফিশিয়াল প্যাডে প্রিন্ট প্রিভিউ</span>
+        
+        <!-- Live Font Size Change Controls -->
+        <div class="d-inline-flex align-items-center gap-1 bg-secondary bg-opacity-25 px-2 py-1 rounded">
+            <span class="small me-1 text-warning fw-bold">🔤 ফন্ট সাইজ:</span>
+            <button type="button" onclick="adjustFontSize(-1)" class="btn btn-sm btn-outline-light px-2 py-0" title="ফন্ট ছোট করুন">-</button>
+            <select id="liveFontSizeSelect" onchange="changeFontSize(this.value)" class="form-select form-select-sm bg-dark text-white border-secondary d-inline-block" style="width: auto;">
+                <option value="13px" {{ ($document->font_size ?? '15px') == '13px' ? 'selected' : '' }}>13px (ছোট)</option>
+                <option value="15px" {{ ($document->font_size ?? '15px') == '15px' ? 'selected' : '' }}>15px (সাধারণ)</option>
+                <option value="17px" {{ ($document->font_size ?? '15px') == '17px' ? 'selected' : '' }}>17px (বড়)</option>
+                <option value="19px" {{ ($document->font_size ?? '15px') == '19px' ? 'selected' : '' }}>19px (বিশাল)</option>
+                <option value="21px" {{ ($document->font_size ?? '15px') == '21px' ? 'selected' : '' }}>21px (আল্টরা)</option>
+            </select>
+            <button type="button" onclick="adjustFontSize(1)" class="btn btn-sm btn-outline-light px-2 py-0" title="ফন্ট বড় করুন">+</button>
+        </div>
+
         <button onclick="window.print()" class="btn btn-warning fw-bold btn-sm px-4 text-white" style="background-color: #f37021; border-color: #f37021;">
             🖨️ এখনই প্রিন্ট করুন (Print Now)
         </button>
@@ -247,8 +266,35 @@
         </div>
     </div>
 
-    <!-- Auto Print Script -->
+    <!-- Live Font Size Change & Auto Print Script -->
     <script>
+        function changeFontSize(size) {
+            const docBody = document.querySelector('.document-body');
+            if (docBody) {
+                docBody.style.fontSize = size;
+            }
+        }
+
+        function adjustFontSize(delta) {
+            const docBody = document.querySelector('.document-body');
+            const select = document.getElementById('liveFontSizeSelect');
+            if (docBody) {
+                let currentSize = parseInt(window.getComputedStyle(docBody).fontSize) || 15;
+                let newSize = Math.max(10, Math.min(30, currentSize + delta)) + 'px';
+                docBody.style.fontSize = newSize;
+
+                // Update select dropdown if option exists
+                if (select) {
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value === newSize) {
+                            select.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         window.addEventListener('load', function() {
             setTimeout(function() {
                 window.print();

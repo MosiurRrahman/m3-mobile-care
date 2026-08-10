@@ -157,6 +157,16 @@
                                 </select>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label small fw-bold required">ফন্ট সাইজ (Font Size)</label>
+                                <select name="font_size" id="fontSizeSelect" class="form-select">
+                                    <option value="13px" {{ old('font_size') == '13px' ? 'selected' : '' }}>ছোট (13px - Compact)</option>
+                                    <option value="15px" {{ old('font_size', '15px') == '15px' ? 'selected' : '' }}>মাঝারি (15px - Standard Default)</option>
+                                    <option value="17px" {{ old('font_size') == '17px' ? 'selected' : '' }}>বড় (17px - Large)</option>
+                                    <option value="19px" {{ old('font_size') == '19px' ? 'selected' : '' }}>বিশাল (19px - Extra Large)</option>
+                                    <option value="21px" {{ old('font_size') == '21px' ? 'selected' : '' }}>আল্টরা বড় (21px - Ultra Large)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label small fw-bold required">অবস্থা (Status)</label>
                                 <select name="status" class="form-select" required>
                                     <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>প্রকাশিত (Published)</option>
