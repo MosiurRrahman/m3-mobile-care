@@ -2,20 +2,20 @@
 // M3 Mobile Care Application Config & SEO Metadata
 return [
   "creatorName" => "M3 Mobile Care",
-  "creatorUrl" => "https://m3mobilecares.com",
+  "creatorUrl" => "https://www.m3mobilecares.com",
   "templateName" => "M3 Mobile Care",
-  "templateSuffix" => "Expert Mobile Repair & Live Service Board",
+  "templateSuffix" => "Trusted Mobile Repair & Accessories Shop",
   "templateVersion" => "1.0.0",
   "templateFree" => false,
-  "templateDescription" => "M3 Mobile Care - Premier smartphone repair & live diagnostic tracking center in Bangladesh. Expert screen display replacement, battery replacement, glass repair, motherboard fixing, firmware flashing, and FRP unlock.",
-  "templateKeyword" => "M3 Mobile Care, Mobile Repair Bangladesh, Phone Repair Service, Display Replacement, Live Repair Tracking, Smartphone Service Center, iPhone Repair Dhaka, Samsung Glass Replacement, Battery Replacement, FRP Unlock, Phone Repair Shop Bangladesh",
+  "templateDescription" => "M3 Mobile Care - Trusted Mobile Repair & Accessories Shop at (বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও. Website: www.m3mobilecares.com, Email: support@m3mobilecares.com, Mobile: +8801353106967 / +8801353106966.",
+  "templateKeyword" => "M3 Mobile Care, Mobile Repair Ranisankail, Phone Accessories Thakurgaon, Display Replacement, Battery Replacement, Ranisankail Mobile Shop, Abdul Goffar Market Mobile Care",
   "licenseUrl" => "",
-  "livePreview" => "https://m3mobilecares.com",
-  "productPage" => "https://m3mobilecares.com",
-  "support" => "https://m3mobilecares.com",
+  "livePreview" => "https://www.m3mobilecares.com",
+  "productPage" => "https://www.m3mobilecares.com",
+  "support" => "https://www.m3mobilecares.com",
   "moreThemes" => "",
-  "ogTitle" => "M3 Mobile Care - Expert Smartphone Repair & Live Service Board",
-  "ogImage" => "https://m3mobilecares.com/assets/img/branding/logo-dark-icon.png",
+  "ogTitle" => "M3 Mobile Care – Trusted Mobile Repair & Accessories Shop",
+  "ogImage" => "https://www.m3mobilecares.com/assets/img/branding/logo-dark-icon.png",
   "ogType" => "website",
   "documentation" => "",
   "generator" => "",
@@ -30,3 +30,4 @@ return [
   "dribbbleUrl" => "",
   "instagramUrl" => ""
 ];
+

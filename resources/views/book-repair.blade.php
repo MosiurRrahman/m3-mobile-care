@@ -1,8 +1,8 @@
 @extends('layouts/blankLayout')
 
 @section('title', 'Book Online Smartphone Repair Appointment - M3 Mobile Care')
-@section('meta_description', 'Book an online repair appointment with M3 Mobile Care for fast iPhone, Samsung, Xiaomi, Realme, Oppo, Vivo, OnePlus screen, battery & motherboard repairs in Bangladesh.')
-@section('meta_keywords', 'Book Mobile Repair, Online Phone Repair Appointment, Smartphone Repair Booking Bangladesh, iPhone Screen Repair Booking')
+@section('meta_description', 'Book an online repair appointment with M3 Mobile Care – Trusted Mobile Repair & Accessories Shop at (বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও. Website: www.m3mobilecares.com, Mobile: +8801353106967 / +8801353106966.')
+@section('meta_keywords', 'Book Mobile Repair, Online Phone Repair Appointment, Smartphone Repair Booking Bangladesh, iPhone Screen Repair Booking, Ranisankail Mobile Repair')
 
 @section('head_extra')
 <!-- BreadcrumbList & Service JSON-LD Schema -->

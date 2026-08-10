@@ -51,10 +51,10 @@
   <meta name="robots" content="@yield('meta_robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')" />
 
   <!-- Local SEO Geo Meta Tags -->
-  <meta name="geo.region" content="BD-13" />
-  <meta name="geo.placename" content="Dhaka" />
-  <meta name="geo.position" content="23.8103;90.4125" />
-  <meta name="ICBM" content="23.8103, 90.4125" />
+  <meta name="geo.region" content="BD-58" />
+  <meta name="geo.placename" content="Ranisankail, Thakurgaon" />
+  <meta name="geo.position" content="25.8858;88.2678" />
+  <meta name="ICBM" content="25.8858, 88.2678" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website" />

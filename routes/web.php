@@ -19,6 +19,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CashController;
 use App\Http\Controllers\PartnerLedgerController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\DocumentController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -161,5 +162,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'update'])->name('admin.partner-ledger.update');
         Route::delete('/admin/partner-ledger/{id}', [PartnerLedgerController::class, 'destroy'])->name('admin.partner-ledger.destroy');
         Route::post('/admin/partner-ledger/rollback', [PartnerLedgerController::class, 'rollbackDistribution'])->name('admin.partner-ledger.rollback');
+    });
+
+    // Document & Pad Generator Routes (Accessible by staff/admin)
+    Route::middleware(['role:super_admin,admin,salesman,technician'])->group(function () {
+        Route::get('/admin/documents', [DocumentController::class, 'index'])->name('admin.documents.index');
+        Route::get('/admin/documents/create', [DocumentController::class, 'create'])->name('admin.documents.create');
+        Route::post('/admin/documents', [DocumentController::class, 'store'])->name('admin.documents.store');
+        Route::get('/admin/documents/{id}', [DocumentController::class, 'show'])->name('admin.documents.show');
+        Route::get('/admin/documents/{id}/edit', [DocumentController::class, 'edit'])->name('admin.documents.edit');
+        Route::put('/admin/documents/{id}', [DocumentController::class, 'update'])->name('admin.documents.update');
+        Route::delete('/admin/documents/{id}', [DocumentController::class, 'destroy'])->name('admin.documents.destroy');
+        Route::get('/admin/documents/{id}/print', [DocumentController::class, 'print'])->name('admin.documents.print');
     });
 });

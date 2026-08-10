@@ -1,8 +1,8 @@
 @extends('layouts/blankLayout')
 
-@section('title', ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' - E-Commerce Store & Smartphone Service Center')
-@section('meta_description', ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' - ' . ($shopSettings['shop_slogan'] ?? 'Premium Mobile Repair & Retail') . '. Shop trending mobile parts, original display screens, batteries, fast chargers & upcoming tools in ' . ($shopSettings['address'] ?? 'Thakurgaon'))
-@section('meta_keywords', 'M3 Mobile Care, Mobile Store Bangladesh, Phone Parts Shop, iPhone Display Price, Samsung Screen Repair, Mobile Accessories Thakurgaon, Trending Phone Accessories, Upcoming Mobile Repair Tools, FRP Unlock')
+@section('title', ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' – Trusted Mobile Repair & Accessories Shop')
+@section('meta_description', ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' – Trusted Mobile Repair & Accessories Shop. Address: ' . ($shopSettings['address'] ?? '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও') . '. Website: www.m3mobilecares.com | Email: ' . ($shopSettings['email'] ?? 'support@m3mobilecares.com') . ' | Mobile: ' . ($shopSettings['phone'] ?? '+8801353106967 / +8801353106966'))
+@section('meta_keywords', 'M3 Mobile Care, Mobile Repair Ranisankail, Phone Accessories Thakurgaon, Display Replacement, Battery Replacement, Ranisankail Mobile Shop, Abdul Goffar Market Mobile Care, www.m3mobilecares.com')
 
 @section('head_extra')
 <!-- Import Premium Google Fonts & Stylesheets -->
@@ -21,27 +21,28 @@
       'name' => $shopSettings['shop_name'] ?? 'M3 Mobile Care',
       'image' => asset('assets/img/branding/logo-light-icon.png'),
       'logo' => asset('assets/img/branding/logo-light-icon.png'),
-      'url' => url('/'),
-      'telephone' => $shopSettings['phone'] ?? '+880 1712-345678',
+      'url' => 'https://www.m3mobilecares.com',
+      'telephone' => $shopSettings['phone'] ?? '+8801353106967',
+      'email' => $shopSettings['email'] ?? 'support@m3mobilecares.com',
       'priceRange' => '৳৳',
-      'description' => ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' - ' . ($shopSettings['shop_slogan'] ?? 'Premium Mobile Repair & Retail') . '. Genuine display replacement, high-health batteries, fast chargers, motherboard micro-soldering, and live repair ticket tracking.',
+      'description' => ($shopSettings['shop_name'] ?? 'M3 Mobile Care') . ' – Trusted Mobile Repair & Accessories Shop at (বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও.',
       'address' => [
         '@type' => 'PostalAddress',
-        'streetAddress' => $shopSettings['address'] ?? 'Goffar Market, Ranisankail, Thakurgoan',
+        'streetAddress' => $shopSettings['address'] ?? '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও',
         'addressLocality' => 'Ranisankail, Thakurgaon',
         'addressCountry' => 'BD'
       ],
       'geo' => [
         '@type' => 'GeoCoordinates',
-        'latitude' => 25.8920,
-        'longitude' => 88.2562
+        'latitude' => 25.8858,
+        'longitude' => 88.2678
       ],
       'openingHoursSpecification' => [
         [
           '@type' => 'OpeningHoursSpecification',
           'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
           'opens' => '09:00',
-          'closes' => '21:00'
+          'closes': '21:30'
         ]
       ],
       'sameAs' => ['https://www.facebook.com/m3mobilecare']
@@ -1057,10 +1058,11 @@
             </div>
             <div class="col-md-4">
                 <h3 class="h6 text-dark fw-bold mb-3 text-uppercase tracking-wider">Store & Contact Details</h3>
-                <p class="text-slate-600 small mb-2"><i class="ti tabler-map-pin me-2 text-primary"></i><strong>Address:</strong> {{ $shopSettings['address'] ?? 'Goffar Market, Ranisankail, Thakurgoan' }}</p>
-                <p class="text-slate-600 small mb-2"><i class="ti tabler-phone me-2 text-primary"></i><strong>Phone:</strong> {{ $shopSettings['phone'] ?? '+880 1712-345678' }}</p>
-                <p class="text-slate-600 small mb-2"><i class="ti tabler-mail me-2 text-primary"></i><strong>Email:</strong> {{ $shopSettings['email'] ?? 'info@m3mobilecare.com' }}</p>
-                <p class="text-slate-600 small mb-0"><i class="ti tabler-clock me-2 text-primary"></i><strong>Working Hours:</strong> Saturday - Thursday: 09:00 AM - 09:00 PM</p>
+                <p class="text-slate-600 small mb-2"><i class="ti tabler-map-pin me-2 text-primary"></i><strong>Address:</strong> {{ $shopSettings['address'] ?? '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও' }}</p>
+                <p class="text-slate-600 small mb-2"><i class="ti tabler-phone me-2 text-primary"></i><strong>Mobile:</strong> {{ $shopSettings['phone'] ?? '+8801353106967 / +8801353106966' }}</p>
+                <p class="text-slate-600 small mb-2"><i class="ti tabler-mail me-2 text-primary"></i><strong>Email:</strong> {{ $shopSettings['email'] ?? 'support@m3mobilecares.com' }}</p>
+                <p class="text-slate-600 small mb-2"><i class="ti tabler-world me-2 text-primary"></i><strong>Website:</strong> <a href="https://www.m3mobilecares.com" target="_blank" class="text-slate-600 text-decoration-none fw-semibold">www.m3mobilecares.com</a></p>
+                <p class="text-slate-600 small mb-0"><i class="ti tabler-clock me-2 text-primary"></i><strong>Working Hours:</strong> Saturday - Thursday: 09:00 AM - 09:30 PM</p>
             </div>
         </div>
         

@@ -73,6 +73,12 @@
       "url": "admin/social"
     },
     {
+      "name": "Pad & Documents",
+      "icon": "menu-icon icon-base ti tabler-file-text",
+      "slug": "admin.documents.index",
+      "url": "admin/documents"
+    },
+    {
       "name": "Staff Accounts",
       "icon": "menu-icon icon-base ti tabler-users-group",
       "slug": "admin.users.index",

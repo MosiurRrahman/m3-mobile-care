@@ -9,8 +9,8 @@
             <!-- Store Details -->
             <div class="text-center mb-4">
                 <h3 class="fw-extrabold text-dark mb-1">{{ App\Models\Setting::get('shop_name', 'M3 Mobile Care') }}</h3>
-                <p class="text-muted small mb-1">{{ App\Models\Setting::get('address', 'Level 3, Multiplan Center, Elephant Road, Dhaka') }}</p>
-                <p class="text-muted small mb-1">Phone: {{ App\Models\Setting::get('phone', '+880 1712-345678') }} | Email: {{ App\Models\Setting::get('email', 'info@m3mobilecare.com') }}</p>
+                <p class="text-muted small mb-1">{{ App\Models\Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও') }}</p>
+                <p class="text-muted small mb-1">Mobile: {{ App\Models\Setting::get('phone', '+8801353106967 / +8801353106966') }} | Email: {{ App\Models\Setting::get('email', 'support@m3mobilecares.com') }}</p>
                 <hr class="border-dark my-3">
                 <h4 class="fw-bold text-dark mb-0">RETAIL SALES BILL</h4>
             </div>
