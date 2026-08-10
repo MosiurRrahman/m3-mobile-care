@@ -107,7 +107,7 @@
                 <!-- Logo Watermark Background -->
                 @if(!empty($shopSettings['logo']))
                     <div class="position-absolute top-50 start-50 translate-middle opacity-10 pointer-events-none text-center select-none" style="z-index: 0; user-select: none;">
-                        <img src="{{ $shopSettings['logo'] }}" alt="Watermark" style="max-width: 320px; max-height: 320px; opacity: 0.08;">
+                        <img src="{{ $shopSettings['logo'] }}" alt="Watermark" style="max-width: 520px; width: 75%; opacity: 0.08;">
                     </div>
                 @endif
 

@@ -57,15 +57,16 @@
             margin-bottom: 20px;
         }
 
-        /* Logo Background Watermark */
+        /* Logo Background Watermark (Full Page Size & Centered on Every Page) */
         .watermark-logo {
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 320px;
-            max-height: 320px;
-            opacity: 0.07;
+            width: 85%;
+            max-width: 700px;
+            max-height: 700px;
+            opacity: 0.08;
             pointer-events: none;
             z-index: 0;
             filter: grayscale(10%);
@@ -117,10 +118,24 @@
 
             .page-container {
                 width: 100%;
-                min-height: 100vh;
+                min-height: auto;
                 margin: 0;
-                padding: 10mm 15mm;
+                padding: 5mm 0;
                 box-shadow: none;
+            }
+
+            .watermark-logo {
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 85% !important;
+                max-width: 720px !important;
+                height: auto !important;
+                opacity: 0.08 !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                display: block !important;
             }
 
             .no-print {
@@ -129,7 +144,7 @@
 
             @page {
                 size: A4 portrait;
-                margin: 0;
+                margin: 12mm 15mm;
             }
         }
     </style>
