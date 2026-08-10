@@ -22,6 +22,10 @@ deployment:
     - mkdir -p $COMPOSER_HOME
     - cd $DEPLOYPATH && $PHP $COMPOSER install --no-dev --optimize-autoloader --no-interaction --quiet
 
+    # Clear dev package caches & rediscover production packages
+    - rm -f $DEPLOYPATH/bootstrap/cache/packages.php $DEPLOYPATH/bootstrap/cache/services.php $DEPLOYPATH/bootstrap/cache/config.php
+    - cd $DEPLOYPATH && $PHP artisan package:discover
+
     # Clear and rebuild caches
     - cd $DEPLOYPATH && $PHP artisan config:cache
     - cd $DEPLOYPATH && $PHP artisan route:cache

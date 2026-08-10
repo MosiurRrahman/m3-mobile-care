@@ -57,4 +57,7 @@ yarn-error.log
 /storage/framework/views/*
 /storage/logs/*
 
+# Bootstrap Cache
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
 
