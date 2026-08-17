@@ -23,15 +23,27 @@ use App\Http\Controllers\DocumentController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact', [HomeController::class, 'submitContact'])->name('contact.submit');
+Route::get('/products', function() { return redirect()->route('home'); })->name('products');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
-Route::get('/track', [HomeController::class, 'index'])->name('track.form');
+Route::get('/track', [HomeController::class, 'trackView'])->name('track.form');
+Route::get('/ert', [HomeController::class, 'trackView'])->name('ert');
 Route::post('/track', [HomeController::class, 'track'])->name('track.search');
 Route::get('/track-ajax', [HomeController::class, 'trackAjax'])->name('track.ajax');
 Route::get('/book', [HomeController::class, 'showBookingForm'])->name('book.form');
 Route::post('/book', [HomeController::class, 'book'])->name('book.store');
 Route::get('/booking-success/{ticket_id}', [HomeController::class, 'bookingSuccess'])->name('book.success');
 
-// Authentication Routes
+// Authentication & Staff Portal Routes
+Route::get('/portal', function () {
+    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+})->name('portal');
+Route::get('/portal/login', function () {
+    return redirect()->route('login');
+})->name('portal.login');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -72,6 +84,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['permission:inventory'])->group(function () {
         Route::get('/admin/inventory/parts', [InventoryController::class, 'indexParts'])->name('admin.inventory.parts');
         Route::get('/admin/inventory/accessories', [InventoryController::class, 'indexAccessories'])->name('admin.inventory.accessories');
+        Route::get('/admin/inventory/salesman-sheet', [InventoryController::class, 'salesmanSheet'])->name('admin.inventory.salesman-sheet');
+        Route::get('/admin/inventory/salesman-sheet/print', [InventoryController::class, 'printSalesmanSheet'])->name('admin.inventory.salesman-sheet.print');
         Route::get('/admin/inventory/create', [InventoryController::class, 'create'])->name('admin.inventory.create');
         Route::get('/admin/inventory/{id}/edit', [InventoryController::class, 'edit'])->name('admin.inventory.edit');
         Route::post('/admin/inventory', [InventoryController::class, 'store'])->name('admin.inventory.store');

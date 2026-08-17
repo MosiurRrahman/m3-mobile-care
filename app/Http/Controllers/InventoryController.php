@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\InventoryItem;
 use App\Models\Category;
 use App\Models\Supplier;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -378,5 +379,82 @@ class InventoryController extends Controller
 
         $route = $type === 'spare_part' ? 'admin.inventory.parts' : 'admin.inventory.accessories';
         return redirect()->route($route)->with('success', 'Inventory product deleted successfully!');
+    }
+
+    /**
+     * Display the Salesman Price Sheet Generator page.
+     */
+    public function salesmanSheet(Request $request)
+    {
+        $type = $request->get('type', 'accessory');
+        $categoryId = $request->get('category_id');
+        $brand = $request->get('brand');
+        $inStockOnly = $request->get('in_stock', '1');
+        $discountMargin = floatval($request->get('discount_margin', 10));
+
+        $query = InventoryItem::query();
+
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($brand) {
+            $query->where('brand', $brand);
+        }
+
+        if ($inStockOnly === '1') {
+            $query->where('quantity', '>', 0);
+        }
+
+        $items = $query->orderBy('category')->orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
+        $brands = InventoryItem::whereNotNull('brand')->where('brand', '!=', '')->distinct()->pluck('brand');
+
+        return view('inventory.salesman-sheet', compact('items', 'categories', 'brands', 'type', 'categoryId', 'brand', 'inStockOnly', 'discountMargin'));
+    }
+
+    /**
+     * Print-ready A4 Salesman Price Sheet.
+     */
+    public function printSalesmanSheet(Request $request)
+    {
+        $type = $request->get('type', 'accessory');
+        $categoryId = $request->get('category_id');
+        $brand = $request->get('brand');
+        $inStockOnly = $request->get('in_stock', '1');
+        $discountMargin = floatval($request->get('discount_margin', 10));
+
+        $query = InventoryItem::query();
+
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($brand) {
+            $query->where('brand', $brand);
+        }
+
+        if ($inStockOnly === '1') {
+            $query->where('quantity', '>', 0);
+        }
+
+        $items = $query->orderBy('category')->orderBy('name')->get()->groupBy('category');
+        $shopSettings = [
+            'name' => Setting::get('shop_name', 'M3 Mobile Care'),
+            'slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
+            'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
+            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'logo' => asset('assets/img/branding/logo.png'),
+        ];
+
+        return view('inventory.salesman-sheet-print', compact('items', 'shopSettings', 'discountMargin', 'type', 'brand'));
     }
 }

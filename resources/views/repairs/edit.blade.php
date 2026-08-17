@@ -142,385 +142,385 @@
                             </div>
                         </div>
                     @else
-                        <!-- SUPER ADMIN FULL UPDATE WORKFLOW -->
-                        <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-user me-2"></i>1. Customer Assignment</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-12">
-                                <label class="form-label fw-semibold" for="customer_id">Select Customer <span class="text-danger">*</span></label>
-                                <select name="customer_id" id="customer_id" class="form-select" required>
-                                    @foreach($customers as $customer)
-                                    <option value="{{ $customer->id }}" {{ old('customer_id', $repair->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name }} ({{ $customer->phone }})</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                        <!-- SUPER ADMIN FULL UPDATE WORKFLOW (Compact 2-Column Dashboard Layout) -->
+                        <div class="row g-4">
+                            <!-- LEFT COLUMN: Customer, Device Info & Diagnostics -->
+                            <div class="col-lg-7">
+                                <!-- 1. Customer & Device Information Card -->
+                                <div class="card border mb-4 shadow-none">
+                                    <div class="card-header bg-light py-3 border-bottom d-flex align-items-center">
+                                        <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-device-mobile me-2"></i>1. Customer & Device Information</h6>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold" for="customer_id">Select Customer <span class="text-danger">*</span></label>
+                                            <select name="customer_id" id="customer_id" class="form-select" required>
+                                                @foreach($customers as $customer)
+                                                <option value="{{ $customer->id }}" {{ old('customer_id', $repair->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name }} ({{ $customer->phone }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                        <hr class="my-4 text-muted opacity-25">
-
-                        <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-device-mobile me-2"></i>2. Device Information</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="device_brand">Brand <span class="text-danger">*</span></label>
-                                <input type="text" name="device_brand" id="device_brand" class="form-control" value="{{ old('device_brand', $repair->device_brand) }}" required>
-                            </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="device_model">Model <span class="text-danger">*</span></label>
-                                <input type="text" name="device_model" id="device_model" class="form-control" value="{{ old('device_model', $repair->device_model) }}" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold" for="serial_imei">IMEI / Serial Number</label>
-                                <input type="text" name="serial_imei" id="serial_imei" class="form-control" value="{{ old('serial_imei', $repair->serial_imei) }}">
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold" for="password_pattern">Screen Lock Credentials / Unlocking Pattern</label>
-                                <input type="text" name="password_pattern" id="password_pattern" class="form-control" value="{{ old('password_pattern', $repair->password_pattern) }}">
-                                <div class="form-text small">e.g. Pin: 1234. Needed to verify repairs.</div>
-                                
-                                <div class="d-flex align-items-center gap-2 mt-2">
-                                    <button type="button" id="btn-toggle-pattern" class="btn btn-sm btn-outline-primary"><i class="ti tabler-grid me-1"></i>Draw Pattern Lock</button>
-                                </div>
-                                
-                                <div id="pattern-lock-wrapper" class="mt-2 card p-2 border" style="display: none; width: fit-content; background: #f8f9fa;">
-                                    <div id="pattern-holder" style="width: 180px; height: 180px; position: relative; background: #eef1f6; border-radius: 8px; touch-action: none; overflow: hidden;">
-                                        <svg id="pattern-svg" style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"></svg>
-                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); height: 100%; width: 100%; padding: 10px; box-sizing: border-box;">
-                                            @for($i = 1; $i <= 9; $i++)
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <div class="pattern-dot" data-index="{{ $i }}" style="width: 14px; height: 14px; border-radius: 50%; background: #a1b0cb; cursor: pointer; z-index: 10; transition: all 0.2s ease;"></div>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold" for="device_brand">Brand <span class="text-danger">*</span></label>
+                                                <input type="text" name="device_brand" id="device_brand" class="form-control form-control-sm" value="{{ old('device_brand', $repair->device_brand) }}" required>
                                             </div>
-                                            @endfor
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-2" style="width: 180px;">
-                                        <span class="small text-muted" id="pattern-path-label">Path: {{ $repair->pattern_lock_path ?? 'None' }}</span>
-                                        <button type="button" id="btn-clear-pattern" class="btn btn-xs btn-outline-danger py-0 px-1" style="font-size:0.75rem;">Clear</button>
-                                    </div>
-                                    <input type="hidden" name="pattern_lock_path" id="pattern_lock_path" value="{{ old('pattern_lock_path', $repair->pattern_lock_path) }}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold" for="issue_description">Issue Description <span class="text-danger">*</span></label>
-                                <textarea name="issue_description" id="issue_description" rows="3" class="form-control" required>{{ old('issue_description', $repair->issue_description) }}</textarea>
-                            </div>
-                        </div>
-
-                        <!-- SECTION 2.5: Physical Checklist & Photos -->
-                        <hr class="my-4 text-muted opacity-25">
-                        <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-clipboard-check me-2"></i>2.5 Device Condition Checklist & Photos</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label fw-bold d-block mb-3 text-dark">Pre-Repair Physical Diagnostics</label>
-                                
-                                @php
-                                    $checklist = $repair->device_checklist ?? [];
-                                @endphp
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[scratches]" id="chk_scratches" value="yes" {{ isset($checklist['scratches']) && $checklist['scratches'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_scratches">Body Scratches / Dents</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[display_ok]" id="chk_display" value="yes" {{ !isset($checklist['display_ok']) || $checklist['display_ok'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_display">Display Functional</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[touch_ok]" id="chk_touch" value="yes" {{ !isset($checklist['touch_ok']) || $checklist['touch_ok'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_touch">Touch Screen Working</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[camera_ok]" id="chk_camera" value="yes" {{ !isset($checklist['camera_ok']) || $checklist['camera_ok'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_camera">Cameras Working</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[audio_ok]" id="chk_audio" value="yes" {{ !isset($checklist['audio_ok']) || $checklist['audio_ok'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_audio">Speakers & Audio Working</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="device_checklist[buttons_ok]" id="chk_buttons" value="yes" {{ !isset($checklist['buttons_ok']) || $checklist['buttons_ok'] == 'yes' ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-semibold" for="chk_buttons">Physical Buttons OK</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold" for="device_photos">Upload Device Photos <span class="text-muted">(Will append to currently uploaded photos)</span></label>
-                                <input type="file" name="device_photos[]" id="device_photos" class="form-control mb-3" accept="image/*" multiple>
-                                
-                                @if($repair->device_photos && count($repair->device_photos) > 0)
-                                    <label class="form-label d-block fw-semibold mb-2 text-muted">Currently Uploaded Photos:</label>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @foreach($repair->device_photos as $photo)
-                                            <div class="position-relative rounded overflow-hidden border" style="width: 80px; height: 80px;">
-                                                <img src="{{ asset('storage/' . $photo) }}" class="w-100 h-100 object-fit-cover">
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold" for="device_model">Model <span class="text-danger">*</span></label>
+                                                <input type="text" name="device_model" id="device_model" class="form-control form-control-sm" value="{{ old('device_model', $repair->device_model) }}" required>
                                             </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold" for="serial_imei">IMEI / Serial</label>
+                                                <input type="text" name="serial_imei" id="serial_imei" class="form-control form-control-sm" value="{{ old('serial_imei', $repair->serial_imei) }}">
+                                            </div>
+                                        </div>
 
-                        <hr class="my-4 text-muted opacity-25">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold" for="password_pattern">Screen Lock Credentials / Unlocking Pattern</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" name="password_pattern" id="password_pattern" class="form-control" value="{{ old('password_pattern', $repair->password_pattern) }}" placeholder="e.g. Pin: 1234">
+                                                <button type="button" id="btn-toggle-pattern" class="btn btn-outline-primary"><i class="ti tabler-grid me-1"></i>Draw Pattern</button>
+                                            </div>
 
-                        <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-tool me-2"></i>3. Technical Operations & Costs</h5>
-                        <div class="row mb-4">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="status">Job Status <span class="text-danger">*</span></label>
-                                <select name="status" id="status" class="form-select" required>
-                                    <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
-                                    <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
-                                    <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                                    <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
-                                    <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
-                                    <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
-                                    <option value="delivered" {{ old('status', $repair->status) == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                    <option value="cancelled" {{ old('status', $repair->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="assigned_technician_id">Assign Technician</label>
-                                <select name="assigned_technician_id" id="assigned_technician_id" class="form-select">
-                                    <option value="">Unassigned</option>
-                                    @foreach($technicians as $tech)
-                                    <option value="{{ $tech->id }}" {{ old('assigned_technician_id', $repair->assigned_technician_id) == $tech->id ? 'selected' : '' }}>{{ $tech->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold" for="expected_delivery_date">Expected Delivery Date</label>
-                                <input type="date" name="expected_delivery_date" id="expected_delivery_date" class="form-control" value="{{ old('expected_delivery_date', $repair->expected_delivery_date) }}">
-                            </div>
-                        </div>
+                                            <div id="pattern-lock-wrapper" class="mt-2 card p-2 border" style="display: none; width: fit-content; background: #f8f9fa;">
+                                                <div id="pattern-holder" style="width: 180px; height: 180px; position: relative; background: #eef1f6; border-radius: 8px; touch-action: none; overflow: hidden;">
+                                                    <svg id="pattern-svg" style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"></svg>
+                                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); height: 100%; width: 100%; padding: 10px; box-sizing: border-box;">
+                                                        @for($i = 1; $i <= 9; $i++)
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <div class="pattern-dot" data-index="{{ $i }}" style="width: 14px; height: 14px; border-radius: 50%; background: #a1b0cb; cursor: pointer; z-index: 10; transition: all 0.2s ease;"></div>
+                                                        </div>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center mt-2" style="width: 180px;">
+                                                    <span class="small text-muted" id="pattern-path-label">Path: {{ $repair->pattern_lock_path ?? 'None' }}</span>
+                                                    <button type="button" id="btn-clear-pattern" class="btn btn-xs btn-outline-danger py-0 px-1" style="font-size:0.75rem;">Clear</button>
+                                                </div>
+                                                <input type="hidden" name="pattern_lock_path" id="pattern_lock_path" value="{{ old('pattern_lock_path', $repair->pattern_lock_path) }}">
+                                            </div>
+                                        </div>
 
-                        @if(auth()->user()->isSuperAdmin())
-                        <div class="row mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="commission_type">Technician Commission Type</label>
-                                <select name="commission_type" id="commission_type" class="form-select">
-                                    <option value="" {{ empty($repair->commission_type) ? 'selected' : '' }}>No Commission / Salary-based</option>
-                                    <option value="percentage" {{ old('commission_type', $repair->commission_type) == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
-                                    <option value="flat" {{ old('commission_type', $repair->commission_type) == 'flat' ? 'selected' : '' }}>Flat Amount (BDT)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold" for="commission_rate">Commission Value</label>
-                                <input type="number" name="commission_rate" id="commission_rate" step="0.01" min="0" class="form-control" value="{{ old('commission_rate', $repair->commission_rate) }}">
-                                <div class="form-text small">e.g. 15 for 15% of actual repair charge, or 250 for a flat 250 BDT commission.</div>
-                            </div>
-                        </div>
-                        @endif
-
-                        <!-- Initial Estimates & Advance Payment Row -->
-                        <div class="row mb-4">
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="repair_charge">Repair Charge / Service Fee (BDT)</label>
-                                <input type="number" name="repair_charge" id="repair_charge" step="0.01" min="0" class="form-control" value="{{ old('repair_charge', $repair->repair_charge) }}">
-                            </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="estimated_cost">Estimated Cost (BDT)</label>
-                                <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control bg-light" value="{{ old('estimated_cost', $repair->estimated_cost) }}" readonly>
-                                <div class="form-text small">Auto-calculated (Charge + Parts)</div>
-                            </div>
-                            <div class="col-md-3 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="advance_payment">Advance Paid (BDT)</label>
-                                <input type="number" name="advance_payment" id="advance_payment" step="0.01" min="0" class="form-control" value="{{ old('advance_payment', $repair->advance_payment) }}">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold" for="advance_payment_method">Advance Payment Method</label>
-                                <select name="advance_payment_method" id="advance_payment_method" class="form-select">
-                                    <option value="">-- Select Method --</option>
-                                    <option value="Cash" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Cash' ? 'selected' : '' }}>Cash</option>
-                                    <option value="bKash" {{ old('advance_payment_method', $repair->advance_payment_method) == 'bKash' ? 'selected' : '' }}>bKash</option>
-                                    <option value="Nagad" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Nagad' ? 'selected' : '' }}>Nagad</option>
-                                    <option value="Rocket" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Rocket' ? 'selected' : '' }}>Rocket</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row mb-4">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <label class="form-label fw-semibold" for="warranty_days">Warranty Period (Days)</label>
-                                <input type="number" name="warranty_days" id="warranty_days" min="0" class="form-control" value="{{ old('warranty_days', $repair->warranty_days ?? 0) }}" placeholder="e.g. 90">
-                                <div class="form-text small">Number of days parts/labor warranty. Starts upon completion.</div>
-                            </div>
-                            <div class="col-md-8 d-flex align-items-center mt-md-3">
-                                <div class="form-check form-switch card p-2 px-3 border w-100 bg-label-warning border-warning d-flex align-items-center flex-row gap-2">
-                                    <input class="form-check-input ms-0" type="checkbox" name="data_loss_consent" id="data_loss_consent" value="1" {{ old('data_loss_consent', $repair->data_loss_consent) ? 'checked' : '' }} required>
-                                    <div class="ms-2">
-                                        <label class="form-check-label fw-bold text-warning" for="data_loss_consent">
-                                            Data Loss Consent Verified <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="form-text text-warning small opacity-75 mt-0" style="font-size: 0.75rem;">Customer acknowledges they backed up data and M3 Mobile Care is not liable for data loss during repair.</div>
+                                        <div>
+                                            <label class="form-label fw-semibold" for="issue_description">Issue Description <span class="text-danger">*</span></label>
+                                            <textarea name="issue_description" id="issue_description" rows="2" class="form-control form-control-sm" required>{{ old('issue_description', $repair->issue_description) }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Final Settlement (At Delivery) Row -->
-                        <div class="row mb-4 p-3 bg-light rounded border mx-0">
-                            <div class="col-12 mb-3">
-                                <h6 class="fw-bold mb-0 text-primary"><i class="ti tabler-cash me-1"></i>Final Settlement & Checkout (স্প্লিট পেমেন্ট)</h6>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label fw-semibold" for="actual_cost">Actual / Final Cost (Total Bill) (BDT)</label>
-                                <input type="number" name="actual_cost" id="actual_cost" step="0.01" min="0" class="form-control fw-bold text-dark" value="{{ old('actual_cost', $repair->actual_cost) }}" placeholder="Fill total bill at delivery">
-                                <div class="form-text small text-info mt-1" style="font-size: 0.75rem;">
-                                    Counter Due: <strong id="val-final-due">0.00</strong> BDT (excluding {{ number_format($repair->advance_payment, 2) }} BDT advance)
+                                <!-- 2. Pre-Repair Physical Checklist & Photos Card (Dynamic Custom Fields Only) -->
+                                <div class="card border mb-4 shadow-none">
+                                    <div class="card-header bg-light py-3 border-bottom d-flex align-items-center justify-content-between">
+                                        <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-clipboard-check me-2"></i>2. Condition Checklist & Photos</h6>
+                                        <button type="button" class="btn btn-xs btn-outline-primary fw-bold" id="btn-add-custom-checklist"><i class="ti tabler-plus me-1"></i>Add Custom Condition Item</button>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <!-- Container for Dynamic Custom Checklist Items Only -->
+                                        <div id="custom-checklist-container" class="mb-3">
+                                            @php
+                                                $checklist = $repair->device_checklist ?? [];
+                                                $customItems = isset($checklist['custom']) && is_array($checklist['custom']) ? $checklist['custom'] : [];
+
+                                                // Legacy keys converted to dynamic rows if present
+                                                $legacyLabels = [
+                                                    'scratches' => 'Body Scratches',
+                                                    'display_ok' => 'Display Condition',
+                                                    'touch_ok' => 'Touch Screen',
+                                                    'camera_ok' => 'Cameras',
+                                                    'audio_ok' => 'Speakers & Audio',
+                                                    'buttons_ok' => 'Physical Buttons',
+                                                ];
+                                                foreach ($legacyLabels as $lKey => $lTitle) {
+                                                    if (isset($checklist[$lKey]) && !empty($checklist[$lKey])) {
+                                                        $val = $checklist[$lKey];
+                                                        $strVal = is_string($val) ? $val : ($val === 'yes' ? 'OK / Good' : 'Issue');
+                                                        $exists = false;
+                                                        foreach ($customItems as $ci) {
+                                                            if (($ci['label'] ?? '') === $lTitle) { $exists = true; break; }
+                                                        }
+                                                        if (!$exists) {
+                                                            $customItems[] = ['label' => $lTitle, 'value' => $strVal];
+                                                        }
+                                                    }
+                                                }
+                                            @endphp
+                                            @foreach($customItems as $cIdx => $cItem)
+                                                <div class="row g-2 mb-2 custom-checklist-row align-items-center">
+                                                    <div class="col-5">
+                                                        <input type="text" name="device_checklist[custom][{{ $cIdx }}][label]" class="form-control form-control-sm" value="{{ $cItem['label'] ?? '' }}" placeholder="Condition Label (e.g. Body Scratches, Face ID)" required>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="text" name="device_checklist[custom][{{ $cIdx }}][value]" class="form-control form-control-sm" value="{{ $cItem['value'] ?? '' }}" placeholder="Details (e.g. Scratched / Working / 85% Health)" required>
+                                                    </div>
+                                                    <div class="col-1 text-center">
+                                                        <button type="button" class="btn btn-xs btn-icon btn-outline-danger btn-remove-custom-checklist"><i class="ti tabler-trash"></i></button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label fw-semibold small" for="device_photos">Upload Device Photos</label>
+                                            <input type="file" name="device_photos[]" id="device_photos" class="form-control form-control-sm mb-2" accept="image/*" multiple>
+                                            @if($repair->device_photos && count($repair->device_photos) > 0)
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @foreach($repair->device_photos as $photo)
+                                                        <div class="position-relative rounded overflow-hidden border" style="width: 50px; height: 50px;">
+                                                            <img src="{{ asset('storage/' . $photo) }}" class="w-100 h-100 object-fit-cover">
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Split delivery payments -->
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label fw-semibold text-muted mb-2">Delivery Payment Methods (ডেলিভারি পেমেন্ট)</label>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white small px-1.5" style="font-size: 0.75rem;"><i class="ti tabler-cash text-success"></i> Cash</span>
-                                            @php
-                                                $oldCashDelivery = old('cash_delivery');
-                                                if (is_null($oldCashDelivery) && $repair->status === 'delivered') {
-                                                    $oldCashDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Cash')->sum('amount');
-                                                }
-                                            @endphp
-                                            <input type="number" name="cash_delivery" id="cash_delivery" step="0.01" min="0" class="form-control text-end fw-bold text-dark" value="{{ $oldCashDelivery ?? 0 }}" placeholder="0">
-                                        </div>
+
+                                <!-- 3. Diagnostics & Spare Parts Card -->
+                                <div class="card border mb-4 shadow-none">
+                                    <div class="card-header bg-light py-3 border-bottom d-flex align-items-center justify-content-between">
+                                        <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-box me-2"></i>3. Technical Diagnostics & Installed Spare Parts</h6>
+                                        <button type="button" class="btn btn-xs btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Part</button>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white small px-1.5" style="font-size: 0.75rem;"><i class="ti tabler-wallet text-pink" style="color: #d81b60 !important;"></i> bKash</span>
-                                            @php
-                                                $oldBkashDelivery = old('bkash_delivery');
-                                                if (is_null($oldBkashDelivery) && $repair->status === 'delivered') {
-                                                    $oldBkashDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'bKash')->sum('amount');
-                                                }
-                                            @endphp
-                                            <input type="number" name="bkash_delivery" id="bkash_delivery" step="0.01" min="0" class="form-control text-end fw-bold text-dark" value="{{ $oldBkashDelivery ?? 0 }}" placeholder="0">
+                                    <div class="card-body p-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold" for="technician_notes">Technician Diagnostic Notes & Lab Update</label>
+                                            <textarea name="technician_notes" id="technician_notes" rows="3" class="form-control form-control-sm" placeholder="Write lab updates, diagnose details, or work progress description...">{{ old('technician_notes', $repair->technician_notes) }}</textarea>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white small px-1.5" style="font-size: 0.75rem;"><i class="ti tabler-wallet text-warning"></i> Nagad</span>
-                                            @php
-                                                $oldNagadDelivery = old('nagad_delivery');
-                                                if (is_null($oldNagadDelivery) && $repair->status === 'delivered') {
-                                                    $oldNagadDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Nagad')->sum('amount');
-                                                }
-                                            @endphp
-                                            <input type="number" name="nagad_delivery" id="nagad_delivery" step="0.01" min="0" class="form-control text-end fw-bold text-dark" value="{{ $oldNagadDelivery ?? 0 }}" placeholder="0">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white small px-1.5" style="font-size: 0.75rem;"><i class="ti tabler-wallet text-purple" style="color: #8e44ad !important;"></i> Rocket</span>
-                                            @php
-                                                $oldRocketDelivery = old('rocket_delivery');
-                                                if (is_null($oldRocketDelivery) && $repair->status === 'delivered') {
-                                                    $oldRocketDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Rocket')->sum('amount');
-                                                }
-                                            @endphp
-                                            <input type="number" name="rocket_delivery" id="rocket_delivery" step="0.01" min="0" class="form-control text-end fw-bold text-dark" value="{{ $oldRocketDelivery ?? 0 }}" placeholder="0">
+
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered align-middle mb-0">
+                                                <thead class="table-light small fw-bold">
+                                                    <tr>
+                                                        <th>Select Inventory Item / Enter Name</th>
+                                                        <th style="width: 120px;">Buying Price</th>
+                                                        <th style="width: 70px;">Qty</th>
+                                                        <th style="width: 50px;" class="text-center">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="parts-container">
+                                                    @php
+                                                        $usedParts = $repair->used_parts ?? [];
+                                                    @endphp
+                                                    @foreach($usedParts as $index => $part)
+                                                        <tr class="part-row">
+                                                            <td>
+                                                                <select class="form-select form-select-sm select-part-item" name="used_parts[{{ $index }}][inventory_id]">
+                                                                    <option value="">-- Type Custom Part Name Below --</option>
+                                                                    @foreach($inventoryItems as $item)
+                                                                        <option value="{{ $item->id }}" 
+                                                                            data-name="{{ $item->name }}" 
+                                                                            data-price="{{ $item->purchase_price }}"
+                                                                            {{ isset($part['inventory_id']) && $part['inventory_id'] == $item->id ? 'selected' : '' }}>
+                                                                            {{ $item->name }} (Qty: {{ $item->quantity }}, Cost: {{ $item->purchase_price }} BDT)
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name mt-1" value="{{ $part['name'] }}" placeholder="Enter part name manually" required style="{{ isset($part['inventory_id']) && $part['inventory_id'] ? 'display:none;' : '' }}">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name="used_parts[{{ $index }}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="{{ $part['buying_price'] }}" step="0.01" min="0" required>
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name="used_parts[{{ $index }}][quantity]" class="form-control form-control-sm input-quantity text-center" value="{{ $part['quantity'] }}" min="1" required>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <button type="button" class="btn btn-xs btn-icon btn-outline-danger btn-remove-part"><i class="ti tabler-trash"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-3 mb-3">
-                                <label class="form-label fw-semibold text-danger" for="remaining_due">Remaining Due (BDT)</label>
-                                <input type="number" id="remaining_due" step="0.01" class="form-control bg-light text-danger fw-bold" value="{{ old('due_amount', $repair->due_amount) }}" readonly>
-                            </div>
 
-                            <!-- Cash Given & Change Return -->
-                            <div class="col-md-3 mb-3" id="cash_received_container" style="display: none;">
-                                <label class="form-label fw-semibold text-dark" for="cash_received">Cash Received (BDT)</label>
-                                <input type="number" name="cash_received" id="cash_received" step="0.01" min="0" class="form-control text-dark fw-bold" value="{{ old('cash_received', $repair->cash_received) }}">
-                            </div>
-                            <div class="col-md-3 mb-3" id="change_returned_container" style="display: none;">
-                                <label class="form-label fw-semibold text-success" for="change_returned">Change Returned (BDT)</label>
-                                <input type="number" name="change_returned" id="change_returned" step="0.01" min="0" class="form-control bg-light text-success fw-bold" value="{{ old('change_returned', $repair->change_returned) }}" readonly>
-                            </div>
-                        </div>
+                            <!-- RIGHT COLUMN: Technical Operations, Costs & Settlement (sob sese / ডানের প্যানেল) -->
+                            <div class="col-lg-5">
+                                <div class="card border border-primary border-opacity-25 shadow-sm sticky-top" style="top: 20px;">
+                                    <div class="card-header bg-primary bg-opacity-10 py-3 border-bottom d-flex align-items-center">
+                                        <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-tool me-2"></i>4. Technical Operations & Costs (sob sese)</h6>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <!-- Status & Assignment -->
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold text-dark mb-1" for="status">Job Status <span class="text-danger">*</span></label>
+                                            <select name="status" id="status" class="form-select fw-bold border-primary text-primary" required>
+                                                <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
+                                                <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
+                                                <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                                                <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
+                                                <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
+                                                <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
+                                                <option value="delivered" {{ old('status', $repair->status) == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                                <option value="cancelled" {{ old('status', $repair->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                            </select>
+                                        </div>
 
-                        <!-- USED PARTS SECTION (Admin Workflow) -->
-                        <div class="mb-4 p-3 bg-light rounded border">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Pricing</h6>
-                                <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Installed Part</button>
-                            </div>
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="assigned_technician_id">Assign Tech</label>
+                                                <select name="assigned_technician_id" id="assigned_technician_id" class="form-select form-select-sm">
+                                                    <option value="">Unassigned</option>
+                                                    @foreach($technicians as $tech)
+                                                    <option value="{{ $tech->id }}" {{ old('assigned_technician_id', $repair->assigned_technician_id) == $tech->id ? 'selected' : '' }}>{{ $tech->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="expected_delivery_date">Delivery Date</label>
+                                                <input type="date" name="expected_delivery_date" id="expected_delivery_date" class="form-control form-control-sm" value="{{ old('expected_delivery_date', $repair->expected_delivery_date) }}">
+                                            </div>
+                                        </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-sm table-bordered align-middle mb-0">
-                                    <thead class="table-light small fw-bold">
-                                        <tr>
-                                            <th>Select Inventory Item / Enter Name</th>
-                                            <th style="width: 150px;">Buying Price (BDT)</th>
-                                            <th style="width: 100px;">Quantity</th>
-                                            <th style="width: 70px;" class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="parts-container">
-                                        @php
-                                            $usedParts = $repair->used_parts ?? [];
-                                        @endphp
-                                        @foreach($usedParts as $index => $part)
-                                            <tr class="part-row">
-                                                <td>
-                                                    <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[{{ $index }}][inventory_id]">
-                                                        <option value="">-- Custom Part (Type Below) --</option>
-                                                        @foreach($inventoryItems as $item)
-                                                            <option value="{{ $item->id }}" 
-                                                                data-name="{{ $item->name }}" 
-                                                                data-price="{{ $item->purchase_price }}"
-                                                                {{ isset($part['inventory_id']) && $part['inventory_id'] == $item->id ? 'selected' : '' }}>
-                                                                {{ $item->name }} (Qty: {{ $item->quantity }}, Cost: {{ $item->purchase_price }} BDT)
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name" value="{{ $part['name'] }}" placeholder="Enter part name manually" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="used_parts[{{ $index }}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="{{ $part['buying_price'] }}" step="0.01" min="0" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="used_parts[{{ $index }}][quantity]" class="form-control form-control-sm input-quantity text-center" value="{{ $part['quantity'] }}" min="1" required>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-icon btn-outline-danger btn-remove-part"><i class="ti tabler-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                        @if(auth()->user()->isSuperAdmin())
+                                        <div class="row g-3 mb-4 bg-light p-3 rounded border">
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="commission_type">Commission Type</label>
+                                                <select name="commission_type" id="commission_type" class="form-select form-select-sm">
+                                                    <option value="" {{ empty($repair->commission_type) ? 'selected' : '' }}>No Commission</option>
+                                                    <option value="percentage" {{ old('commission_type', $repair->commission_type) == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
+                                                    <option value="flat" {{ old('commission_type', $repair->commission_type) == 'flat' ? 'selected' : '' }}>Flat Amount (BDT)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="commission_rate">Commission Value</label>
+                                                <input type="number" name="commission_rate" id="commission_rate" step="0.01" min="0" class="form-control form-control-sm" value="{{ old('commission_rate', $repair->commission_rate) }}">
+                                            </div>
+                                        </div>
+                                        @endif
 
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold" for="technician_notes">Technician Notes</label>
-                                <textarea name="technician_notes" id="technician_notes" rows="4" class="form-control" placeholder="Write logs, diagnose details, or parts replaced...">{{ old('technician_notes', $repair->technician_notes) }}</textarea>
+                                        <!-- Estimates & Advance -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="repair_charge">Service Charge (BDT)</label>
+                                                <input type="number" name="repair_charge" id="repair_charge" step="0.01" min="0" class="form-control form-control-sm" value="{{ old('repair_charge', $repair->repair_charge) }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small text-muted mb-1" for="estimated_cost">Estimated Cost</label>
+                                                <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control form-control-sm bg-light fw-bold" value="{{ old('estimated_cost', $repair->estimated_cost) }}" readonly>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="advance_payment">Advance Paid</label>
+                                                <input type="number" name="advance_payment" id="advance_payment" step="0.01" min="0" class="form-control form-control-sm text-success fw-bold" value="{{ old('advance_payment', $repair->advance_payment) }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="advance_payment_method">Advance Method</label>
+                                                <select name="advance_payment_method" id="advance_payment_method" class="form-select form-select-sm">
+                                                    <option value="">-- Method --</option>
+                                                    <option value="Cash" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                                    <option value="bKash" {{ old('advance_payment_method', $repair->advance_payment_method) == 'bKash' ? 'selected' : '' }}>bKash</option>
+                                                    <option value="Nagad" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Nagad' ? 'selected' : '' }}>Nagad</option>
+                                                    <option value="Rocket" {{ old('advance_payment_method', $repair->advance_payment_method) == 'Rocket' ? 'selected' : '' }}>Rocket</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-6">
+                                                <label class="form-label fw-semibold small mb-1" for="warranty_days">Warranty (Days)</label>
+                                                <input type="number" name="warranty_days" id="warranty_days" min="0" class="form-control form-control-sm" value="{{ old('warranty_days', $repair->warranty_days ?? 0) }}" placeholder="e.g. 90">
+                                            </div>
+                                            <div class="col-6 d-flex align-items-end">
+                                                <div class="form-check form-switch small w-100 p-3 border rounded bg-light">
+                                                    <input class="form-check-input ms-0 me-1" type="checkbox" name="data_loss_consent" id="data_loss_consent" value="1" {{ old('data_loss_consent', $repair->data_loss_consent) ? 'checked' : '' }} required>
+                                                    <label class="form-check-label fw-bold text-dark ms-1" for="data_loss_consent" style="font-size:0.75rem;">Data Consent Verified *</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Final Settlement (At Delivery) Spacious Card -->
+                                        <div class="p-4 rounded-3 bg-light border border-info border-opacity-25 mb-4">
+                                            <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-cash me-2"></i>Final Checkout (স্প্লিট পেমেন্ট)</h6>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold small mb-1" for="actual_cost">Actual / Final Cost (Total Bill)</label>
+                                                <input type="number" name="actual_cost" id="actual_cost" step="0.01" min="0" class="form-control fw-bold text-dark" value="{{ old('actual_cost', $repair->actual_cost) }}" placeholder="Fill total bill at delivery">
+                                                <div class="form-text small text-info mt-2">
+                                                    Counter Due: <strong id="val-final-due">0.00</strong> BDT
+                                                </div>
+                                            </div>
+
+                                            <label class="form-label fw-semibold text-dark small mb-2 d-block border-top pt-2">Delivery Payment Methods (ডেলিভারি পেমেন্ট)</label>
+                                            <div class="row g-2 mb-3">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text bg-white fw-semibold small text-success px-2"><i class="ti tabler-cash me-1"></i>Cash</span>
+                                                        @php
+                                                            $oldCashDelivery = old('cash_delivery');
+                                                            if (is_null($oldCashDelivery) && $repair->status === 'delivered') {
+                                                                $oldCashDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Cash')->sum('amount');
+                                                            }
+                                                        @endphp
+                                                        <input type="number" name="cash_delivery" id="cash_delivery" step="0.01" min="0" class="form-control text-end fw-bold" value="{{ $oldCashDelivery ?? 0 }}" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text bg-white fw-semibold small px-2" style="color:#d81b60!important;"><i class="ti tabler-wallet me-1"></i>bKash</span>
+                                                        @php
+                                                            $oldBkashDelivery = old('bkash_delivery');
+                                                            if (is_null($oldBkashDelivery) && $repair->status === 'delivered') {
+                                                                $oldBkashDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'bKash')->sum('amount');
+                                                            }
+                                                        @endphp
+                                                        <input type="number" name="bkash_delivery" id="bkash_delivery" step="0.01" min="0" class="form-control text-end fw-bold" value="{{ $oldBkashDelivery ?? 0 }}" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text bg-white fw-semibold small text-warning px-2"><i class="ti tabler-wallet me-1"></i>Nagad</span>
+                                                        @php
+                                                            $oldNagadDelivery = old('nagad_delivery');
+                                                            if (is_null($oldNagadDelivery) && $repair->status === 'delivered') {
+                                                                $oldNagadDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Nagad')->sum('amount');
+                                                            }
+                                                        @endphp
+                                                        <input type="number" name="nagad_delivery" id="nagad_delivery" step="0.01" min="0" class="form-control text-end fw-bold" value="{{ $oldNagadDelivery ?? 0 }}" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text bg-white fw-semibold small px-2" style="color:#8e44ad!important;"><i class="ti tabler-wallet me-1"></i>Rocket</span>
+                                                        @php
+                                                            $oldRocketDelivery = old('rocket_delivery');
+                                                            if (is_null($oldRocketDelivery) && $repair->status === 'delivered') {
+                                                                $oldRocketDelivery = $repair->payments->where('transaction_type', 'delivery')->where('payment_method', 'Rocket')->sum('amount');
+                                                            }
+                                                        @endphp
+                                                        <input type="number" name="rocket_delivery" id="rocket_delivery" step="0.01" min="0" class="form-control text-end fw-bold" value="{{ $oldRocketDelivery ?? 0 }}" placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 rounded bg-danger bg-opacity-10 border border-danger border-opacity-20 mb-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <label class="form-label fw-bold text-danger mb-0 small" for="remaining_due">Remaining Due (BDT)</label>
+                                                    <input type="number" id="remaining_due" step="0.01" class="form-control form-control-sm border-0 bg-transparent text-end text-danger fw-bold fs-6 p-0" style="width:120px;" value="{{ old('due_amount', $repair->due_amount) }}" readonly>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3" id="cash_received_container" style="display: none;">
+                                                <label class="form-label fw-semibold text-dark small mb-1" for="cash_received">Cash Received (BDT)</label>
+                                                <input type="number" name="cash_received" id="cash_received" step="0.01" min="0" class="form-control text-dark fw-bold" value="{{ old('cash_received', $repair->cash_received) }}">
+                                            </div>
+                                            <div class="mt-2" id="change_returned_container" style="display: none;">
+                                                <label class="form-label fw-semibold text-success small mb-1" for="change_returned">Change Returned (BDT)</label>
+                                                <input type="number" name="change_returned" id="change_returned" step="0.01" min="0" class="form-control bg-white text-success fw-bold" value="{{ old('change_returned', $repair->change_returned) }}" readonly>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-primary btn-lg fw-bold py-3"><i class="ti tabler-device-floppy me-2"></i>Save Changes</button>
+                                            <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-outline-secondary text-center">Cancel</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endif
-
-                    <div class="d-flex gap-2 justify-content-end mt-4">
-                        <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-outline-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary px-4"><i class="ti tabler-device-floppy me-1"></i>Save Changes</button>
-                    </div>
                 </form>
             </div>
         </div>
@@ -628,10 +628,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (opt) {
                     nameInput.value = opt.getAttribute('data-name') || '';
                     priceInput.value = opt.getAttribute('data-price') || '0.00';
+                    nameInput.style.display = 'none';
                 }
             } else {
                 nameInput.value = '';
                 priceInput.value = '0.00';
+                nameInput.style.display = 'block';
+                nameInput.focus();
             }
             updateCommissionPreview();
         });
@@ -662,11 +665,11 @@ document.addEventListener('DOMContentLoaded', function() {
             newRow.className = 'part-row';
             newRow.innerHTML = `
                 <td>
-                    <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[${partIndex}][inventory_id]">
-                        <option value="">-- Custom Part (Type Below) --</option>
+                    <select class="form-select form-select-sm select-part-item" name="used_parts[${partIndex}][inventory_id]">
+                        <option value="">-- Type Custom Part Name Below --</option>
                         ${selectOptions}
                     </select>
-                    <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name" placeholder="Enter part name manually" required>
+                    <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name mt-1" placeholder="Enter part name manually" required>
                 </td>
                 <td>
                     <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="0.00" step="0.01" min="0" required>
@@ -691,6 +694,38 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCommissionPreview();
         });
     });
+
+    // Dynamic Custom Condition Checklist JS
+    const btnAddCustomChecklist = document.getElementById('btn-add-custom-checklist');
+    const customChecklistContainer = document.getElementById('custom-checklist-container');
+    let customChecklistIndex = document.querySelectorAll('.custom-checklist-row').length;
+
+    if (btnAddCustomChecklist && customChecklistContainer) {
+        btnAddCustomChecklist.addEventListener('click', function() {
+            const row = document.createElement('div');
+            row.className = 'row g-2 mb-2 custom-checklist-row align-items-center';
+            row.innerHTML = `
+                <div class="col-5">
+                    <input type="text" name="device_checklist[custom][${customChecklistIndex}][label]" class="form-control form-control-sm" placeholder="Condition Label (e.g. Face ID)" required>
+                </div>
+                <div class="col-6">
+                    <input type="text" name="device_checklist[custom][${customChecklistIndex}][value]" class="form-control form-control-sm" placeholder="Details (e.g. Working / 85% Health)" required>
+                </div>
+                <div class="col-1 text-center">
+                    <button type="button" class="btn btn-xs btn-icon btn-outline-danger btn-remove-custom-checklist"><i class="ti tabler-trash"></i></button>
+                </div>
+            `;
+            customChecklistContainer.appendChild(row);
+            customChecklistIndex++;
+        });
+
+        customChecklistContainer.addEventListener('click', function(e) {
+            const btnRemove = e.target.closest('.btn-remove-custom-checklist');
+            if (btnRemove) {
+                btnRemove.closest('.custom-checklist-row').remove();
+            }
+        });
+    }
 
     // Delegated events for parts list
     partsContainers.forEach(container => {

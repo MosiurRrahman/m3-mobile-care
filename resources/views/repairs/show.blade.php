@@ -107,47 +107,46 @@
                     $checklist = $repair->device_checklist ?? [];
                     $labels = [
                         'scratches' => 'Body Scratches / Dents',
-                        'display_ok' => 'Display Functional',
-                        'touch_ok' => 'Touch Screen Working',
-                        'camera_ok' => 'Cameras Working',
-                        'audio_ok' => 'Speakers & Audio Working',
-                        'buttons_ok' => 'Physical Buttons OK',
+                        'display_ok' => 'Display Condition',
+                        'touch_ok' => 'Touch Screen',
+                        'camera_ok' => 'Cameras',
+                        'audio_ok' => 'Speakers & Audio',
+                        'buttons_ok' => 'Physical Buttons',
                     ];
+                    $customChecklist = isset($checklist['custom']) && is_array($checklist['custom']) ? $checklist['custom'] : [];
                 @endphp
                 <div class="row mb-3">
                     @foreach($labels as $key => $label)
                         @php
-                            $checked = isset($checklist[$key]) && $checklist[$key] == 'yes';
-                            if ($key !== 'scratches') {
-                                // Default is working if not explicitly set
-                                if (!isset($checklist[$key])) {
-                                    $checked = true;
-                                }
-                            }
+                            $val = $checklist[$key] ?? null;
                         @endphp
                         <div class="col-sm-6 col-md-4 mb-3">
-                            <div class="d-flex align-items-center gap-2">
-                                @if($key === 'scratches')
-                                    {{-- Scratches is bad if true, good if false --}}
-                                    @if($checked)
-                                        <span class="badge bg-label-danger rounded-circle p-1"><i class="ti tabler-x fs-6"></i></span>
-                                        <span class="text-danger fw-semibold small">{{ $label }}</span>
+                            <div class="p-2 border rounded bg-light">
+                                <small class="text-muted d-block fw-semibold" style="font-size:0.75rem;">{{ $label }}</small>
+                                <span class="fw-bold small">
+                                    @if(empty($val))
+                                        <span class="text-muted">Not specified</span>
+                                    @elseif($val === 'yes')
+                                        <span class="text-success"><i class="ti tabler-check me-1"></i>OK / Good</span>
+                                    @elseif($val === 'no')
+                                        <span class="text-danger"><i class="ti tabler-x me-1"></i>Issue / Faulty</span>
                                     @else
-                                        <span class="badge bg-label-success rounded-circle p-1"><i class="ti tabler-check fs-6"></i></span>
-                                        <span class="text-success fw-semibold small">{{ $label }} (No)</span>
+                                        <span class="text-dark">{{ $val }}</span>
                                     @endif
-                                @else
-                                    {{-- Functional checks --}}
-                                    @if($checked)
-                                        <span class="badge bg-label-success rounded-circle p-1"><i class="ti tabler-check fs-6"></i></span>
-                                        <span class="text-success fw-semibold small">{{ $label }}</span>
-                                    @else
-                                        <span class="badge bg-label-danger rounded-circle p-1"><i class="ti tabler-x fs-6"></i></span>
-                                        <span class="text-danger fw-semibold small">{{ $label }} (Faulty)</span>
-                                    @endif
-                                @endif
+                                </span>
                             </div>
                         </div>
+                    @endforeach
+
+                    @foreach($customChecklist as $cItem)
+                        @if(!empty($cItem['label']))
+                        <div class="col-sm-6 col-md-4 mb-3">
+                            <div class="p-2 border rounded bg-light border-primary border-opacity-25">
+                                <small class="text-primary d-block fw-semibold" style="font-size:0.75rem;"><i class="ti tabler-sparkles me-1"></i>{{ $cItem['label'] }}</small>
+                                <span class="fw-bold text-dark small">{{ $cItem['value'] ?? 'N/A' }}</span>
+                            </div>
+                        </div>
+                        @endif
                     @endforeach
                 </div>
 
@@ -443,23 +442,55 @@
                 
                 @php
                     $status = $repair->status;
+                    $techNotes = $repair->technician_notes ? $repair->technician_notes : null;
+
                     $steps = [
-                        'pending' => ['Title' => 'Pending Confirmation', 'Desc' => 'Ticket logged. Awaiting confirmation.', 'Icon' => 'tabler-ticket'],
-                        'diagnosing' => ['Title' => 'Diagnosing', 'Desc' => 'Device open, checking fault details.', 'Icon' => 'tabler-zoom-check'],
-                        'waiting_for_approval' => ['Title' => 'Waiting Approval', 'Desc' => 'Estimated costs shared, awaiting approval.', 'Icon' => 'tabler-clock'],
-                        'repairing' => ['Title' => 'Repairing', 'Desc' => 'Replacing components or software flashing.', 'Icon' => 'tabler-tool'],
-                        'quality_check' => ['Title' => 'Quality Check', 'Desc' => 'Testing screen, cameras, and batteries.', 'Icon' => 'tabler-shield-check'],
-                        'completed' => ['Title' => 'Completed (Ready)', 'Desc' => 'Job finished. Ready for collection.', 'Icon' => 'tabler-checkbox'],
-                        'delivered' => ['Title' => 'Delivered', 'Desc' => 'Payment settled. Device collected.', 'Icon' => 'tabler-archive']
+                        'pending' => [
+                            'Title' => 'Pending Confirmation', 
+                            'Desc' => 'Ticket #' . $repair->ticket_id . ' logged for ' . $repair->device_brand . ' ' . $repair->device_model . '.', 
+                            'Icon' => 'tabler-ticket'
+                        ],
+                        'diagnosing' => [
+                            'Title' => 'Diagnosing', 
+                            'Desc' => 'Diagnosing reported issue: "' . $repair->issue_description . '"', 
+                            'Icon' => 'tabler-zoom-check'
+                        ],
+                        'waiting_for_approval' => [
+                            'Title' => 'Waiting Approval', 
+                            'Desc' => 'Estimated cost ' . number_format($repair->estimated_cost, 0) . ' BDT shared, awaiting customer approval.', 
+                            'Icon' => 'tabler-clock'
+                        ],
+                        'repairing' => [
+                            'Title' => 'Repairing', 
+                            'Desc' => $techNotes ? $techNotes : 'Replacing components or software flashing in lab.', 
+                            'Icon' => 'tabler-tool'
+                        ],
+                        'quality_check' => [
+                            'Title' => 'Quality Check', 
+                            'Desc' => 'Testing screen, cameras, battery, and charging stability.', 
+                            'Icon' => 'tabler-shield-check'
+                        ],
+                        'completed' => [
+                            'Title' => 'Completed (Ready)', 
+                            'Desc' => 'Job finished! Device ready for pickup.', 
+                            'Icon' => 'tabler-checkbox'
+                        ],
+                        'delivered' => [
+                            'Title' => 'Delivered', 
+                            'Desc' => 'Payment settled and device collected by customer.', 
+                            'Icon' => 'tabler-archive'
+                        ]
                     ];
 
-                    $statusOrder = ['pending', 'diagnosing', 'waiting_for_approval', 'repairing', 'quality_check', 'completed', 'delivered'];
-                    $currentIndex = array_search($status, $statusOrder);
+                    $fullStatusOrder = ['pending', 'diagnosing', 'waiting_for_approval', 'repairing', 'quality_check', 'completed', 'delivered'];
+                    $currentIndex = array_search($status, $fullStatusOrder);
                     
                     if ($status == 'cancelled') {
                         $steps['cancelled'] = ['Title' => 'Cancelled', 'Desc' => 'Repair ticket cancelled.', 'Icon' => 'tabler-square-x'];
                         $statusOrder = ['pending', 'cancelled'];
                         $currentIndex = 1;
+                    } else {
+                        $statusOrder = $currentIndex !== false ? array_slice($fullStatusOrder, 0, $currentIndex + 1) : $fullStatusOrder;
                     }
                 @endphp
 

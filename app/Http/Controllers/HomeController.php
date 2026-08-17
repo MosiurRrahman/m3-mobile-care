@@ -17,10 +17,6 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->check() && !$request->filled('ticket_id')) {
-            return redirect()->route('dashboard');
-        }
-
         $repair = null;
         $searched = false;
 
@@ -146,6 +142,109 @@ class HomeController extends Controller
     {
         $repair = Repair::where('ticket_id', $ticket_id)->firstOrFail();
         return view('booking-success', compact('repair'));
+    }
+
+    /**
+     * Show Services page.
+     */
+    public function services()
+    {
+        $services = Service::all();
+        $shopSettings = $this->getShopSettings();
+        return view('services', compact('services', 'shopSettings'));
+    }
+
+    /**
+     * Show About Us page.
+     */
+    public function about()
+    {
+        $shopSettings = $this->getShopSettings();
+        return view('about', compact('shopSettings'));
+    }
+
+    /**
+     * Show Contact Us page.
+     */
+    public function contact()
+    {
+        $shopSettings = $this->getShopSettings();
+        return view('contact', compact('shopSettings'));
+    }
+
+    /**
+     * Handle public contact form submission.
+     */
+    public function submitContact(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string',
+        ]);
+
+        return redirect()->back()->with('success', 'ধন্যবাদ! আপনার বার্তাটি আমরা পেয়েছি। খুব শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।');
+    }
+
+    /**
+     * Show E-Commerce Products / Accessories page.
+     */
+    public function products(Request $request)
+    {
+        $query = InventoryItem::where('quantity', '>', 0);
+
+        if ($request->filled('search')) {
+            $searchTerm = trim($request->input('search'));
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('category', 'like', "%{$searchTerm}%")
+                  ->orWhere('model_compatibility', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        $products = $query->latest()->paginate(12);
+        $shopSettings = $this->getShopSettings();
+        $categories = InventoryItem::distinct()->pluck('category')->filter()->values();
+
+        return view('products', compact('products', 'shopSettings', 'categories'));
+    }
+
+    /**
+     * Show dedicated ERT (Estimated Repair Tracking) Page.
+     */
+    public function trackView(Request $request)
+    {
+        $repair = null;
+        $searched = false;
+
+        if ($request->filled('ticket_id')) {
+            $searched = true;
+            $repair = Repair::with(['technician', 'customer'])
+                ->where('ticket_id', trim($request->input('ticket_id')))
+                ->first();
+        }
+
+        $shopSettings = $this->getShopSettings();
+        return view('track-ert', compact('repair', 'searched', 'shopSettings'));
+    }
+
+    /**
+     * Helper to retrieve shop settings array.
+     */
+    private function getShopSettings()
+    {
+        return [
+            'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
+            'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
+            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'email' => Setting::get('email', 'support@m3mobilecares.com'),
+            'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
+            'logo' => Setting::get('logo'),
+        ];
     }
 
     /**

@@ -15,11 +15,16 @@
                 </ol>
             </nav>
         </div>
-        @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-        <a href="{{ route('admin.inventory.create', ['type' => 'accessory']) }}" class="btn btn-primary">
-            <i class="ti tabler-plus me-1"></i>Add Accessory
-        </a>
-        @endif
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.inventory.salesman-sheet', ['type' => 'accessory']) }}" class="btn btn-outline-primary">
+                <i class="ti tabler-printer me-1"></i>সেলস প্রাইস শিট
+            </a>
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+            <a href="{{ route('admin.inventory.create', ['type' => 'accessory']) }}" class="btn btn-primary">
+                <i class="ti tabler-plus me-1"></i>Add Accessory
+            </a>
+            @endif
+        </div>
     </div>
 
     <!-- Alert Notifications -->
@@ -70,7 +75,7 @@
                     </div>
                 </form>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -123,7 +128,7 @@
                                     <a href="{{ route('admin.inventory.edit', $item->id) }}" class="btn btn-icon btn-sm btn-outline-primary me-1" title="Edit Item">
                                         <i class="ti tabler-edit"></i>
                                     </a>
-                                    
+
                                     <form action="{{ route('admin.inventory.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this item from catalog?');">
                                         @csrf
                                         @method('DELETE')
@@ -141,7 +146,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
             @if($items->hasPages())
             <div class="card-footer bg-transparent border-0 d-flex justify-content-end py-3">
