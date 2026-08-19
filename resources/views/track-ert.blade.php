@@ -37,7 +37,7 @@
     .ert-hero-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #ffffff;
-        padding: 70px 0 60px 0;
+        padding: 30px 0 20px 0;
         position: relative;
     }
 
@@ -46,7 +46,7 @@
         border-radius: var(--radius-lg);
         border: 1px solid var(--border-subtle);
         box-shadow: var(--shadow-md);
-        padding: 36px;
+        padding: 10px;
     }
 
     .btn-ux-primary {
@@ -68,7 +68,7 @@
     /* Vertical Timeline UI */
     .timeline-ert {
         position: relative;
-        padding-left: 28px;
+        padding-left: 12%;
     }
     .timeline-ert-item {
         position: relative;
@@ -117,8 +117,8 @@
             <span class="badge bg-danger text-white px-3 py-1.5 rounded-pill fw-bold mb-3 fs-7">
                 <i class="ti tabler-activity me-1"></i> LIVE ESTIMATED REPAIR TRACKER
             </span>
-            <h1 class="text-white fw-extrabold display-5 mb-3">ERT লাইভ রিপেয়ার ট্র্যাকিং</h1>
-            <p class="text-slate-300 fs-5 max-w-2xl mx-auto">
+            <h1 class="text-white fw-extrabold display-6 mb-3">ERT লাইভ রিপেয়ার ট্র্যাকিং</h1>
+            <p class="text-slate-300 fs-6 max-w-2xl mx-auto">
                 আপনার রসিদে থাকা <strong>Ticket ID</strong> বসিয়ে লাইভ রিপেয়ার স্ট্যাটাস, টেকনিশিয়ান নোট ও ডেলিভারি তথ্য দেখুন।
             </p>
         </div>
@@ -130,7 +130,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="ert-main-card">
-                        
+
                         <!-- Search Form -->
                         <form action="{{ route('track.form') }}" method="GET" class="mb-4">
                             <div class="row g-3 justify-content-center align-items-center">
@@ -153,23 +153,23 @@
                                 <div class="alert alert-success d-flex align-items-center mb-4 rounded-3 p-3">
                                     <i class="ti tabler-circle-check fs-2 me-2.5"></i>
                                     <div>
-                                        <strong class="fs-6">সফলভাবে পাওয়া গেছে!</strong> টিকিট নাম্বার: <span class="fw-extrabold text-uppercase">{{ $repair->ticket_id }}</span>
+                                        <strong class="fs-8">সফলভাবে পাওয়া গেছে!</strong> টিকিট নাম্বার: <span class="fw-extrabold text-uppercase">{{ $repair->ticket_id }}</span>
                                     </div>
                                 </div>
 
                                 <!-- Ticket Quick Summary Grid -->
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-4">
-                                        <div class="p-3.5 bg-light rounded-3 border h-100">
+                                        <div class="p-2 bg-light rounded-3 border text-center h-100">
                                             <span class="text-muted fs-8 text-uppercase fw-bold d-block mb-1">ডিভাইসের নাম</span>
-                                            <h5 class="mb-0 fw-bold text-dark"><i class="ti tabler-device-mobile text-orange me-1"></i> {{ $repair->device_brand }} {{ $repair->device_model }}</h5>
+                                            <h6 class="mb-0 fw-bold text-dark"><i class="ti tabler-device-mobile text-orange me-1"></i> {{ $repair->device_brand }} {{ $repair->device_model }}</h6>
                                             @if($repair->serial_imei)
                                                 <small class="text-muted d-block mt-1">IMEI/SN: {{ $repair->serial_imei }}</small>
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="p-3.5 bg-light rounded-3 border h-100">
+                                        <div class="p-2 bg-light rounded-3 border text-center h-100">
                                             <span class="text-muted fs-8 text-uppercase fw-bold d-block mb-1">বর্তমান স্ট্যাটাস</span>
                                             @php
                                                 $statusBadges = [
@@ -184,16 +184,16 @@
                                                 ];
                                                 $badgeInfo = $statusBadges[$repair->status] ?? ['bg-secondary text-white', ucfirst($repair->status)];
                                             @endphp
-                                            <span class="badge {{ $badgeInfo[0] }} fs-6 px-3 py-2 rounded-pill mt-1"><i class="ti tabler-clock me-1"></i> {{ $badgeInfo[1] }}</span>
+                                            <span class="badge {{ $badgeInfo[0] }} fs-8 px-3 py-2 rounded-pill mt-1"><i class="ti tabler-clock me-1"></i> {{ $badgeInfo[1] }}</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="p-3.5 bg-light rounded-3 border h-100">
+                                    {{-- <div class="col-md-4">
+                                        <div class="p-2 bg-light rounded-3 border text-center h-100">
                                             <span class="text-muted fs-8 text-uppercase fw-bold d-block mb-1">আউটলেট তথ্য</span>
                                             <h6 class="mb-0 fw-bold text-dark"><i class="ti tabler-map-pin text-success me-1"></i> M3 Mobile Care</h6>
                                             <small class="text-muted d-block mt-1">রাণীশংকৈল, ঠাকুরগাঁও</small>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <!-- Full Diagnostic & Timeline Details -->
