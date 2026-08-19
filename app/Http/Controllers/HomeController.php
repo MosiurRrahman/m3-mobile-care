@@ -213,7 +213,7 @@ class HomeController extends Controller
         }
 
         $waText = "নমস্কার M3 Mobile Care,\n\n👤 নাম: {$name}\n📞 মোবাইল: {$phone}\n💬 বার্তা: {$message}";
-        $waUrl = "https://wa.me/{$cleanWa}?text=" . rawurlencode($waText);
+        $waUrl = "https://api.whatsapp.com/send?phone={$cleanWa}&text=" . rawurlencode($waText);
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([

@@ -197,7 +197,7 @@
             }
 
             const waText = "নমস্কার M3 Mobile Care,\n\n👤 নাম: " + name + "\n📞 মোবাইল: " + phone + "\n💬 বার্তা: " + message;
-            const waUrl = "https://wa.me/" + shopWa + "?text=" + encodeURIComponent(waText);
+            const waUrl = "https://api.whatsapp.com/send?phone=" + shopWa + "&text=" + encodeURIComponent(waText);
 
             try {
                 // Send AJAX to server to save in Admin Panel
@@ -212,22 +212,29 @@
                 });
 
                 const data = await response.json();
+                const targetWaUrl = data.whatsapp_url || waUrl;
 
                 // Show success in UI
                 alertBox.classList.remove('d-none');
-                alertMessage.textContent = 'আপনার বার্তাটি অ্যাডমিন প্যানেলে সংরক্ষিত হয়েছে। হোয়াটসঅ্যাপ ওপেন হচ্ছে...';
-                alertWaBtn.href = data.whatsapp_url || waUrl;
+                alertMessage.textContent = 'আপনার বার্তাটি অ্যাডমিন প্যানেলে সংরক্ষিত হয়েছে। হোয়াটসঅ্যাপে সেন্ড করুন...';
+                alertWaBtn.href = targetWaUrl;
 
                 // Reset form fields
                 form.reset();
 
-                // Immediately open WhatsApp URL (since triggered by submit button)
-                window.location.href = data.whatsapp_url || waUrl;
+                // Direct open WhatsApp
+                const newWin = window.open(targetWaUrl, '_blank');
+                if (!newWin || newWin.closed || typeof newWin.closed == 'undefined') {
+                    window.location.href = targetWaUrl;
+                }
             } catch (err) {
                 // On any network failure, directly launch WhatsApp so customer never gets stuck
                 alertBox.classList.remove('d-none');
                 alertWaBtn.href = waUrl;
-                window.location.href = waUrl;
+                const newWin = window.open(waUrl, '_blank');
+                if (!newWin || newWin.closed || typeof newWin.closed == 'undefined') {
+                    window.location.href = waUrl;
+                }
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnHtml;
