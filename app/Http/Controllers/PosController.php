@@ -10,6 +10,7 @@ use App\Models\PaymentLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\SmsService;
 
 class PosController extends Controller
 {
@@ -294,9 +295,37 @@ class PosController extends Controller
                 ]);
             });
 
+            // Dispatch SMS for due payment
+            try {
+                $sale->refresh()->load('customer');
+                SmsService::sendDuePaymentSms($sale->customer, $amountPaid, $sale->due_amount, 'POS Invoice', $sale->invoice_no);
+            } catch (\Throwable $smsEx) {
+                // Suppress SMS exceptions
+            }
+
             return redirect()->back()->with('success', 'Due payment of ' . number_format($amountPaid, 2) . ' BDT recorded successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to process due payment: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Manually trigger SMS to customer for a POS sale invoice.
+     */
+    public function sendManualSaleSms(Request $request, $id)
+    {
+        $sale = Sale::with('customer')->findOrFail($id);
+
+        if (!$sale->customer || empty($sale->customer->phone)) {
+            return redirect()->back()->with('error', 'Customer phone number not available for this sale.');
+        }
+
+        $result = SmsService::sendPosSaleSms($sale, true);
+
+        if ($result['success']) {
+            return redirect()->back()->with('success', 'Bill SMS sent successfully to ' . $sale->customer->phone . '! (' . $result['message'] . ')');
+        }
+
+        return redirect()->back()->with('error', 'Failed to send SMS: ' . $result['message']);
     }
 }

@@ -612,8 +612,6 @@
         </div>
     </section>
 
-
-
     <!-- WHY M3 MOBILE CARE? RICH FEATURE CARDS SECTION -->
     <section class="py-5 bg-white">
         <div class="container py-3">

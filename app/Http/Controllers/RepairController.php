@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Helpers\Helpers;
 use Illuminate\Support\Facades\DB;
+use App\Services\SmsService;
 
 class RepairController extends Controller
 {
@@ -237,9 +238,17 @@ class RepairController extends Controller
 
                 // Sync stock deduction
                 self::syncStockDeduction($repair, $status, $usedParts);
+
+                // Dispatch SMS notification for repair tracking
+                try {
+                    $repair->load('customer');
+                    SmsService::sendRepairCreatedSms($repair);
+                } catch (\Throwable $smsEx) {
+                    // Suppress SMS exceptions so record creation is not blocked
+                }
             });
 
-            return redirect()->route('admin.repairs.index')->with('success', 'Job Card ticket created successfully!');
+            return redirect()->route('admin.repairs.index')->with('success', 'Job Card ticket created successfully and Tracking SMS sent!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Failed to create repair ticket: ' . $e->getMessage());
         }
@@ -347,6 +356,8 @@ class RepairController extends Controller
         }
 
         try {
+            $oldStatus = $repair->status;
+
             DB::transaction(function () use ($request, $repair) {
                 $status = $request->input('status');
 
@@ -565,6 +576,18 @@ class RepairController extends Controller
                 }
             });
 
+            // Dispatch SMS on status transitions
+            try {
+                $repair->refresh()->load('customer');
+                if ($oldStatus !== 'completed' && $repair->status === 'completed') {
+                    SmsService::sendRepairReadySms($repair);
+                } elseif ($oldStatus !== 'delivered' && $repair->status === 'delivered') {
+                    SmsService::sendRepairDeliveredSms($repair);
+                }
+            } catch (\Throwable $smsEx) {
+                // Suppress SMS exceptions
+            }
+
             return redirect()->route('admin.repairs.show', $repair->id)->with('success', 'Repair ticket updated successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Failed to update repair ticket: ' . $e->getMessage());
@@ -701,9 +724,51 @@ class RepairController extends Controller
                 ]);
             });
 
+            // Dispatch SMS for due payment
+            try {
+                $repair->refresh()->load('customer');
+                SmsService::sendDuePaymentSms($repair->customer, $amountPaid, $repair->due_amount, 'Repair Ticket', $repair->ticket_id);
+            } catch (\Throwable $smsEx) {
+                // Suppress SMS exceptions
+            }
+
             return redirect()->back()->with('success', 'Due payment of ' . number_format($amountPaid, 2) . ' BDT recorded successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to process due payment: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Manually trigger SMS to customer for a repair ticket.
+     */
+    public function sendManualSms(Request $request, $id)
+    {
+        $repair = Repair::with('customer')->findOrFail($id);
+
+        if (!$repair->customer || empty($repair->customer->phone)) {
+            return redirect()->back()->with('error', 'Customer phone number not available.');
+        }
+
+        $type = $request->input('type', 'tracking'); // tracking, ready, delivered, custom
+
+        if ($type === 'ready') {
+            $result = SmsService::sendRepairReadySms($repair);
+        } elseif ($type === 'delivered') {
+            $result = SmsService::sendRepairDeliveredSms($repair);
+        } elseif ($type === 'custom') {
+            $msg = trim($request->input('custom_message', ''));
+            if (empty($msg)) {
+                return redirect()->back()->with('error', 'Custom SMS message cannot be empty.');
+            }
+            $result = SmsService::sendSms($repair->customer->phone, $msg, true);
+        } else {
+            $result = SmsService::sendRepairCreatedSms($repair);
+        }
+
+        if ($result['success']) {
+            return redirect()->back()->with('success', 'SMS sent successfully to ' . $repair->customer->phone . '! (' . $result['message'] . ')');
+        }
+
+        return redirect()->back()->with('error', 'Failed to send SMS: ' . $result['message']);
     }
 }

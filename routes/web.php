@@ -65,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/pos/checkout', [PosController::class, 'checkout'])->name('admin.pos.checkout');
         Route::get('/admin/pos/invoice/{id}', [PosController::class, 'invoice'])->name('admin.pos.invoice');
         Route::post('/admin/sales/{id}/pay-due', [PosController::class, 'payDue'])->name('admin.sales.pay-due');
+        Route::post('/admin/sales/{id}/send-sms', [PosController::class, 'sendManualSaleSms'])->name('admin.sales.send-sms');
     });
 
     // Repairs (Job Cards)
@@ -78,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/admin/repairs/{id}', [RepairController::class, 'destroy'])->name('admin.repairs.destroy');
         Route::get('/admin/repairs/{id}/print', [RepairController::class, 'printSlip'])->name('admin.repairs.print');
         Route::post('/admin/repairs/{id}/pay-due', [RepairController::class, 'payDue'])->name('admin.repairs.pay-due');
+        Route::post('/admin/repairs/{id}/send-sms', [RepairController::class, 'sendManualSms'])->name('admin.repairs.send-sms');
     });
 
     // Inventory Catalog (Parts & Accessories)
@@ -164,6 +166,8 @@ Route::middleware(['auth'])->group(function () {
         // Global Shop Settings
         Route::get('/admin/settings', [SettingController::class, 'index'])->name('admin.settings.index');
         Route::put('/admin/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+        Route::post('/admin/settings/test-sms', [SettingController::class, 'testSms'])->name('admin.settings.test-sms');
+        Route::get('/admin/settings/sms-balance', [SettingController::class, 'getSmsBalance'])->name('admin.settings.sms-balance');
 
         // System Activity Logs
         Route::get('/admin/activity-logs', [UserController::class, 'activityLogs'])->name('admin.activity-logs.index');

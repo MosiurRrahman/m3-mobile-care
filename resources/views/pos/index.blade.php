@@ -41,6 +41,14 @@
     border: none !important;
     padding: 6px 12px !important;
 }
+.ts-dropdown .create:hover {
+    background-color: #e8f3ff !important;
+    color: #5c50e6 !important;
+}
+.ts-dropdown .create {
+    cursor: pointer;
+    font-size: 0.85rem;
+}
 </style>
 
 <div class="row">
@@ -256,7 +264,7 @@
                         <select id="pos-customer-id" class="form-select select2 border-start-0 ps-0" style="border-radius: 0 8px 8px 0; border-color: #e2e8f0;">
                             <option value="">Walk-in Customer</option>
                             @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->phone }})</option>
+                            <option value="{{ $customer->id }}">{{ $customer->name }} - {{ $customer->phone }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -640,12 +648,59 @@
         let tomSelectCustomer = null;
         if (customerSelect) {
             tomSelectCustomer = new TomSelect(customerSelect, {
-                create: false,
+                create: true,
+                createOnBlur: false,
+                persist: false,
                 sortField: {
                     field: "text",
                     direction: "asc"
                 },
-                placeholder: "Search customer by name or phone..."
+                placeholder: "Search customer by name or phone...",
+                render: {
+                    option_create: function(data, escape) {
+                        return '<div class="create px-3 py-2 text-primary fw-bold bg-light cursor-pointer border-top"><i class="ti tabler-user-plus me-1"></i>+ Register "' + escape(data.input) + '" as Customer</div>';
+                    },
+                    no_results: function(data, escape) {
+                        return '<div class="no-results px-3 py-2 text-muted small"><i class="ti tabler-search-off me-1"></i>No customer found for "' + escape(data.input) + '". Click <b>"+ Register..."</b> above or press Enter.</div>';
+                    }
+                },
+                create: function(input, callback) {
+                    const trimmed = input.trim();
+                    if (!trimmed) {
+                        callback(false);
+                        return;
+                    }
+
+                    fetch('{{ route("admin.customers.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            phone: trimmed,
+                            name: ''
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.customer) {
+                            callback({
+                                value: data.customer.id,
+                                text: `${data.customer.name} - ${data.customer.phone}`
+                            });
+                        } else {
+                            alert(data.message || 'Failed to register customer.');
+                            callback(false);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error registering customer:', err);
+                        alert('Failed to register customer.');
+                        callback(false);
+                    });
+                }
             });
             
             tomSelectCustomer.on('change', function() {
@@ -850,9 +905,9 @@
                 subtotalLabel.innerText = '0.00 BDT';
                 payableLabel.innerText = '0.00 BDT';
                 cashInput.value = 0;
-                bkashInput.value = 0;
-                nagadInput.value = 0;
-                rocketInput.value = 0;
+                if (mfsContainer) {
+                    mfsContainer.innerHTML = '';
+                }
                 totalPaidDisplay.innerText = '0.00 BDT';
                 cashGivenInput.value = '';
                 changeGroup.classList.add('d-none');
@@ -1348,13 +1403,13 @@
                     if (tomSelectCustomer) {
                         tomSelectCustomer.addOption({
                             value: data.customer.id,
-                            text: `${data.customer.name} (${data.customer.phone})`
+                            text: `${data.customer.name} - ${data.customer.phone}`
                         });
                         tomSelectCustomer.setValue(data.customer.id);
                     } else {
                         const opt = document.createElement('option');
                         opt.value = data.customer.id;
-                        opt.innerText = `${data.customer.name} (${data.customer.phone})`;
+                        opt.innerText = `${data.customer.name} - ${data.customer.phone}`;
                         opt.selected = true;
                         customerSelect.appendChild(opt);
                     }
@@ -1371,6 +1426,20 @@
                 alert('Failed to register customer. Check inputs.');
             });
         });
+
+        // Pre-fill phone if typed in TomSelect search
+        const quickCustomerModalEl = document.getElementById('quickCustomerModal');
+        if (quickCustomerModalEl) {
+            quickCustomerModalEl.addEventListener('show.bs.modal', function () {
+                if (tomSelectCustomer && tomSelectCustomer.control_input) {
+                    const typed = (tomSelectCustomer.control_input.value || '').trim();
+                    const phoneInput = document.getElementById('qc_phone');
+                    if (typed && phoneInput && !phoneInput.value) {
+                        phoneInput.value = typed;
+                    }
+                }
+            });
+        }
 
         // Checkout Preview (Modal Trigger)
         checkoutBtn.addEventListener('click', function() {
@@ -1544,20 +1613,22 @@
                         previewModal.hide();
                     }
 
-                    alert('Checkout processed successfully! Opening invoice ticket...');
+                    // Reset POS state immediately
+                    cart.length = 0;
+                    if (discountInput) discountInput.value = 0;
+                    if (tomSelectCustomer) {
+                        tomSelectCustomer.setValue('');
+                    } else if (customerSelect) {
+                        customerSelect.value = '';
+                    }
+                    if (mfsContainer) {
+                        mfsContainer.innerHTML = '';
+                    }
+                    renderCart();
+                    updateCatalogQtyBadges();
                     
                     // Open invoice printable in new tab
                     window.open(`/admin/pos/invoice/${data.sale_id}`, '_blank');
-                    
-                    // Reset POS
-                    cart.length = 0;
-                    discountInput.value = 0;
-                    if (tomSelectCustomer) {
-                        tomSelectCustomer.setValue('');
-                    } else {
-                        customerSelect.value = '';
-                    }
-                    renderCart();
                     
                     // Reload window to update stock displays
                     window.location.reload();

@@ -9,6 +9,7 @@ use App\Models\InventoryItem;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\SmsService;
 
 class HomeController extends Controller
 {
@@ -131,8 +132,16 @@ class HomeController extends Controller
             'status' => 'pending',
         ]);
 
+        // Dispatch tracking SMS notification
+        try {
+            $repair->load('customer');
+            SmsService::sendRepairCreatedSms($repair);
+        } catch (\Throwable $smsEx) {
+            // Suppress SMS exceptions
+        }
+
         return redirect()->route('book.success', ['ticket_id' => $repair->ticket_id])
-            ->with('success', 'Repair request booked successfully!');
+            ->with('success', 'Repair request booked successfully and Tracking SMS sent!');
     }
 
     /**

@@ -17,10 +17,70 @@
             </nav>
         </div>
         <div class="d-flex gap-2">
+            <!-- Send SMS Action Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="ti tabler-message-2 me-1"></i>Send SMS
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-1">
+                    <li>
+                        <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="type" value="tracking">
+                            <button type="submit" class="dropdown-item py-2">
+                                <i class="ti tabler-send me-2 text-primary"></i>Send Tracking Link SMS
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="type" value="ready">
+                            <button type="submit" class="dropdown-item py-2">
+                                <i class="ti tabler-circle-check me-2 text-success"></i>Send Ready for Pickup SMS
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="type" value="delivered">
+                            <button type="submit" class="dropdown-item py-2">
+                                <i class="ti tabler-package me-2 text-info"></i>Send Delivery & Bill SMS
+                            </button>
+                        </form>
+                    </li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#customSmsModal">
+                            <i class="ti tabler-pencil me-2 text-secondary"></i>Write Custom SMS...
+                        </button>
+                    </li>
+                </ul>
+            </div>
             <a href="{{ route('admin.repairs.print', $repair->id) }}" class="btn btn-outline-secondary" target="_blank"><i class="ti tabler-printer me-1"></i>Print Job Slip</a>
             <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-primary"><i class="ti tabler-edit me-1"></i>Edit Ticket</a>
         </div>
     </div>
+
+    <!-- Session Alerts -->
+    @if(session('success'))
+        <div class="col-12 mb-3">
+            <div class="alert alert-success border-0 py-2 d-flex align-items-center">
+                <i class="ti tabler-circle-check fs-4 me-2"></i>
+                <div>{{ session('success') }}</div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="col-12 mb-3">
+            <div class="alert alert-danger border-0 py-2 d-flex align-items-center">
+                <i class="ti tabler-alert-circle fs-4 me-2"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+        </div>
+    @endif
 
     <!-- Details Card -->
     <div class="col-lg-8 mb-4">
@@ -604,4 +664,36 @@
         }
     });
 </script>
+
+<!-- Custom SMS Modal -->
+<div class="modal fade" id="customSmsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="custom">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-dark"><i class="ti tabler-message-2 text-primary me-2"></i>Send Custom SMS to Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Customer Phone</label>
+                        <input type="text" class="form-control" value="{{ $repair->customer ? $repair->customer->phone : 'N/A' }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="custom_message">SMS Message <span class="text-danger">*</span></label>
+                        <textarea name="custom_message" id="custom_message" class="form-control" rows="4" placeholder="Write custom SMS message..." required>Dear {{ $repair->customer ? $repair->customer->name : 'Customer' }}, your device {{ $repair->device_brand }} {{ $repair->device_model }} (Ticket: {{ $repair->ticket_id }}). </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top bg-light">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="ti tabler-send me-1"></i>Send SMS Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

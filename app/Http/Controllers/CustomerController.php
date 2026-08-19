@@ -47,8 +47,8 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $data = $request->validate([
+            'name' => 'nullable|string|max:255',
             'phone' => 'required|string|max:20',
             'alt_phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
@@ -56,7 +56,33 @@ class CustomerController extends Controller
             'district' => 'nullable|string|max:100',
         ]);
 
-        $customer = Customer::create($request->all());
+        $phone = trim($data['phone']);
+        $name = trim($data['name'] ?? '');
+
+        if (empty($name) || $name === $phone || preg_match('/^[0-9+() -]+$/', $name)) {
+            $name = 'Walk-in';
+        }
+
+        $customer = Customer::where('phone', $phone)->first();
+        if (!$customer) {
+            $customer = Customer::create([
+                'name' => $name,
+                'phone' => $phone,
+                'alt_phone' => $data['alt_phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'address' => $data['address'] ?? null,
+                'district' => $data['district'] ?? null,
+            ]);
+        } elseif (!empty($data['name']) && $customer->name !== $data['name']) {
+            // Update name/details if provided
+            $customer->update(array_filter([
+                'name' => $data['name'],
+                'alt_phone' => $data['alt_phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'address' => $data['address'] ?? null,
+                'district' => $data['district'] ?? null,
+            ]));
+        }
 
         // Check if AJAX request (from POS terminal checkout)
         if ($request->ajax() || $request->wantsJson()) {
@@ -76,7 +102,7 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = Customer::findOrFail($id);
-        
+
         // Eager load previous repairs
         $repairs = Repair::where('customer_id', $customer->id)
             ->with('technician')
