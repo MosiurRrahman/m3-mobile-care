@@ -58,6 +58,9 @@
                     </li>
                 </ul>
             </div>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickStatusModal">
+                <i class="ti tabler-refresh me-1"></i>Update Status & Note
+            </button>
             <a href="{{ route('admin.repairs.print', $repair->id) }}" class="btn btn-outline-secondary" target="_blank"><i class="ti tabler-printer me-1"></i>Print Job Slip</a>
             <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-primary"><i class="ti tabler-edit me-1"></i>Edit Ticket</a>
         </div>
@@ -690,6 +693,49 @@
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary px-4">
                         <i class="ti tabler-send me-1"></i>Send SMS Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Status & Note Update Modal -->
+<div class="modal fade" id="quickStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form action="{{ route('admin.repairs.quick-status', $repair->id) }}" method="POST">
+                @csrf
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-dark"><i class="ti tabler-refresh text-primary me-2"></i>Update Job Status & Live ERT Note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="qs_status">Repair Job Status <span class="text-danger">*</span></label>
+                        <select name="status" id="qs_status" class="form-select" required>
+                            <option value="pending" {{ $repair->status == 'pending' ? 'selected' : '' }}>১. অপেক্ষমান (Pending confirmation)</option>
+                            <option value="diagnosing" {{ $repair->status == 'diagnosing' ? 'selected' : '' }}>২. ডায়াগনসিস চলছে (Diagnosing)</option>
+                            <option value="waiting_for_approval" {{ $repair->status == 'waiting_for_approval' ? 'selected' : '' }}>২.১ গ্রাহক অনুমোদনের অপেক্ষা (Waiting Approval)</option>
+                            <option value="repairing" {{ $repair->status == 'repairing' ? 'selected' : '' }}>৩. কাজ চলছে (Repairing)</option>
+                            <option value="quality_check" {{ $repair->status == 'quality_check' ? 'selected' : '' }}>৩.১ কোয়ালিটি চেক (Quality Check)</option>
+                            <option value="completed" {{ $repair->status == 'completed' ? 'selected' : '' }}>৪. সম্পূর্ণ তৈরি (Completed / Ready for Pickup)</option>
+                            <option value="delivered" {{ $repair->status == 'delivered' ? 'selected' : '' }}>৫. ডেলিভারি সম্পন্ন (Delivered)</option>
+                            <option value="cancelled" {{ $repair->status == 'cancelled' ? 'selected' : '' }}>বাতিল (Cancelled)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="qs_technician_notes">
+                            Live Description / Technician Note
+                            <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি কাস্টমার ERT লাইভ ট্র্যাকিং পেজে দেখতে পাবেন)</small>
+                        </label>
+                        <textarea name="technician_notes" id="qs_technician_notes" class="form-control" rows="4" placeholder="যেমন: নতুন অরিজিনাল ডিসপ্লে লাগানো হচ্ছে / মাদারবোর্ড আইসি ডায়াগনসিস সম্পন্ন...">{{ $repair->technician_notes }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top bg-light">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="ti tabler-check me-1"></i>Save & Update Live Status
                     </button>
                 </div>
             </form>

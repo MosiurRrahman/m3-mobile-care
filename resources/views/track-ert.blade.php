@@ -99,6 +99,10 @@
         background: var(--brand-orange);
         box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25);
     }
+    .timeline-ert-item.cancelled .timeline-ert-icon {
+        background: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25);
+    }
 </style>
 
 @include('_partials.public-navbar')
@@ -224,27 +228,117 @@
                                     <div class="col-lg-5">
                                         <div class="p-4 border rounded-3 bg-white h-100">
                                             <h6 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="ti tabler-timeline text-orange me-1"></i> রিপেয়ারের ধাপসমূহ</h6>
+                                            
+                                            @php
+                                                $status = $repair->status;
+                                                $techNotes = !empty($repair->technician_notes) ? trim($repair->technician_notes) : null;
+                                                $partsUsed = !empty($repair->used_parts) && is_array($repair->used_parts) 
+                                                    ? implode(', ', array_filter(array_column($repair->used_parts, 'name'))) 
+                                                    : null;
+
+                                                // Sequential step definitions up to the current progress
+                                                $stepDefinitions = [
+                                                    'pending' => [
+                                                        'title' => '১. রিসিভড & এন্ট্রি',
+                                                        'date' => $repair->created_at->format('d M, Y h:i A'),
+                                                        'desc' => 'টিকিট #' . $repair->ticket_id . ' সিস্টেমে রিসিভড করা হয়েছে।',
+                                                    ],
+                                                    'diagnosing' => [
+                                                        'title' => '২. ডায়াগনসিস ও পার্টস চেকিং',
+                                                        'date' => null,
+                                                        'desc' => $techNotes ?: 'টেকনিশিয়ান ডিভাইসটি ল্যাবে পরীক্ষা ও সমস্যা ডায়াগনসিস করছেন।',
+                                                    ],
+                                                    'waiting_for_approval' => [
+                                                        'title' => '২. গ্রাহক অনুমোদনের অপেক্ষা',
+                                                        'date' => null,
+                                                        'desc' => $techNotes ?: 'আনুমানিক খরচ নির্ধারণ করে গ্রাহকের অনুমোদনের অপেক্ষায় রাখা হয়েছে।',
+                                                    ],
+                                                    'repairing' => [
+                                                        'title' => '৩. রিপেয়ার কাজ চলছে',
+                                                        'date' => null,
+                                                        'desc' => $techNotes ?: ($partsUsed ? 'পার্টস প্রতিস্থাপন: ' . $partsUsed : 'ল্যাবে অভিজ্ঞ টেকনিশিয়ান দ্বারা রিপেয়ার কাজ চলছে।'),
+                                                    ],
+                                                    'quality_check' => [
+                                                        'title' => '৩. কোয়ালিটি টেস্ট',
+                                                        'date' => null,
+                                                        'desc' => $techNotes ?: 'রিপেয়ার শেষে পারফরম্যান্স ও কোয়ালিটি টেস্ট চলছে।',
+                                                    ],
+                                                    'completed' => [
+                                                        'title' => '৪. টেস্ট সম্পন্ন ও ডেলিভারির জন্য প্রস্তুত',
+                                                        'date' => $repair->completed_at ? \Carbon\Carbon::parse($repair->completed_at)->format('d M, Y h:i A') : null,
+                                                        'desc' => $techNotes ?: 'ডিভাইসটি সফলভাবে প্রস্তুত করা হয়েছে। আউটলেট থেকে ডেলিভারি গ্রহণ করতে পারেন।',
+                                                    ],
+                                                    'delivered' => [
+                                                        'title' => '৫. ডেলিভারি সম্পন্ন',
+                                                        'date' => $repair->updated_at->format('d M, Y h:i A'),
+                                                        'desc' => $techNotes ?: 'পণ্যটি সফলভাবে গ্রাহকের নিকট হস্তান্তর করা হয়েছে। ধন্যবাদ!',
+                                                    ],
+                                                    'cancelled' => [
+                                                        'title' => 'সার্ভিস বাতিল (Cancelled)',
+                                                        'date' => $repair->updated_at->format('d M, Y h:i A'),
+                                                        'desc' => $techNotes ?: 'অনিবার্য কারণে সার্ভিসটি বাতিল করা হয়েছে।',
+                                                    ],
+                                                ];
+
+                                                // Determine sequence of steps to show up to the current status
+                                                if ($status === 'pending') {
+                                                    $visibleKeys = ['pending'];
+                                                } elseif ($status === 'diagnosing') {
+                                                    $visibleKeys = ['pending', 'diagnosing'];
+                                                } elseif ($status === 'waiting_for_approval') {
+                                                    $visibleKeys = ['pending', 'waiting_for_approval'];
+                                                } elseif ($status === 'repairing') {
+                                                    $visibleKeys = ['pending', 'diagnosing', 'repairing'];
+                                                } elseif ($status === 'quality_check') {
+                                                    $visibleKeys = ['pending', 'diagnosing', 'repairing', 'quality_check'];
+                                                } elseif ($status === 'completed') {
+                                                    $visibleKeys = ['pending', 'diagnosing', 'repairing', 'completed'];
+                                                } elseif ($status === 'delivered') {
+                                                    $visibleKeys = ['pending', 'diagnosing', 'repairing', 'completed', 'delivered'];
+                                                } elseif ($status === 'cancelled') {
+                                                    $visibleKeys = ['pending', 'cancelled'];
+                                                } else {
+                                                    $visibleKeys = ['pending'];
+                                                }
+
+                                                $lastIndex = count($visibleKeys) - 1;
+                                            @endphp
+
                                             <div class="timeline-ert pt-2">
-                                                <div class="timeline-ert-item {{ in_array($repair->status, ['pending', 'diagnosing', 'repairing', 'quality_check', 'completed', 'delivered']) ? 'completed' : '' }}">
-                                                    <div class="timeline-ert-icon"></div>
-                                                    <h6 class="mb-0 fw-bold">১. রিসিভড & এন্ট্রি</h6>
-                                                    <small class="text-muted">{{ $repair->created_at->format('d M, Y h:i A') }}</small>
-                                                </div>
-                                                <div class="timeline-ert-item {{ in_array($repair->status, ['diagnosing', 'repairing', 'quality_check', 'completed', 'delivered']) ? 'completed' : ($repair->status == 'pending' ? 'active' : '') }}">
-                                                    <div class="timeline-ert-icon"></div>
-                                                    <h6 class="mb-0 fw-bold">২. ডায়াগনসিস ও পার্টস রেডি</h6>
-                                                    <small class="text-muted">টেকনিশিয়ান পরীক্ষা করছেন</small>
-                                                </div>
-                                                <div class="timeline-ert-item {{ in_array($repair->status, ['repairing', 'quality_check', 'completed', 'delivered']) ? 'completed' : ($repair->status == 'diagnosing' ? 'active' : '') }}">
-                                                    <div class="timeline-ert-icon"></div>
-                                                    <h6 class="mb-0 fw-bold">৩. রিপেয়ার কাজ চলছে</h6>
-                                                    <small class="text-muted">অরিজিনাল পার্টস প্রতিস্থাপন</small>
-                                                </div>
-                                                <div class="timeline-ert-item {{ in_array($repair->status, ['completed', 'delivered']) ? 'completed' : ($repair->status == 'completed' ? 'active' : '') }}">
-                                                    <div class="timeline-ert-icon"></div>
-                                                    <h6 class="mb-0 fw-bold">৪. টেস্ট ও ডেলিভারির জন্য প্রস্তুত</h6>
-                                                    <small class="text-muted">সম্পূর্ণ টেস্টেড</small>
-                                                </div>
+                                                @foreach($visibleKeys as $idx => $sKey)
+                                                    @php
+                                                        $isLast = ($idx === $lastIndex);
+                                                        $sItem = $stepDefinitions[$sKey] ?? null;
+                                                        if (!$sItem) continue;
+
+                                                        $isCancelled = ($sKey === 'cancelled');
+                                                        $itemClass = $isCancelled ? 'cancelled' : ($isLast ? 'active' : 'completed');
+                                                        
+                                                        // For past steps, show clean concise completed notes
+                                                        $desc = $sItem['desc'];
+                                                        if (!$isLast) {
+                                                            if ($sKey === 'pending') {
+                                                                $desc = 'সিস্টেমে রিসিভ ও এন্ট্রি সম্পন্ন।';
+                                                            } elseif ($sKey === 'diagnosing') {
+                                                                $desc = 'ডিভাইস পরীক্ষা ও পার্টস ডায়াগনসিস সম্পন্ন।';
+                                                            } elseif ($sKey === 'repairing') {
+                                                                $desc = 'রিপেয়ারিং ও সার্ভিস কাজ সম্পন্ন।';
+                                                            } elseif ($sKey === 'completed') {
+                                                                $desc = 'টেস্টিং ও ডেলিভারি প্রস্তুতি সম্পন্ন।';
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    <div class="timeline-ert-item {{ $itemClass }}">
+                                                        <div class="timeline-ert-icon"></div>
+                                                        <h6 class="mb-0 fw-bold text-dark">{{ $sItem['title'] }}</h6>
+                                                        <div class="text-slate-600 fs-8 mt-1 lh-sm">{{ $desc }}</div>
+                                                        @if($sItem['date'])
+                                                            <small class="text-muted d-block mt-1" style="font-size: 0.72rem;">
+                                                                <i class="ti tabler-calendar-time me-1"></i>{{ $sItem['date'] }}
+                                                            </small>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>

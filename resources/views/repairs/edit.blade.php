@@ -137,8 +137,11 @@
 
                         <div class="row mb-4">
                             <div class="col-12">
-                                <label class="form-label fw-semibold" for="technician_notes">Technician Diagnostic Logs & Notes <span class="text-danger">*</span></label>
-                                <textarea name="technician_notes" id="technician_notes" rows="4" class="form-control" placeholder="Describe operations done, parts replaced, current condition..." required>{{ old('technician_notes', $repair->technician_notes) }}</textarea>
+                                <label class="form-label fw-semibold" for="technician_notes">
+                                    Technician Diagnostic Logs & Notes <span class="text-danger">*</span>
+                                    <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি গ্রাহক ERT লাইভ ট্র্যাকিং টাইমলাইনে দেখতে পাবেন)</small>
+                                </label>
+                                <textarea name="technician_notes" id="technician_notes" rows="4" class="form-control" placeholder="যেমন: নতুন অরিজিনাল ডিসপ্লে লাগানো হচ্ছে / মাদারবোর্ড আইসি ডায়াগনসিস সম্পন্ন..." required>{{ old('technician_notes', $repair->technician_notes) }}</textarea>
                             </div>
                         </div>
                     @else
@@ -284,8 +287,11 @@
                                     </div>
                                     <div class="card-body p-4">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold" for="technician_notes">Technician Diagnostic Notes & Lab Update</label>
-                                            <textarea name="technician_notes" id="technician_notes" rows="3" class="form-control form-control-sm" placeholder="Write lab updates, diagnose details, or work progress description...">{{ old('technician_notes', $repair->technician_notes) }}</textarea>
+                                            <label class="form-label fw-semibold" for="technician_notes">
+                                                Technician Diagnostic Notes & Lab Update
+                                                <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি গ্রাহক ERT লাইভ ট্র্যাকিং টাইমলাইনে দেখতে পাবেন)</small>
+                                            </label>
+                                            <textarea name="technician_notes" id="technician_notes" rows="3" class="form-control form-control-sm" placeholder="যেমন: নতুন অরিজিনাল ডিসপ্লে লাগানো হচ্ছে / মাদারবোর্ড আইসি ডায়াগনসিস সম্পন্ন...">{{ old('technician_notes', $repair->technician_notes) }}</textarea>
                                         </div>
 
                                         <div class="table-responsive">

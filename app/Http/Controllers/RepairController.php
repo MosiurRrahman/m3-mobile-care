@@ -771,4 +771,41 @@ class RepairController extends Controller
 
         return redirect()->back()->with('error', 'Failed to send SMS: ' . $result['message']);
     }
+
+    /**
+     * Quick update repair status and technician notes.
+     */
+    public function quickStatus(Request $request, $id)
+    {
+        $repair = Repair::findOrFail($id);
+
+        if (auth()->user()->isTechnician() && $repair->assigned_technician_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $request->validate([
+            'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,repairing,quality_check,completed,delivered,cancelled',
+            'technician_notes' => 'nullable|string',
+        ]);
+
+        $status = $request->input('status');
+        $notes = $request->input('technician_notes');
+
+        $updateData = [
+            'status' => $status,
+            'technician_notes' => $notes,
+        ];
+
+        if (in_array($status, ['completed', 'delivered']) && !$repair->completed_at) {
+            $updateData['completed_at'] = now();
+        }
+
+        if (intval($repair->warranty_days) > 0 && in_array($status, ['completed', 'delivered']) && !$repair->warranty_expiry_date) {
+            $updateData['warranty_expiry_date'] = now()->addDays(intval($repair->warranty_days))->toDateString();
+        }
+
+        $repair->update($updateData);
+
+        return redirect()->back()->with('success', 'রিপেয়ার স্ট্যাটাস ও লাইভ নোট সফলভাবে আপডেট করা হয়েছে!');
+    }
 }

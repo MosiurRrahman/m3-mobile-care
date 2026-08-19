@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/repairs/{id}/print', [RepairController::class, 'printSlip'])->name('admin.repairs.print');
         Route::post('/admin/repairs/{id}/pay-due', [RepairController::class, 'payDue'])->name('admin.repairs.pay-due');
         Route::post('/admin/repairs/{id}/send-sms', [RepairController::class, 'sendManualSms'])->name('admin.repairs.send-sms');
+        Route::post('/admin/repairs/{id}/quick-status', [RepairController::class, 'quickStatus'])->name('admin.repairs.quick-status');
     });
 
     // Inventory Catalog (Parts & Accessories)
