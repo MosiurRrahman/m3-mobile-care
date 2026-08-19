@@ -19,6 +19,7 @@ class SettingController extends Controller
             'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
             'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'whatsapp' => Setting::get('whatsapp', '+8801353106967'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
             'logo' => Setting::get('logo'),
@@ -54,6 +55,7 @@ class SettingController extends Controller
             'shop_name' => 'required|string|max:255',
             'shop_slogan' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:100',
+            'whatsapp' => 'nullable|string|max:100',
             'email' => 'nullable|string|email|max:255',
             'address' => 'nullable|string|max:500',
             'logo' => 'nullable|image|max:10240',
@@ -70,6 +72,7 @@ class SettingController extends Controller
         Setting::set('shop_name', $request->input('shop_name'));
         Setting::set('shop_slogan', $request->input('shop_slogan'));
         Setting::set('phone', $request->input('phone'));
+        Setting::set('whatsapp', $request->input('whatsapp'));
         Setting::set('email', $request->input('email'));
         Setting::set('address', $request->input('address'));
         Setting::set('receipt_footer', $request->input('receipt_footer'));

@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Customer;
 use App\Models\InventoryItem;
 use App\Models\Setting;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\SmsService;
@@ -192,7 +193,39 @@ class HomeController extends Controller
             'message' => 'required|string',
         ]);
 
-        return redirect()->back()->with('success', 'ধন্যবাদ! আপনার বার্তাটি আমরা পেয়েছি। খুব শীঘ্রই আমরা আপনার সাথে যোগাযোগ করব।');
+        $name = trim($request->input('name'));
+        $phone = trim($request->input('phone'));
+        $message = trim($request->input('message'));
+
+        // 1. Save to Admin database (ContactMessage)
+        ContactMessage::create([
+            'name' => $name,
+            'phone' => $phone,
+            'message' => $message,
+            'status' => 'unread',
+        ]);
+
+        // 2. Build WhatsApp direct URL for shop owner
+        $shopWa = Setting::get('whatsapp', '+8801353106967');
+        $cleanWa = preg_replace('/[^0-9]/', '', $shopWa);
+        if (str_starts_with($cleanWa, '01')) {
+            $cleanWa = '88' . $cleanWa;
+        }
+
+        $waText = "নমস্কার M3 Mobile Care,\n\n👤 নাম: {$name}\n📞 মোবাইল: {$phone}\n💬 বার্তা: {$message}";
+        $waUrl = "https://wa.me/{$cleanWa}?text=" . rawurlencode($waText);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'ধন্যবাদ! আপনার বার্তাটি আমাদের সিস্টেমে সংরক্ষিত হয়েছে এবং হোয়াটসঅ্যাপে পাঠানো হচ্ছে...',
+                'whatsapp_url' => $waUrl,
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', 'ধন্যবাদ! আপনার বার্তাটি আমাদের সিস্টেমে সংরক্ষিত হয়েছে এবং হোয়াটসঅ্যাপে পাঠানো হচ্ছে...')
+            ->with('whatsapp_url', $waUrl);
     }
 
     /**
@@ -203,19 +236,14 @@ class HomeController extends Controller
         $query = InventoryItem::where('quantity', '>', 0);
 
         if ($request->filled('search')) {
-            $searchTerm = trim($request->input('search'));
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%")
-                  ->orWhere('category', 'like', "%{$searchTerm}%")
-                  ->orWhere('model_compatibility', 'like', "%{$searchTerm}%");
-            });
+            $query->where('name', 'like', '%' . trim($request->input('search')) . '%');
         }
 
         if ($request->filled('category')) {
             $query->where('category', $request->input('category'));
         }
 
-        $products = $query->latest()->paginate(12);
+        $products = $query->orderBy('name', 'asc')->paginate(16)->withQueryString();
         $shopSettings = $this->getShopSettings();
         $categories = InventoryItem::distinct()->pluck('category')->filter()->values();
 
@@ -250,6 +278,7 @@ class HomeController extends Controller
             'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
             'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'whatsapp' => Setting::get('whatsapp', '+8801353106967'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
             'logo' => Setting::get('logo'),

@@ -38,6 +38,21 @@
         width: auto;
         object-fit: contain;
     }
+    .btn-orange-gradient {
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+        border: none !important;
+        color: #ffffff !important;
+        padding: 10px 20px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35) !important;
+        transition: all 0.3s ease !important;
+    }
+    .btn-orange-gradient:hover {
+        background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
+        transform: translateY(-2px) !important;
+        color: #ffffff !important;
+    }
 </style>
 
 @include('_partials.public-navbar')

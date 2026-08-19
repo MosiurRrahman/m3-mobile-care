@@ -20,6 +20,7 @@ use App\Http\Controllers\CashController;
 use App\Http\Controllers\PartnerLedgerController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ContactMessageController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -153,6 +154,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/cash', [CashController::class, 'index'])->name('admin.cash.index');
         Route::post('/admin/cash/outflow', [CashController::class, 'storeOutflow'])->name('admin.cash.outflow');
         Route::post('/admin/cash/inflow', [CashController::class, 'storeInflow'])->name('admin.cash.inflow');
+    });
+
+    // Customer Inquiries & Messages
+    Route::middleware(['role:super_admin,admin'])->group(function () {
+        Route::get('/admin/contact-messages', [ContactMessageController::class, 'index'])->name('admin.contact-messages.index');
+        Route::post('/admin/contact-messages/{id}/read', [ContactMessageController::class, 'markAsRead'])->name('admin.contact-messages.read');
+        Route::post('/admin/contact-messages/mark-all-read', [ContactMessageController::class, 'markAllAsRead'])->name('admin.contact-messages.mark-all-read');
+        Route::post('/admin/contact-messages/{id}/send-sms', [ContactMessageController::class, 'sendReplySms'])->name('admin.contact-messages.send-sms');
+        Route::delete('/admin/contact-messages/{id}', [ContactMessageController::class, 'destroy'])->name('admin.contact-messages.destroy');
     });
 
     // Super-Admin Only Operations (Staff Accounts, Settings)

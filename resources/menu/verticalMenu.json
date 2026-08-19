@@ -43,6 +43,12 @@
       "url": "admin/customers"
     },
     {
+      "name": "Customer Inquiries",
+      "icon": "menu-icon icon-base ti tabler-messages",
+      "slug": "admin.contact-messages",
+      "url": "admin/contact-messages"
+    },
+    {
       "name": "Supplier & Purchases",
       "icon": "menu-icon icon-base ti tabler-truck-delivery",
       "slug": "admin.purchases",

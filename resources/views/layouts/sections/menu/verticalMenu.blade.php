@@ -70,9 +70,16 @@ $configData = Helper::appClasses();
         <i class="{{ $menu->icon }}"></i>
         @endisset
         <div>{{ isset($menu->name) ? __($menu->name) : '' }}</div>
-        @isset($menu->badge)
-        <div class="badge bg-{{ $menu->badge[0] }} rounded-pill ms-auto">{{ $menu->badge[1] }}</div>
-        @endisset
+        @if(isset($menu->slug) && $menu->slug === 'admin.contact-messages')
+          @php
+            $unreadInquiriesCount = \App\Models\ContactMessage::where('status', 'unread')->count();
+          @endphp
+          @if($unreadInquiriesCount > 0)
+            <div class="badge bg-danger rounded-pill ms-auto">{{ $unreadInquiriesCount }}</div>
+          @endif
+        @elseif(isset($menu->badge))
+          <div class="badge bg-{{ $menu->badge[0] }} rounded-pill ms-auto">{{ $menu->badge[1] }}</div>
+        @endif
       </a>
 
       {{-- submenu --}}
