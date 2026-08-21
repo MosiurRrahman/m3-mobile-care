@@ -211,10 +211,16 @@ class InventoryController extends Controller
             $sku = $prefix . $categoryCode . '-' . strtoupper(Str::random(5));
         } while (InventoryItem::where('sku', $sku)->exists());
 
+        // Generate unique barcode if not provided
+        $barcode = trim($request->input('barcode') ?? '');
+        if (empty($barcode)) {
+            $barcode = self::generateUniqueBarcode();
+        }
+
         InventoryItem::create([
             'name' => $request->input('name'),
             'sku' => $sku,
-            'barcode' => $request->input('barcode'),
+            'barcode' => $barcode,
             'type' => $request->input('type'),
             'category' => $category->name,
             'category_id' => $category->id,
@@ -332,9 +338,15 @@ class InventoryController extends Controller
             }
         }
 
+        // Ensure barcode is preserved or auto-generated if empty
+        $barcode = trim($request->input('barcode') ?? '');
+        if (empty($barcode)) {
+            $barcode = $item->barcode ?: self::generateUniqueBarcode();
+        }
+
         $item->update([
             'name' => $request->input('name'),
-            'barcode' => $request->input('barcode'),
+            'barcode' => $barcode,
             'category' => $category->name,
             'category_id' => $category->id,
             'sub_category' => $request->input('sub_category'),
@@ -379,6 +391,62 @@ class InventoryController extends Controller
 
         $route = $type === 'spare_part' ? 'admin.inventory.parts' : 'admin.inventory.accessories';
         return redirect()->route($route)->with('success', 'Inventory product deleted successfully!');
+    }
+
+    /**
+     * Generate a unique barcode.
+     */
+    public static function generateUniqueBarcode(): string
+    {
+        do {
+            // EAN-13 or 12-digit standard barcode format (6940 prefix + 8 random digits)
+            $barcode = '6940' . mt_rand(10000000, 99999999);
+        } while (InventoryItem::where('barcode', $barcode)->exists());
+
+        return $barcode;
+    }
+
+    /**
+     * AJAX endpoint to generate a fresh unique barcode.
+     */
+    public function getGeneratedBarcode()
+    {
+        return response()->json([
+            'barcode' => self::generateUniqueBarcode()
+        ]);
+    }
+
+    /**
+     * Barcode Print Studio & Label Generator.
+     */
+    public function barcodePrint(Request $request)
+    {
+        $items = InventoryItem::where('quantity', '>', 0)
+            ->orWhereNotNull('barcode')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $selectedItemId = $request->input('item_id');
+        $selectedQty = max(1, intval($request->input('qty', 60)));
+
+        $selectedItem = null;
+        if ($selectedItemId) {
+            $selectedItem = InventoryItem::find($selectedItemId);
+            // If the selected item doesn't have a barcode, assign and save one dynamically
+            if ($selectedItem && empty($selectedItem->barcode)) {
+                $selectedItem->barcode = self::generateUniqueBarcode();
+                $selectedItem->save();
+            }
+        }
+
+        $shopSettings = [
+            'name' => Setting::get('shop_name', 'M3 Mobile Care'),
+            'slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
+            'phone' => Setting::get('phone', '+8801353106967'),
+            'address' => Setting::get('address', 'রাণীশংকৈল, ঠাকুরগাঁও'),
+        ];
+
+        return view('inventory.barcode-print', compact('items', 'selectedItem', 'selectedItemId', 'selectedQty', 'shopSettings'));
     }
 
     /**

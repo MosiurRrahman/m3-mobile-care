@@ -73,8 +73,14 @@
 
                             <div class="row mb-3">
                                 <div class="col-12">
-                                    <label class="form-label fw-semibold" for="barcode">Item Barcode (SKU auto-generated on save)</label>
-                                    <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode') }}" placeholder="Scan product barcode / UPC code">
+                                    <label class="form-label fw-semibold" for="barcode">Item Barcode (বারকোড)</label>
+                                    <div class="input-group">
+                                        <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode') }}" placeholder="Scan product barcode or generate new">
+                                        <button class="btn btn-outline-primary" type="button" id="btn-generate-barcode" title="Generate New Barcode">
+                                            <i class="ti tabler-barcode me-1"></i> <strong>Generate Barcode</strong>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Scan manufacturer barcode or click <strong>Generate Barcode</strong> (auto-assigned if left blank).</small>
                                 </div>
                             </div>
 
@@ -297,6 +303,33 @@
         addVariantRowBtn.addEventListener('click', () => addVariantRow());
         addVariantRow('Color', 'Black', 'ACCS-BLK', '5', '');
         toggleProductType();
+
+        // Barcode Generation Trigger
+        const btnGenBarcode = document.getElementById('btn-generate-barcode');
+        const barcodeInput = document.getElementById('barcode');
+        if (btnGenBarcode && barcodeInput) {
+            btnGenBarcode.addEventListener('click', function() {
+                btnGenBarcode.disabled = true;
+                btnGenBarcode.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Generating...';
+
+                fetch('{{ route("admin.inventory.barcode.generate") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.barcode) {
+                            barcodeInput.value = data.barcode;
+                        }
+                    })
+                    .catch(err => {
+                        // Fallback client side generation
+                        const randomCode = '6940' + Math.floor(10000000 + Math.random() * 90000000);
+                        barcodeInput.value = randomCode;
+                    })
+                    .finally(() => {
+                        btnGenBarcode.disabled = false;
+                        btnGenBarcode.innerHTML = '<i class="ti tabler-barcode me-1"></i> <strong>Generate Barcode</strong>';
+                    });
+            });
+        }
     });
 </script>
 @endsection

@@ -237,7 +237,7 @@ class UserController extends Controller
             $query->whereDate('created_at', '<=', $request->input('end_date'));
         }
 
-        $logs = $query->orderBy('created_at', 'desc')->paginate(25);
+        $logs = $query->orderBy('created_at', 'desc')->paginate(10);
         $users = User::orderBy('name', 'asc')->get();
 
         return view('users.activity-logs', compact('logs', 'users'));

@@ -86,4 +86,58 @@ class Repair extends Model
     {
         return $this->morphMany(PaymentLog::class, 'payable');
     }
+
+    /**
+     * Get total parts purchase cost.
+     */
+    public function getTotalPartsCostAttribute(): float
+    {
+        $total = 0;
+        if (is_array($this->used_parts)) {
+            foreach ($this->used_parts as $part) {
+                $total += floatval($part['buying_price'] ?? 0) * intval($part['quantity'] ?? 1);
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Get total courier/transport cost for outsourced parts.
+     */
+    public function getTotalCourierCostAttribute(): float
+    {
+        $total = 0;
+        if (is_array($this->used_parts)) {
+            foreach ($this->used_parts as $part) {
+                $total += floatval($part['courier_cost'] ?? 0);
+            }
+        }
+        return $total;
+    }
+
+    /**
+     * Check if this job card has Dhaka / externally sourced parts.
+     */
+    public function getHasDhakaPartsAttribute(): bool
+    {
+        if (is_array($this->used_parts)) {
+            foreach ($this->used_parts as $part) {
+                $source = $part['source'] ?? '';
+                if ($source === 'dhaka_supplier' || $source === 'external' || $source === 'local_shop') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Calculate Net Profit: (Actual Cost or Estimated Cost) - (Total Parts Cost + Courier Cost + Commission Amount)
+     */
+    public function getNetProfitAttribute(): float
+    {
+        $revenue = $this->actual_cost !== null ? floatval($this->actual_cost) : floatval($this->estimated_cost);
+        $expenses = $this->total_parts_cost + $this->total_courier_cost + floatval($this->commission_amount ?? 0);
+        return max(0, $revenue - $expenses);
+    }
 }

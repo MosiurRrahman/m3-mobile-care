@@ -35,6 +35,15 @@
                     <li>
                         <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
                             @csrf
+                            <input type="hidden" name="type" value="parts_arrived">
+                            <button type="submit" class="dropdown-item py-2">
+                                <i class="ti tabler-truck-delivery me-2 text-warning"></i>Send Parts Arrived (ঢাকা পার্টস) SMS
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                            @csrf
                             <input type="hidden" name="type" value="ready">
                             <button type="submit" class="dropdown-item py-2">
                                 <i class="ti tabler-circle-check me-2 text-success"></i>Send Ready for Pickup SMS
@@ -410,47 +419,86 @@
 
                 <!-- Installed Spare Parts -->
                 <div class="mt-4 border-top pt-4">
-                    <h6 class="fw-bold text-dark mb-3"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold text-dark mb-0"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Sourcing</h6>
+                        @if($repair->has_dhaka_parts)
+                            <span class="badge bg-label-info"><i class="ti tabler-truck-delivery me-1"></i>Includes Dhaka/Outsourced Parts</span>
+                        @endif
+                    </div>
                     @if($repair->used_parts && count($repair->used_parts) > 0)
-                        <div class="table-responsive border rounded">
+                        <div class="table-responsive border rounded mb-3">
                             <table class="table table-sm table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Part Name</th>
-                                        <th>Quantity</th>
+                                        <th>Source (উৎস)</th>
+                                        <th>Supplier / Shop</th>
+                                        <th class="text-center">Qty</th>
                                         @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                                             <th class="text-end">Buying Price</th>
-                                            <th class="text-end">Total Price</th>
+                                            <th class="text-end">Courier (৳)</th>
+                                            <th class="text-end">Total Cost</th>
                                         @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @php
                                         $totalPartsCost = 0;
+                                        $totalCourierCost = 0;
                                     @endphp
                                     @foreach($repair->used_parts as $part)
                                         @php
-                                            $partCost = floatval($part['buying_price'] ?? 0) * intval($part['quantity'] ?? 1);
-                                            $totalPartsCost += $partCost;
+                                            $qty = intval($part['quantity'] ?? 1);
+                                            $buyingPrice = floatval($part['buying_price'] ?? 0);
+                                            $courier = floatval($part['courier_cost'] ?? 0);
+                                            $partCost = ($buyingPrice * $qty) + $courier;
+                                            $totalPartsCost += ($buyingPrice * $qty);
+                                            $totalCourierCost += $courier;
+                                            $source = $part['source'] ?? (isset($part['inventory_id']) && $part['inventory_id'] ? 'in_house' : 'dhaka_supplier');
                                         @endphp
                                         <tr>
                                             <td class="fw-semibold text-dark">{{ $part['name'] }}</td>
-                                            <td>{{ $part['quantity'] }}</td>
+                                            <td>
+                                                @if($source === 'in_house')
+                                                    <span class="badge bg-label-success">দোকানের স্টক</span>
+                                                @elseif($source === 'dhaka_supplier')
+                                                    <span class="badge bg-label-warning text-dark"><i class="ti tabler-truck-delivery me-1"></i>ঢাকা সাপ্লায়ার</span>
+                                                @elseif($source === 'local_shop')
+                                                    <span class="badge bg-label-info">লোকাল দোকান</span>
+                                                @else
+                                                    <span class="badge bg-label-secondary">অন্যান্য</span>
+                                                @endif
+                                            </td>
+                                            <td class="small text-muted">{{ $part['supplier_name'] ?? 'N/A' }}</td>
+                                            <td class="text-center">{{ $qty }}</td>
                                             @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                                <td class="text-end">{{ number_format($part['buying_price'], 2) }} BDT</td>
+                                                <td class="text-end">{{ number_format($buyingPrice, 2) }} BDT</td>
+                                                <td class="text-end">{{ number_format($courier, 2) }} BDT</td>
                                                 <td class="text-end fw-bold text-dark">{{ number_format($partCost, 2) }} BDT</td>
                                             @endif
                                         </tr>
                                     @endforeach
                                     @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
                                         <tr class="table-light fw-bold text-dark">
-                                            <td colspan="3" class="text-end">Total Parts Cost:</td>
-                                            <td class="text-end">{{ number_format($totalPartsCost, 2) }} BDT</td>
+                                            <td colspan="4" class="text-end">Parts + Courier Total:</td>
+                                            <td class="text-end">{{ number_format($totalPartsCost, 2) }}</td>
+                                            <td class="text-end">{{ number_format($totalCourierCost, 2) }}</td>
+                                            <td class="text-end fw-bold text-primary">{{ number_format($totalPartsCost + $totalCourierCost, 2) }} BDT</td>
                                         </tr>
                                     @endif
                                 </tbody>
                             </table>
                         </div>
+
+                        @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                        <div class="p-3 bg-label-success rounded-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold text-success d-block"><i class="ti tabler-chart-pie me-1"></i>Estimated Shop Net Profit (নিট লাভ)</span>
+                                <small class="text-muted">Total Bill - (Parts Cost + Courier + Commission)</small>
+                            </div>
+                            <h4 class="fw-bold text-success mb-0">{{ number_format($repair->net_profit, 2) }} BDT</h4>
+                        </div>
+                        @endif
                     @else
                         <div class="p-3 bg-light rounded text-center small text-muted">
                             <i class="ti tabler-info-circle me-1"></i>No new parts were installed for this repair.
@@ -523,6 +571,11 @@
                             'Desc' => 'Estimated cost ' . number_format($repair->estimated_cost, 0) . ' BDT shared, awaiting customer approval.', 
                             'Icon' => 'tabler-clock'
                         ],
+                        'waiting_for_parts' => [
+                            'Title' => 'Waiting for Parts (ঢাকা পার্টস)', 
+                            'Desc' => 'প্রয়োজনীয় পার্টস ঢাকা/বাইরের সাপ্লায়ার থেকে সংগ্রহ করা হচ্ছে।', 
+                            'Icon' => 'tabler-truck-delivery'
+                        ],
                         'repairing' => [
                             'Title' => 'Repairing', 
                             'Desc' => $techNotes ? $techNotes : 'Replacing components or software flashing in lab.', 
@@ -545,7 +598,7 @@
                         ]
                     ];
 
-                    $fullStatusOrder = ['pending', 'diagnosing', 'waiting_for_approval', 'repairing', 'quality_check', 'completed', 'delivered'];
+                    $fullStatusOrder = ['pending', 'diagnosing', 'waiting_for_approval', 'waiting_for_parts', 'repairing', 'quality_check', 'completed', 'delivered'];
                     $currentIndex = array_search($status, $fullStatusOrder);
                     
                     if ($status == 'cancelled') {
@@ -717,6 +770,7 @@
                             <option value="pending" {{ $repair->status == 'pending' ? 'selected' : '' }}>১. অপেক্ষমান (Pending confirmation)</option>
                             <option value="diagnosing" {{ $repair->status == 'diagnosing' ? 'selected' : '' }}>২. ডায়াগনসিস চলছে (Diagnosing)</option>
                             <option value="waiting_for_approval" {{ $repair->status == 'waiting_for_approval' ? 'selected' : '' }}>২.১ গ্রাহক অনুমোদনের অপেক্ষা (Waiting Approval)</option>
+                            <option value="waiting_for_parts" {{ $repair->status == 'waiting_for_parts' ? 'selected' : '' }}>২.২ 📦 পার্টস আসার অপেক্ষায় (Waiting for Parts - Dhaka)</option>
                             <option value="repairing" {{ $repair->status == 'repairing' ? 'selected' : '' }}>৩. কাজ চলছে (Repairing)</option>
                             <option value="quality_check" {{ $repair->status == 'quality_check' ? 'selected' : '' }}>৩.১ কোয়ালিটি চেক (Quality Check)</option>
                             <option value="completed" {{ $repair->status == 'completed' ? 'selected' : '' }}>৪. সম্পূর্ণ তৈরি (Completed / Ready for Pickup)</option>

@@ -103,7 +103,7 @@ class RepairController extends Controller
             'advance_payment' => 'nullable|numeric|min:0',
             'advance_payment_method' => 'nullable|string|in:Cash,bKash,Nagad,Rocket',
             'advance_payment_ref' => 'nullable|string',
-            'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,repairing,quality_check,completed,delivered,cancelled',
+            'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,waiting_for_parts,repairing,quality_check,completed,delivered,cancelled',
             'assigned_technician_id' => 'nullable|exists:users,id',
             'expected_delivery_date' => 'nullable|date',
             'technician_notes' => 'nullable|string',
@@ -116,7 +116,10 @@ class RepairController extends Controller
             'pattern_lock_path' => 'nullable|string',
             'data_loss_consent' => 'nullable',
             'used_parts.*.name' => 'required|string|max:255',
+            'used_parts.*.source' => 'nullable|string|in:in_house,dhaka_supplier,local_shop,other',
+            'used_parts.*.supplier_name' => 'nullable|string|max:255',
             'used_parts.*.buying_price' => 'required|numeric|min:0',
+            'used_parts.*.courier_cost' => 'nullable|numeric|min:0',
             'used_parts.*.quantity' => 'required|integer|min:1',
         ]);
 
@@ -147,17 +150,19 @@ class RepairController extends Controller
                 $repairCharge = floatval($request->input('repair_charge', 0));
                 $advancePayment = floatval($request->input('advance_payment', 0));
 
-                // Calculate parts cost to subtract from commission base
+                // Calculate parts cost and courier fees to subtract from commission base
                 $usedParts = $request->input('used_parts', []);
                 $totalPartsCost = 0;
+                $totalCourierCost = 0;
                 if (is_array($usedParts)) {
                     foreach ($usedParts as $part) {
                         $totalPartsCost += floatval($part['buying_price'] ?? 0) * intval($part['quantity'] ?? 1);
+                        $totalCourierCost += floatval($part['courier_cost'] ?? 0);
                     }
                 }
 
-                // Estimated Cost = Service Fee / Charge + Total Parts Cost
-                $estimatedCost = $repairCharge + $totalPartsCost;
+                // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
+                $estimatedCost = $repairCharge + $totalPartsCost + $totalCourierCost;
 
                 $actualCost = null;
                 if (in_array($status, ['completed', 'delivered'])) {
@@ -303,11 +308,14 @@ class RepairController extends Controller
         // Technicians are only allowed to update status, notes, and used parts
         if (auth()->user()->isTechnician()) {
             $request->validate([
-                'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,repairing,quality_check,completed,delivered,cancelled',
+                'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,waiting_for_parts,repairing,quality_check,completed,delivered,cancelled',
                 'technician_notes' => 'nullable|string',
                 'used_parts' => 'nullable|array',
                 'used_parts.*.name' => 'required|string|max:255',
+                'used_parts.*.source' => 'nullable|string|in:in_house,dhaka_supplier,local_shop,other',
+                'used_parts.*.supplier_name' => 'nullable|string|max:255',
                 'used_parts.*.buying_price' => 'required|numeric|min:0',
+                'used_parts.*.courier_cost' => 'nullable|numeric|min:0',
                 'used_parts.*.quantity' => 'required|integer|min:1',
             ]);
         } else {
@@ -337,7 +345,7 @@ class RepairController extends Controller
                 'rocket_delivery_ref' => 'nullable|string',
                 'cash_received' => 'nullable|numeric|min:0',
                 'change_returned' => 'nullable|numeric|min:0',
-                'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,repairing,quality_check,completed,delivered,cancelled',
+                'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,waiting_for_parts,repairing,quality_check,completed,delivered,cancelled',
                 'assigned_technician_id' => 'nullable|exists:users,id',
                 'expected_delivery_date' => 'nullable|date',
                 'technician_notes' => 'nullable|string',
@@ -350,7 +358,10 @@ class RepairController extends Controller
                 'pattern_lock_path' => 'nullable|string',
                 'data_loss_consent' => 'nullable',
                 'used_parts.*.name' => 'required|string|max:255',
+                'used_parts.*.source' => 'nullable|string|in:in_house,dhaka_supplier,local_shop,other',
+                'used_parts.*.supplier_name' => 'nullable|string|max:255',
                 'used_parts.*.buying_price' => 'required|numeric|min:0',
+                'used_parts.*.courier_cost' => 'nullable|numeric|min:0',
                 'used_parts.*.quantity' => 'required|integer|min:1',
             ]);
         }
@@ -358,27 +369,29 @@ class RepairController extends Controller
         try {
             $oldStatus = $repair->status;
 
-            DB::transaction(function () use ($request, $repair) {
+            DB::transaction(function () use ($request, $repair, $oldStatus) {
                 $status = $request->input('status');
 
                 if (auth()->user()->isTechnician()) {
                     $actualCost = $repair->actual_cost;
 
-                    // Calculate parts cost to subtract from commission base
+                    // Calculate parts cost and courier to subtract from commission base
                     $usedParts = $request->input('used_parts', []);
                     $totalPartsCost = 0;
+                    $totalCourierCost = 0;
                     if (is_array($usedParts)) {
                         foreach ($usedParts as $part) {
                             $totalPartsCost += floatval($part['buying_price'] ?? 0) * intval($part['quantity'] ?? 1);
+                            $totalCourierCost += floatval($part['courier_cost'] ?? 0);
                         }
                     }
 
-                    $estimatedCost = floatval($repair->repair_charge) + $totalPartsCost;
+                    $estimatedCost = floatval($repair->repair_charge) + $totalPartsCost + $totalCourierCost;
                     if (in_array($status, ['completed', 'delivered']) && $actualCost === null) {
                         $actualCost = $estimatedCost;
                     }
 
-                    $baseCost = floatval($actualCost ?? $estimatedCost) - $totalPartsCost;
+                    $baseCost = floatval($actualCost ?? $estimatedCost) - ($totalPartsCost + $totalCourierCost);
                     if ($baseCost < 0) {
                         $baseCost = 0;
                     }
@@ -410,17 +423,19 @@ class RepairController extends Controller
                     $repairCharge = floatval($request->input('repair_charge', 0));
                     $advancePayment = floatval($request->input('advance_payment', 0));
 
-                    // Calculate parts cost to subtract from commission base
+                    // Calculate parts cost and courier
                     $usedParts = $request->input('used_parts', []);
                     $totalPartsCost = 0;
+                    $totalCourierCost = 0;
                     if (is_array($usedParts)) {
                         foreach ($usedParts as $part) {
                             $totalPartsCost += floatval($part['buying_price'] ?? 0) * intval($part['quantity'] ?? 1);
+                            $totalCourierCost += floatval($part['courier_cost'] ?? 0);
                         }
                     }
 
-                    // Estimated Cost = Service Fee / Charge + Total Parts Cost
-                    $estimatedCost = $repairCharge + $totalPartsCost;
+                    // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
+                    $estimatedCost = $repairCharge + $totalPartsCost + $totalCourierCost;
 
                     // Use filled() to correctly catch both null AND empty string ""
                     $actualCost = $request->filled('actual_cost') ? floatval($request->input('actual_cost')) : null;
@@ -749,12 +764,14 @@ class RepairController extends Controller
             return redirect()->back()->with('error', 'Customer phone number not available.');
         }
 
-        $type = $request->input('type', 'tracking'); // tracking, ready, delivered, custom
+        $type = $request->input('type', 'tracking'); // tracking, ready, delivered, parts_arrived, custom
 
         if ($type === 'ready') {
             $result = SmsService::sendRepairReadySms($repair);
         } elseif ($type === 'delivered') {
             $result = SmsService::sendRepairDeliveredSms($repair);
+        } elseif ($type === 'parts_arrived') {
+            $result = SmsService::sendRepairPartsArrivedSms($repair);
         } elseif ($type === 'custom') {
             $msg = trim($request->input('custom_message', ''));
             if (empty($msg)) {
@@ -784,10 +801,11 @@ class RepairController extends Controller
         }
 
         $request->validate([
-            'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,repairing,quality_check,completed,delivered,cancelled',
+            'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,waiting_for_parts,repairing,quality_check,completed,delivered,cancelled',
             'technician_notes' => 'nullable|string',
         ]);
 
+        $oldStatus = $repair->status;
         $status = $request->input('status');
         $notes = $request->input('technician_notes');
 
@@ -805,6 +823,16 @@ class RepairController extends Controller
         }
 
         $repair->update($updateData);
+
+        // Auto trigger SMS if parts arrived from Dhaka
+        if ($oldStatus === 'waiting_for_parts' && in_array($status, ['repairing', 'completed'])) {
+            try {
+                $repair->refresh()->load('customer');
+                SmsService::sendRepairPartsArrivedSms($repair);
+            } catch (\Throwable $e) {
+                // Ignore SMS failures
+            }
+        }
 
         return redirect()->back()->with('success', 'রিপেয়ার স্ট্যাটাস ও লাইভ নোট সফলভাবে আপডেট করা হয়েছে!');
     }

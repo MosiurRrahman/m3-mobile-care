@@ -73,8 +73,14 @@
 
                             <div class="row mb-3">
                                 <div class="col-md-6 mb-3 mb-md-0">
-                                    <label class="form-label fw-semibold" for="barcode">Item Barcode</label>
-                                    <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode', $item->barcode) }}">
+                                    <label class="form-label fw-semibold" for="barcode">Item Barcode (বারকোড)</label>
+                                    <div class="input-group">
+                                        <input type="text" name="barcode" id="barcode" class="form-control" value="{{ old('barcode', $item->barcode) }}" placeholder="Scan or generate barcode">
+                                        <button class="btn btn-outline-primary" type="button" id="btn-generate-barcode" title="Generate New Barcode">
+                                            <i class="ti tabler-barcode"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Auto-assigned if left blank.</small>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold" for="sku_code">Product SKU (Readonly)</label>
@@ -223,6 +229,11 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
                             <button type="submit" class="btn btn-primary w-100 mb-2 py-2"><i class="ti tabler-device-floppy me-1"></i>Save Changes</button>
+                            
+                            <a href="{{ route('admin.inventory.barcode.print', ['item_id' => $item->id, 'qty' => 60]) }}" target="_blank" class="btn btn-outline-warning text-dark w-100 mb-2 py-2" style="border-color: #f37021;">
+                                <i class="ti tabler-barcode me-1 text-warning"></i> <strong>Print Barcode Stickers</strong>
+                            </a>
+
                             <a href="{{ $item->type === 'spare_part' ? route('admin.inventory.parts') : route('admin.inventory.accessories') }}" class="btn btn-outline-secondary w-100 py-2">Cancel</a>
                         </div>
                     </div>
@@ -328,6 +339,32 @@
         }
 
         toggleProductType();
+
+        // Barcode Generation Trigger
+        const btnGenBarcode = document.getElementById('btn-generate-barcode');
+        const barcodeInput = document.getElementById('barcode');
+        if (btnGenBarcode && barcodeInput) {
+            btnGenBarcode.addEventListener('click', function() {
+                btnGenBarcode.disabled = true;
+                btnGenBarcode.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                fetch('{{ route("admin.inventory.barcode.generate") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.barcode) {
+                            barcodeInput.value = data.barcode;
+                        }
+                    })
+                    .catch(err => {
+                        const randomCode = '6940' + Math.floor(10000000 + Math.random() * 90000000);
+                        barcodeInput.value = randomCode;
+                    })
+                    .finally(() => {
+                        btnGenBarcode.disabled = false;
+                        btnGenBarcode.innerHTML = '<i class="ti tabler-barcode"></i>';
+                    });
+            });
+        }
     });
 </script>
 @endsection

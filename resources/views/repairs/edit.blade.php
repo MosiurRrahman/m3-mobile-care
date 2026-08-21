@@ -73,6 +73,7 @@
                                     <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                     <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                     <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                                    <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
                                     <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                     <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                     <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -85,18 +86,24 @@
                         <!-- USED PARTS SECTION (Technician Workflow) -->
                         <div class="mb-4 p-3 bg-light rounded border">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Pricing</h6>
-                                <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Installed Part</button>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Outsourced Sourcing</h6>
+                                    <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Spare Part</button>
                             </div>
 
                             <div class="table-responsive">
                                 <table class="table table-sm table-bordered align-middle mb-0">
                                     <thead class="table-light small fw-bold">
                                         <tr>
-                                            <th>Select Inventory Item / Enter Name</th>
-                                            <th style="width: 150px;">Buying Price (BDT)</th>
-                                            <th style="width: 100px;">Quantity</th>
-                                            <th style="width: 70px;" class="text-center">Action</th>
+                                            <th style="min-width: 220px;">Part Item / Manual Name</th>
+                                            <th style="width: 160px;">Source (উৎস)</th>
+                                            <th style="width: 160px;">Supplier / Shop</th>
+                                            <th style="width: 120px;">Buying Price</th>
+                                            <th style="width: 100px;">Courier (৳)</th>
+                                            <th style="width: 70px;">Qty</th>
+                                            <th style="width: 50px;" class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="parts-container">
@@ -107,7 +114,7 @@
                                             <tr class="part-row">
                                                 <td>
                                                     <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[{{ $index }}][inventory_id]">
-                                                        <option value="">-- Custom Part (Type Below) --</option>
+                                                        <option value="">-- Custom / Sourced Part --</option>
                                                         @foreach($inventoryItems as $item)
                                                             <option value="{{ $item->id }}" 
                                                                 data-name="{{ $item->name }}" 
@@ -117,10 +124,25 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name" value="{{ $part['name'] }}" placeholder="Enter part name manually" required>
+                                                    <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name" value="{{ $part['name'] }}" placeholder="Enter part name (e.g. Backshell Blue)" required>
+                                                </td>
+                                                <td>
+                                                    @php $pSource = $part['source'] ?? (isset($part['inventory_id']) && $part['inventory_id'] ? 'in_house' : 'dhaka_supplier'); @endphp
+                                                    <select name="used_parts[{{ $index }}][source]" class="form-select form-select-sm select-part-source">
+                                                        <option value="in_house" {{ $pSource == 'in_house' ? 'selected' : '' }}>দোকানের স্টক</option>
+                                                        <option value="dhaka_supplier" {{ $pSource == 'dhaka_supplier' ? 'selected' : '' }}>ঢাকা সাপ্লায়ার</option>
+                                                        <option value="local_shop" {{ $pSource == 'local_shop' ? 'selected' : '' }}>লোকাল দোকান</option>
+                                                        <option value="other" {{ $pSource == 'other' ? 'selected' : '' }}>অন্যান্য</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="used_parts[{{ $index }}][supplier_name]" class="form-control form-control-sm" value="{{ $part['supplier_name'] ?? '' }}" placeholder="যেমন: মোতালেব প্লাজা">
                                                 </td>
                                                 <td>
                                                     <input type="number" name="used_parts[{{ $index }}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="{{ $part['buying_price'] }}" step="0.01" min="0" required>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="used_parts[{{ $index }}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="{{ $part['courier_cost'] ?? '0.00' }}" step="0.01" min="0" placeholder="0.00">
                                                 </td>
                                                 <td>
                                                     <input type="number" name="used_parts[{{ $index }}][quantity]" class="form-control form-control-sm input-quantity text-center" value="{{ $part['quantity'] }}" min="1" required>
@@ -282,7 +304,10 @@
                                 <!-- 3. Diagnostics & Spare Parts Card -->
                                 <div class="card border mb-4 shadow-none">
                                     <div class="card-header bg-light py-3 border-bottom d-flex align-items-center justify-content-between">
-                                        <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-box me-2"></i>3. Technical Diagnostics & Installed Spare Parts</h6>
+                                        <div>
+                                            <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-box me-2"></i>3. Technical Diagnostics & Installed Spare Parts</h6>
+                                            <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span>
+                                        </div>
                                         <button type="button" class="btn btn-xs btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Part</button>
                                     </div>
                                     <div class="card-body p-4">
@@ -298,10 +323,13 @@
                                             <table class="table table-sm table-bordered align-middle mb-0">
                                                 <thead class="table-light small fw-bold">
                                                     <tr>
-                                                        <th>Select Inventory Item / Enter Name</th>
-                                                        <th style="width: 120px;">Buying Price</th>
-                                                        <th style="width: 70px;">Qty</th>
-                                                        <th style="width: 50px;" class="text-center">Action</th>
+                                                        <th style="min-width: 200px;">Part Item / Manual Name</th>
+                                                        <th style="width: 140px;">Source (উৎস)</th>
+                                                        <th style="width: 140px;">Supplier / Shop</th>
+                                                        <th style="width: 110px;">Buying Price</th>
+                                                        <th style="width: 90px;">Courier (৳)</th>
+                                                        <th style="width: 65px;">Qty</th>
+                                                        <th style="width: 45px;" class="text-center">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="parts-container">
@@ -311,8 +339,8 @@
                                                     @foreach($usedParts as $index => $part)
                                                         <tr class="part-row">
                                                             <td>
-                                                                <select class="form-select form-select-sm select-part-item" name="used_parts[{{ $index }}][inventory_id]">
-                                                                    <option value="">-- Type Custom Part Name Below --</option>
+                                                                <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[{{ $index }}][inventory_id]">
+                                                                    <option value="">-- Custom / Sourced Part --</option>
                                                                     @foreach($inventoryItems as $item)
                                                                         <option value="{{ $item->id }}" 
                                                                             data-name="{{ $item->name }}" 
@@ -322,10 +350,25 @@
                                                                         </option>
                                                                     @endforeach
                                                                 </select>
-                                                                <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name mt-1" value="{{ $part['name'] }}" placeholder="Enter part name manually" required style="{{ isset($part['inventory_id']) && $part['inventory_id'] ? 'display:none;' : '' }}">
+                                                                <input type="text" name="used_parts[{{ $index }}][name]" class="form-control form-control-sm input-part-name" value="{{ $part['name'] }}" placeholder="Enter part name (e.g. Backshell Blue)" required>
+                                                            </td>
+                                                            <td>
+                                                                @php $pSource = $part['source'] ?? (isset($part['inventory_id']) && $part['inventory_id'] ? 'in_house' : 'dhaka_supplier'); @endphp
+                                                                <select name="used_parts[{{ $index }}][source]" class="form-select form-select-sm select-part-source">
+                                                                    <option value="in_house" {{ $pSource == 'in_house' ? 'selected' : '' }}>দোকানের স্টক</option>
+                                                                    <option value="dhaka_supplier" {{ $pSource == 'dhaka_supplier' ? 'selected' : '' }}>ঢাকা সাপ্লায়ার</option>
+                                                                    <option value="local_shop" {{ $pSource == 'local_shop' ? 'selected' : '' }}>লোকাল দোকান</option>
+                                                                    <option value="other" {{ $pSource == 'other' ? 'selected' : '' }}>অন্যান্য</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="used_parts[{{ $index }}][supplier_name]" class="form-control form-control-sm" value="{{ $part['supplier_name'] ?? '' }}" placeholder="যেমন: মোতালেব প্লাজা">
                                                             </td>
                                                             <td>
                                                                 <input type="number" name="used_parts[{{ $index }}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="{{ $part['buying_price'] }}" step="0.01" min="0" required>
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name="used_parts[{{ $index }}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="{{ $part['courier_cost'] ?? '0.00' }}" step="0.01" min="0" placeholder="0.00">
                                                             </td>
                                                             <td>
                                                                 <input type="number" name="used_parts[{{ $index }}][quantity]" class="form-control form-control-sm input-quantity text-center" value="{{ $part['quantity'] }}" min="1" required>
@@ -356,6 +399,7 @@
                                                 <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                                 <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                                 <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                                                <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
                                                 <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                                 <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                                 <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -547,17 +591,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const estimatedCostInput = document.getElementById('estimated_cost');
         const repairChargeInput = document.getElementById('repair_charge');
 
-        // Sum up parts cost
+        // Sum up parts cost and courier
         let totalPartsCost = 0;
+        let totalCourierCost = 0;
         document.querySelectorAll('.part-row').forEach(row => {
-            const price = parseFloat(row.querySelector('.input-buying-price').value) || 0;
-            const qty = parseInt(row.querySelector('.input-quantity').value) || 1;
-            totalPartsCost += price * qty;
+            const price = parseFloat(row.querySelector('.input-buying-price')?.value) || 0;
+            const courier = parseFloat(row.querySelector('.input-courier-cost')?.value) || 0;
+            const qty = parseInt(row.querySelector('.input-quantity')?.value) || 1;
+            totalPartsCost += (price * qty);
+            totalCourierCost += courier;
         });
 
-        // Update Estimated Cost field dynamically (Service Charge + Parts Cost)
+        // Update Estimated Cost field dynamically (Service Charge + Parts Cost + Courier)
         let repairChargeVal = repairChargeInput ? parseFloat(repairChargeInput.value) || 0 : 0;
-        let estimatedCostVal = repairChargeVal + totalPartsCost;
+        let estimatedCostVal = repairChargeVal + totalPartsCost + totalCourierCost;
         if (estimatedCostInput) {
             estimatedCostInput.value = estimatedCostVal.toFixed(2);
         }
@@ -571,8 +618,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let commissionBase = 0;
         if (!isNaN(actualCostVal)) {
-            // If actual cost is set, commission is calculated based on net actual cost: actual_cost - totalPartsCost
-            commissionBase = Math.max(0, actualCostVal - totalPartsCost);
+            // If actual cost is set, commission is calculated based on net actual cost: actual_cost - (totalPartsCost + totalCourierCost)
+            commissionBase = Math.max(0, actualCostVal - (totalPartsCost + totalCourierCost));
         } else {
             // Otherwise based on repair_charge (the net service fee estimate)
             commissionBase = Math.max(0, repairChargeVal);
@@ -586,21 +633,27 @@ document.addEventListener('DOMContentLoaded', function() {
             calculatedCommission = commissionBase * (commissionRate / 100);
         }
 
+        const netProfit = Math.max(0, estimatedCostVal - (totalPartsCost + totalCourierCost + calculatedCommission));
+
         // Display results
         let previewHtml = `
             <div class="alert alert-info border-0 shadow-sm p-3 mt-3 d-flex flex-column gap-1 small">
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-semibold">Net Service Charge (excluding parts cost):</span>
+                    <span class="text-muted fw-semibold">Net Service Fee (কাস্টমার সার্ভিস ফি):</span>
                     <span class="fw-bold text-dark">${commissionBase.toFixed(2)} BDT</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-semibold">Total Parts Buying Cost:</span>
+                    <span class="text-muted fw-semibold">Total Parts Buying Cost (পার্টস খরচ):</span>
                     <span class="fw-bold text-danger">${totalPartsCost.toFixed(2)} BDT</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted fw-semibold">Total Courier / Transport (কুরিয়ার):</span>
+                    <span class="fw-bold text-warning text-dark">${totalCourierCost.toFixed(2)} BDT</span>
                 </div>
                 <hr class="my-1">
                 <div class="d-flex justify-content-between fs-6">
-                    <span class="text-primary fw-bold">Calculated Commission:</span>
-                    <span class="fw-bold text-success">${calculatedCommission.toFixed(2)} BDT</span>
+                    <span class="text-primary fw-bold">Shop Net Profit (দোকানের নিট লাভ):</span>
+                    <span class="fw-bold text-success">${netProfit.toFixed(2)} BDT</span>
                 </div>
             </div>
         `;
@@ -619,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!el) return;
         const ts = new TomSelect(el, {
             create: false,
-            placeholder: "Search spare parts...",
+            placeholder: "Search shop inventory...",
             sortField: {
                 field: "text",
                 direction: "asc"
@@ -629,18 +682,16 @@ document.addEventListener('DOMContentLoaded', function() {
         ts.on('change', function(value) {
             const nameInput = row.querySelector('.input-part-name');
             const priceInput = row.querySelector('.input-buying-price');
+            const sourceSelect = row.querySelector('.select-part-source');
             if (value) {
                 const opt = el.options[el.selectedIndex];
                 if (opt) {
                     nameInput.value = opt.getAttribute('data-name') || '';
                     priceInput.value = opt.getAttribute('data-price') || '0.00';
-                    nameInput.style.display = 'none';
+                    if (sourceSelect) sourceSelect.value = 'in_house';
                 }
             } else {
-                nameInput.value = '';
-                priceInput.value = '0.00';
-                nameInput.style.display = 'block';
-                nameInput.focus();
+                if (sourceSelect) sourceSelect.value = 'dhaka_supplier';
             }
             updateCommissionPreview();
         });
@@ -671,20 +722,34 @@ document.addEventListener('DOMContentLoaded', function() {
             newRow.className = 'part-row';
             newRow.innerHTML = `
                 <td>
-                    <select class="form-select form-select-sm select-part-item" name="used_parts[${partIndex}][inventory_id]">
-                        <option value="">-- Type Custom Part Name Below --</option>
+                    <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[${partIndex}][inventory_id]">
+                        <option value="">-- Custom / Sourced Part --</option>
                         ${selectOptions}
                     </select>
-                    <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name mt-1" placeholder="Enter part name manually" required>
+                    <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name" placeholder="Enter part name (e.g. Backshell Blue)" required>
+                </td>
+                <td>
+                    <select name="used_parts[${partIndex}][source]" class="form-select form-select-sm select-part-source">
+                        <option value="in_house">দোকানের স্টক</option>
+                        <option value="dhaka_supplier" selected>ঢাকা সাপ্লায়ার</option>
+                        <option value="local_shop">লোকাল দোকান</option>
+                        <option value="other">অন্যান্য</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="used_parts[${partIndex}][supplier_name]" class="form-control form-control-sm" placeholder="যেমন: মোতালেব প্লাজা">
                 </td>
                 <td>
                     <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="0.00" step="0.01" min="0" required>
                 </td>
                 <td>
+                    <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="0.00" step="0.01" min="0" placeholder="0.00">
+                </td>
+                <td>
                     <input type="number" name="used_parts[${partIndex}][quantity]" class="form-control form-control-sm input-quantity text-center" value="1" min="1" required>
                 </td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-icon btn-outline-danger btn-remove-part"><i class="ti tabler-trash"></i></button>
+                    <button type="button" class="btn btn-xs btn-icon btn-outline-danger btn-remove-part"><i class="ti tabler-trash"></i></button>
                 </td>
             `;
 
@@ -752,7 +817,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateCommissionPreview();
             }
 
-            if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-quantity')) {
+            if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
+                updateCommissionPreview();
+            }
+        });
+
+        container.addEventListener('input', function(e) {
+            if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
                 updateCommissionPreview();
             }
         });

@@ -415,4 +415,92 @@ class SmsService
 
         return self::sendSms($phone, $message);
     }
+
+    /**
+     * Trigger: Repair Dhaka/External Sourced Parts Arrived in Shop SMS
+     */
+    public static function sendRepairPartsArrivedSms(Repair $repair): array
+    {
+        $customer = $repair->customer;
+        $phone = $customer ? $customer->phone : null;
+        if (empty($phone)) {
+            return ['success' => false, 'message' => 'Customer phone number not available.'];
+        }
+
+        $shopName = Setting::get('shop_name', 'M3 Mobile Care');
+        $shopPhone = Setting::get('phone', '+8801353106967');
+
+        $defaultTemplate = "প্রিয় {customer_name}, আপনার {device} (টিকিট: {ticket_id})-এর প্রয়োজনীয় পার্টস ঢাকা থেকে আমাদের দোকানে এসে পৌঁছেছে। খুব শীঘ্রই সার্ভিস সম্পন্ন করা হবে। - {shop_name}";
+        $template = Setting::get('sms_template_repair_parts_arrived', $defaultTemplate);
+
+        $message = self::formatTemplate($template, [
+            'customer_name' => self::getCustomerDisplayName($customer),
+            'ticket_id' => $repair->ticket_id,
+            'device' => trim($repair->device_brand . ' ' . $repair->device_model),
+            'shop_name' => $shopName,
+            'shop_phone' => $shopPhone,
+        ]);
+
+        return self::sendSms($phone, $message, true);
+    }
+
+    /**
+     * Trigger: Special Order Created SMS
+     */
+    public static function sendSpecialOrderCreatedSms($order): array
+    {
+        $phone = $order->customer_phone;
+        if (empty($phone)) {
+            return ['success' => false, 'message' => 'Customer phone number not available.'];
+        }
+
+        $shopName = Setting::get('shop_name', 'M3 Mobile Care');
+        $shopPhone = Setting::get('phone', '+8801353106967');
+
+        $deliveryDate = $order->expected_delivery_date ? $order->expected_delivery_date->format('d M, Y') : 'শীঘ্রই';
+
+        $defaultTemplate = "প্রিয় {customer_name}, আপনার স্পেশাল আইটেম '{item_name}' অর্ডার গ্রহণ করা হয়েছে (অর্ডার: {order_number})। অগ্রিম জমা: {advance_paid} টাকা, সম্ভাব্য ডেলিভারি: {delivery_date}। ধন্যবাদ - {shop_name}";
+        $template = Setting::get('sms_template_special_order_create', $defaultTemplate);
+
+        $message = self::formatTemplate($template, [
+            'customer_name' => $order->customer_name ?: 'গ্রাহক',
+            'order_number' => $order->order_number,
+            'item_name' => $order->item_name,
+            'advance_paid' => number_format($order->advance_paid, 2),
+            'selling_price' => number_format($order->selling_price, 2),
+            'delivery_date' => $deliveryDate,
+            'shop_name' => $shopName,
+            'shop_phone' => $shopPhone,
+        ]);
+
+        return self::sendSms($phone, $message);
+    }
+
+    /**
+     * Trigger: Special Order Arrived in Shop SMS
+     */
+    public static function sendSpecialOrderArrivedSms($order): array
+    {
+        $phone = $order->customer_phone;
+        if (empty($phone)) {
+            return ['success' => false, 'message' => 'Customer phone number not available.'];
+        }
+
+        $shopName = Setting::get('shop_name', 'M3 Mobile Care');
+        $shopPhone = Setting::get('phone', '+8801353106967');
+
+        $defaultTemplate = "প্রিয় {customer_name}, আপনার অর্ডারকৃত '{item_name}' (অর্ডার: {order_number}) ঢাকা থেকে দোকানে পৌঁছেছে। অনুগ্রহ করে দোকানে এসে রিসিভ করুন। অবশিষ্ট বকেয়া: {due_amount} টাকা। - {shop_name}";
+        $template = Setting::get('sms_template_special_order_arrived', $defaultTemplate);
+
+        $message = self::formatTemplate($template, [
+            'customer_name' => $order->customer_name ?: 'গ্রাহক',
+            'order_number' => $order->order_number,
+            'item_name' => $order->item_name,
+            'due_amount' => number_format($order->due_amount, 2),
+            'shop_name' => $shopName,
+            'shop_phone' => $shopPhone,
+        ]);
+
+        return self::sendSms($phone, $message, true);
+    }
 }

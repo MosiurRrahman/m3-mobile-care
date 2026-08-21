@@ -123,40 +123,16 @@
                                     <small class="text-muted d-block" style="font-size: 10px;">ID: {{ $log->loggable_id ?? 'N/A' }}</small>
                                 </td>
                                 <td>
-                                    <div class="text-dark">{{ $log->description }}</div>
-                                    
-                                    <!-- Collapsible Change Details for Updates -->
-                                    @if($log->action === 'updated' && $log->changes && count($log->changes) > 0)
-                                        <button class="btn btn-xs btn-outline-info py-0.5 px-1.5 mt-1 border-0 shadow-none d-flex align-items-center gap-1" type="button" data-bs-toggle="collapse" data-bs-target="#changes-{{ $log->id }}" style="font-size: 11px;">
-                                            <i class="ti tabler-eye fs-6"></i> View Updated Fields
-                                        </button>
-                                        <div class="collapse mt-2" id="changes-{{ $log->id }}">
-                                            <div class="p-3 bg-light rounded border-0 text-start" style="max-width: 500px;">
-                                                <table class="table table-sm table-borderless mb-0" style="font-size: 0.78rem;">
-                                                    <thead>
-                                                        <tr class="border-bottom text-muted">
-                                                            <th class="py-1 ps-0">Tracked Field</th>
-                                                            <th class="py-1">Old Value</th>
-                                                            <th class="py-1 text-end pe-0">New Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($log->changes as $field => $val)
-                                                            <tr>
-                                                                <td class="fw-bold text-dark ps-0 py-1">{{ str_replace('_', ' ', ucfirst($field)) }}</td>
-                                                                <td class="text-danger py-1" style="word-break: break-all;">
-                                                                    {{ is_array($val['old']) ? json_encode($val['old']) : ($val['old'] ?? 'Null') }}
-                                                                </td>
-                                                                <td class="text-success text-end pe-0 py-1" style="word-break: break-all;">
-                                                                    {{ is_array($val['new']) ? json_encode($val['new']) : ($val['new'] ?? 'Null') }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    @endif
+                                    <div class="text-dark">{{ \Illuminate\Support\Str::limit($log->description, 50) }}</div>
+
+                                    {{-- Details Modal Trigger --}}
+                                    <button class="btn btn-xs btn-outline-info py-0.5 px-1.5 mt-1 border-0 shadow-none d-flex align-items-center gap-1"
+                                            type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#detailsModal-{{ $log->id }}"
+                                            style="font-size: 11px;">
+                                        <i class="ti tabler-eye fs-6"></i> View Details
+                                    </button>
                                 </td>
                                 <td>
                                     <span class="text-muted"><i class="ti tabler-world me-1 fs-6"></i>{{ $log->ip_address ?? '127.0.0.1' }}</span>
@@ -174,7 +150,7 @@
                     </table>
                 </div>
             </div>
-            
+
             <!-- Pagination Footer -->
             @if($logs->hasPages())
             <div class="card-footer border-top bg-transparent d-flex justify-content-between align-items-center flex-wrap gap-2 py-3">
@@ -189,4 +165,114 @@
         </div>
     </div>
 </div>
+
+{{-- Activity Log Details Modals --}}
+@foreach($logs as $log)
+<div class="modal fade" id="detailsModal-{{ $log->id }}" tabindex="-1" aria-labelledby="detailsModalLabel-{{ $log->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel-{{ $log->id }}">
+                    <i class="ti tabler-list-details me-1"></i> Activity Log Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small mb-1">Timestamp</label>
+                            <div class="text-dark">{{ \Carbon\Carbon::parse($log->created_at)->format('Y-m-d H:i:s') }}
+                                <small class="text-muted">({{ \Carbon\Carbon::parse($log->created_at)->diffForHumans() }})</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small mb-1">Operator / Staff</label>
+                            <div class="d-flex align-items-center">
+                                @if($log->user && $log->user->avatar)
+                                    <img src="{{ asset('storage/' . $log->user->avatar) }}" class="rounded-circle me-2" style="width: 28px; height: 28px; object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-label-primary d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">
+                                        <i class="ti tabler-user fs-6"></i>
+                                    </div>
+                                @endif
+                                <div>
+                                    <span class="fw-bold text-dark">{{ $log->user ? $log->user->name : 'System/Guest' }}</span>
+                                    <small class="text-muted d-block" style="font-size: 10px;">{{ $log->user ? ucfirst($log->user->role) : 'N/A' }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small mb-1">Action</label>
+                            <div>
+                                @php
+                                    $modalActionColors = [
+                                        'created' => 'bg-label-success',
+                                        'updated' => 'bg-label-info',
+                                        'deleted' => 'bg-label-danger'
+                                    ];
+                                    $modalColor = $modalActionColors[$log->action] ?? 'bg-label-secondary';
+                                @endphp
+                                <span class="badge {{ $modalColor }} px-2 py-1 fs-7 fw-bold">{{ ucfirst($log->action) }}</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small mb-1">Entity / Target</label>
+                            <div>
+                                <span class="fw-semibold text-dark">{{ class_basename($log->loggable_type ?: 'System') }}</span>
+                                <small class="text-muted">(ID: {{ $log->loggable_id ?? 'N/A' }})</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small mb-1">IP Address</label>
+                            <div class="text-muted"><i class="ti tabler-world me-1 fs-6"></i>{{ $log->ip_address ?? '127.0.0.1' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-muted small mb-1">Description</label>
+                    <div class="p-3 bg-light rounded text-dark">{{ $log->description }}</div>
+                </div>
+
+                {{-- Change Details for Updates --}}
+                @if($log->action === 'updated' && $log->changes && count($log->changes) > 0)
+                <div>
+                    <label class="form-label fw-bold text-muted small mb-1">Updated Fields</label>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered mb-0" style="font-size: 0.82rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="py-2">Tracked Field</th>
+                                    <th class="py-2">Old Value</th>
+                                    <th class="py-2">New Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($log->changes as $field => $val)
+                                <tr>
+                                    <td class="fw-bold text-dark py-2">{{ str_replace('_', ' ', ucfirst($field)) }}</td>
+                                    <td class="text-danger py-2" style="word-break: break-all;">
+                                        {{ is_array($val['old']) ? json_encode($val['old']) : ($val['old'] ?? 'Null') }}
+                                    </td>
+                                    <td class="text-success py-2" style="word-break: break-all;">
+                                        {{ is_array($val['new']) ? json_encode($val['new']) : ($val['new'] ?? 'Null') }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @endif
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection

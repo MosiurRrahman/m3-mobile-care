@@ -21,6 +21,7 @@ use App\Http\Controllers\PartnerLedgerController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\SpecialOrderController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -84,10 +85,26 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/repairs/{id}/quick-status', [RepairController::class, 'quickStatus'])->name('admin.repairs.quick-status');
     });
 
+    // Customer Special Orders / Pre-orders & Dhaka Sourced Items
+    Route::get('/admin/special-orders', [SpecialOrderController::class, 'index'])->name('admin.special-orders.index');
+    Route::get('/admin/special-orders/create', [SpecialOrderController::class, 'create'])->name('admin.special-orders.create');
+    Route::post('/admin/special-orders', [SpecialOrderController::class, 'store'])->name('admin.special-orders.store');
+    Route::get('/admin/special-orders/{id}', [SpecialOrderController::class, 'show'])->name('admin.special-orders.show');
+    Route::get('/admin/special-orders/{id}/edit', [SpecialOrderController::class, 'edit'])->name('admin.special-orders.edit');
+    Route::put('/admin/special-orders/{id}', [SpecialOrderController::class, 'update'])->name('admin.special-orders.update');
+    Route::delete('/admin/special-orders/{id}', [SpecialOrderController::class, 'destroy'])->name('admin.special-orders.destroy');
+    Route::get('/admin/special-orders/{id}/print', [SpecialOrderController::class, 'printSlip'])->name('admin.special-orders.print');
+    Route::post('/admin/special-orders/{id}/quick-status', [SpecialOrderController::class, 'quickStatus'])->name('admin.special-orders.quick-status');
+    Route::post('/admin/special-orders/{id}/pay-due', [SpecialOrderController::class, 'payDue'])->name('admin.special-orders.pay-due');
+
     // Inventory Catalog (Parts & Accessories)
     Route::middleware(['permission:inventory'])->group(function () {
         Route::get('/admin/inventory/parts', [InventoryController::class, 'indexParts'])->name('admin.inventory.parts');
         Route::get('/admin/inventory/accessories', [InventoryController::class, 'indexAccessories'])->name('admin.inventory.accessories');
+        // Barcode Generation & Printing
+        Route::get('/admin/inventory/barcode/print', [InventoryController::class, 'barcodePrint'])->name('admin.inventory.barcode.print');
+        Route::get('/admin/inventory/barcode/generate', [InventoryController::class, 'getGeneratedBarcode'])->name('admin.inventory.barcode.generate');
+        
         Route::get('/admin/inventory/salesman-sheet', [InventoryController::class, 'salesmanSheet'])->name('admin.inventory.salesman-sheet');
         Route::get('/admin/inventory/salesman-sheet/print', [InventoryController::class, 'printSalesmanSheet'])->name('admin.inventory.salesman-sheet.print');
         Route::get('/admin/inventory/create', [InventoryController::class, 'create'])->name('admin.inventory.create');

@@ -202,6 +202,7 @@
                                 <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                 <option value="diagnosing" {{ old('status') == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                 <option value="waiting_for_approval" {{ old('status') == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                                <option value="waiting_for_parts" {{ old('status') == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
                                 <option value="repairing" {{ old('status') == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                 <option value="quality_check" {{ old('status') == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                 <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -250,7 +251,7 @@
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="estimated_cost">Estimated Cost (BDT)</label>
                             <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control bg-light" value="{{ old('estimated_cost', 0) }}" readonly>
-                            <div class="form-text small">Auto-calculated (Service Fee + Parts)</div>
+                            <div class="form-text small">Auto-calculated (Service Fee + Parts + Courier)</div>
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="advance_payment">Advance Deposit Paid (BDT)</label>
@@ -290,18 +291,24 @@
                     <!-- USED PARTS SECTION (Create workflow) -->
                     <div class="mb-4 p-3 bg-light rounded border">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Pricing</h6>
-                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Installed Part</button>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Outsourced Sourcing</h6>
+                                <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Spare Part</button>
                         </div>
 
                         <div class="table-responsive">
                             <table class="table table-sm table-bordered align-middle mb-0">
                                 <thead class="table-light small fw-bold">
                                     <tr>
-                                        <th>Select Inventory Item / Enter Name</th>
-                                        <th style="width: 150px;">Buying Price (BDT)</th>
-                                        <th style="width: 100px;">Quantity</th>
-                                        <th style="width: 70px;" class="text-center">Action</th>
+                                        <th style="min-width: 220px;">Part Item / Manual Name</th>
+                                        <th style="width: 170px;">Source (উৎস)</th>
+                                        <th style="width: 170px;">Supplier / Shop Name</th>
+                                        <th style="width: 130px;">Buying Price</th>
+                                        <th style="width: 110px;">Courier (৳)</th>
+                                        <th style="width: 80px;">Qty</th>
+                                        <th style="width: 60px;" class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="parts-container">
@@ -401,14 +408,17 @@
 
             // Sum up parts cost
             let totalPartsCost = 0;
+            let totalCourierCost = 0;
             document.querySelectorAll('.part-row').forEach(row => {
                 const price = parseFloat(row.querySelector('.input-buying-price').value) || 0;
+                const courier = parseFloat(row.querySelector('.input-courier-cost')?.value) || 0;
                 const qty = parseInt(row.querySelector('.input-quantity').value) || 1;
-                totalPartsCost += price * qty;
+                totalPartsCost += (price * qty);
+                totalCourierCost += courier;
             });
 
-            // Estimated Cost = Service Fee / Charge + Total Parts Cost
-            const estimatedCost = repairCharge + totalPartsCost;
+            // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
+            const estimatedCost = repairCharge + totalPartsCost + totalCourierCost;
             if (estimatedCostInput) {
                 estimatedCostInput.value = estimatedCost.toFixed(2);
             }
@@ -429,21 +439,27 @@
                 calculatedCommission = commissionBase * (commissionRate / 100);
             }
 
+            const netProfit = Math.max(0, estimatedCost - (totalPartsCost + totalCourierCost + calculatedCommission));
+
             // Display results
             let previewHtml = `
                 <div class="alert alert-info border-0 shadow-sm p-3 mt-3 d-flex flex-column gap-1 small col-12">
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Net Service Charge (excluding parts cost):</span>
+                        <span class="text-muted fw-semibold">Net Service Fee (কাস্টমার সার্ভিস ফি):</span>
                         <span class="fw-bold text-dark">${commissionBase.toFixed(2)} BDT</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Total Parts Buying Cost:</span>
+                        <span class="text-muted fw-semibold">Total Parts Buying Cost (পার্টস খরচ):</span>
                         <span class="fw-bold text-danger">${totalPartsCost.toFixed(2)} BDT</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted fw-semibold">Total Courier / Transport (কুরিয়ার/যাতায়াত):</span>
+                        <span class="fw-bold text-warning text-dark">${totalCourierCost.toFixed(2)} BDT</span>
                     </div>
                     <hr class="my-1">
                     <div class="d-flex justify-content-between fs-6">
-                        <span class="text-primary fw-bold">Calculated Commission:</span>
-                        <span class="fw-bold text-success">${calculatedCommission.toFixed(2)} BDT</span>
+                        <span class="text-primary fw-bold">Shop Net Profit (দোকানের নিট লাভ):</span>
+                        <span class="fw-bold text-success">${netProfit.toFixed(2)} BDT</span>
                     </div>
                 </div>
             `;
@@ -471,13 +487,27 @@
                 newRow.innerHTML = `
                     <td>
                         <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[${partIndex}][inventory_id]">
-                            <option value="">-- Custom Part (Type Below) --</option>
+                            <option value="">-- Custom / Sourced Part --</option>
                             ${selectOptions}
                         </select>
-                        <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name" placeholder="Enter part name manually" required>
+                        <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name" placeholder="Enter part name (e.g. Backshell Blue)" required>
+                    </td>
+                    <td>
+                        <select name="used_parts[${partIndex}][source]" class="form-select form-select-sm select-part-source">
+                            <option value="in_house">দোকানের স্টক (Stock)</option>
+                            <option value="dhaka_supplier" selected>ঢাকা সাপ্লায়ার (Dhaka)</option>
+                            <option value="local_shop">লোকাল দোকান (Local)</option>
+                            <option value="other">অন্যান্য (Other)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" name="used_parts[${partIndex}][supplier_name]" class="form-control form-control-sm" placeholder="e.g. মোতালেব প্লাজা / রাসেল">
                     </td>
                     <td>
                         <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="0.00" step="0.01" min="0" required>
+                    </td>
+                    <td>
+                        <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="0.00" step="0.01" min="0" placeholder="0.00">
                     </td>
                     <td>
                         <input type="number" name="used_parts[${partIndex}][quantity]" class="form-control form-control-sm input-quantity text-center" value="1" min="1" required>
@@ -494,7 +524,7 @@
                 if (selectEl) {
                     const ts = new TomSelect(selectEl, {
                         create: false,
-                        placeholder: "Search spare parts...",
+                        placeholder: "Search shop inventory...",
                         sortField: {
                             field: "text",
                             direction: "asc"
@@ -504,15 +534,16 @@
                     ts.on('change', function(value) {
                         const nameInput = newRow.querySelector('.input-part-name');
                         const priceInput = newRow.querySelector('.input-buying-price');
+                        const sourceSelect = newRow.querySelector('.select-part-source');
                         if (value) {
                             const opt = selectEl.options[selectEl.selectedIndex];
                             if (opt) {
                                 nameInput.value = opt.getAttribute('data-name') || '';
                                 priceInput.value = opt.getAttribute('data-price') || '0.00';
+                                if (sourceSelect) sourceSelect.value = 'in_house';
                             }
                         } else {
-                            nameInput.value = '';
-                            priceInput.value = '0.00';
+                            if (sourceSelect) sourceSelect.value = 'dhaka_supplier';
                         }
                         updateCommissionPreview();
                     });
@@ -531,18 +562,27 @@
                     const row = e.target.closest('tr');
                     const nameInput = row.querySelector('.input-part-name');
                     const priceInput = row.querySelector('.input-buying-price');
+                    const sourceSelect = row.querySelector('.select-part-source');
 
                     if (selectedOption.value) {
                         nameInput.value = selectedOption.dataset.name;
                         priceInput.value = selectedOption.dataset.price;
+                        if (sourceSelect) sourceSelect.value = 'in_house';
                     } else {
                         nameInput.value = '';
                         priceInput.value = '0.00';
+                        if (sourceSelect) sourceSelect.value = 'dhaka_supplier';
                     }
                     updateCommissionPreview();
                 }
 
-                if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-quantity')) {
+                if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
+                    updateCommissionPreview();
+                }
+            });
+
+            partsContainer.addEventListener('input', function(e) {
+                if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
                     updateCommissionPreview();
                 }
             });

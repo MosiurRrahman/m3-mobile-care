@@ -22,9 +22,10 @@
             <div class="col-md-3">
                 <select name="status" class="form-select">
                     <option value="">All Statuses</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="diagnosing" {{ request('status') == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                     <option value="waiting_for_approval" {{ request('status') == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                    <option value="waiting_for_parts" {{ request('status') == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা পার্টস)</option>
                     <option value="repairing" {{ request('status') == 'repairing' ? 'selected' : '' }}>Repairing</option>
                     <option value="quality_check" {{ request('status') == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -70,6 +71,9 @@
                 <tr>
                     <td>
                         <a href="{{ route('admin.repairs.show', $repair->id) }}" class="fw-bold text-decoration-none">{{ $repair->ticket_id }}</a>
+                        @if($repair->has_dhaka_parts)
+                            <div><span class="badge bg-label-info mt-1" style="font-size: 0.68rem;"><i class="ti tabler-truck-delivery me-1"></i>Dhaka Sourced</span></div>
+                        @endif
                     </td>
                     <td>
                         <div class="fw-semibold text-dark">{{ $repair->customer ? $repair->customer->name : 'Walk-in Customer' }}</div>
@@ -88,6 +92,7 @@
                                 'pending' => 'bg-warning',
                                 'diagnosing' => 'bg-info',
                                 'waiting_for_approval' => 'bg-secondary',
+                                'waiting_for_parts' => 'bg-warning text-dark',
                                 'repairing' => 'bg-primary',
                                 'quality_check' => 'bg-dark',
                                 'completed' => 'bg-success',

@@ -13,7 +13,10 @@
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Spare Parts</li>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('admin.inventory.barcode.print') }}" class="btn btn-outline-warning text-dark" style="border-color: #f37021;">
+                <i class="ti tabler-barcode me-1 text-warning"></i>বারকোড প্রিন্ট
+            </a>
             <a href="{{ route('admin.inventory.salesman-sheet', ['type' => 'spare_part']) }}" class="btn btn-outline-primary">
                 <i class="ti tabler-printer me-1"></i>সেলস প্রাইস শিট
             </a>
@@ -118,6 +121,10 @@
                             <td><span class="fw-bold text-success">{{ number_format($item->sale_price, 2) }} BDT</span></td>
                             <td class="text-end">
                                 <div class="d-inline-flex">
+                                    <a href="{{ route('admin.inventory.barcode.print', ['item_id' => $item->id, 'qty' => 60]) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-warning me-1" title="Print Barcode Labels">
+                                        <i class="ti tabler-barcode"></i>
+                                    </a>
+
                                     <a href="{{ route('admin.inventory.edit', $item->id) }}" class="btn btn-icon btn-sm btn-outline-primary me-1" title="Edit Item">
                                         <i class="ti tabler-edit"></i>
                                     </a>
