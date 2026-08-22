@@ -67,6 +67,9 @@
                     </li>
                 </ul>
             </div>
+            <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#updateCustomerModal">
+                <i class="ti tabler-user-edit me-1"></i>Customer Info
+            </button>
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickStatusModal">
                 <i class="ti tabler-refresh me-1"></i>Update Status & Note
             </button>
@@ -98,8 +101,13 @@
     <div class="col-lg-8 mb-4">
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-user me-2"></i>Customer & Device Details</h5>
-                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold text-primary mb-0"><i class="ti tabler-user me-2"></i>Customer & Device Details</h5>
+                    <button type="button" class="btn btn-xs btn-outline-primary" data-bs-toggle="modal" data-bs-target="#updateCustomerModal">
+                        <i class="ti tabler-edit me-1"></i>Edit Customer Info
+                    </button>
+                </div>
+
                 <div class="row">
                     <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">Customer Name</label>
@@ -137,7 +145,7 @@
                     <div class="col-sm-12 mb-3">
                         <label class="small text-muted d-block mb-1">Pattern Screen Unlock / Passwords</label>
                         <span class="text-dark fw-semibold p-2 bg-light rounded-3 d-block border-start border-warning border-3 mb-2"><i class="ti tabler-key me-1 text-warning"></i>{{ $repair->password_pattern ?? 'No lock credentials shared.' }}</span>
-                        
+
                         @if($repair->pattern_lock_path)
                         <div id="read-only-pattern-wrapper" class="card p-2 border mt-2" style="width: fit-content; background: #f8f9fa;">
                             <div id="pattern-holder" style="width: 140px; height: 140px; position: relative; background: #eef1f6; border-radius: 8px;">
@@ -174,7 +182,7 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-clipboard-check me-2"></i>Device Checklist & Physical Condition</h5>
-                
+
                 @php
                     $checklist = $repair->device_checklist ?? [];
                     $labels = [
@@ -246,7 +254,7 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-report-money me-2"></i>Financial & Payments Summary</h5>
-                
+
                 <div class="row">
                     <div class="col-md-2 col-sm-4 mb-3 mb-md-0">
                         <div class="p-3 bg-light rounded-3">
@@ -550,57 +558,57 @@
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
                 <h5 class="fw-bold text-primary mb-5"><i class="ti tabler-git-commit me-2"></i>Job Lifecycle Status</h5>
-                
+
                 @php
                     $status = $repair->status;
                     $techNotes = $repair->technician_notes ? $repair->technician_notes : null;
 
                     $steps = [
                         'pending' => [
-                            'Title' => 'Pending Confirmation', 
-                            'Desc' => 'Ticket #' . $repair->ticket_id . ' logged for ' . $repair->device_brand . ' ' . $repair->device_model . '.', 
+                            'Title' => 'Pending Confirmation',
+                            'Desc' => 'Ticket #' . $repair->ticket_id . ' logged for ' . $repair->device_brand . ' ' . $repair->device_model . '.',
                             'Icon' => 'tabler-ticket'
                         ],
                         'diagnosing' => [
-                            'Title' => 'Diagnosing', 
-                            'Desc' => 'Diagnosing reported issue: "' . $repair->issue_description . '"', 
+                            'Title' => 'Diagnosing',
+                            'Desc' => 'Diagnosing reported issue: "' . $repair->issue_description . '"',
                             'Icon' => 'tabler-zoom-check'
                         ],
                         'waiting_for_approval' => [
-                            'Title' => 'Waiting Approval', 
-                            'Desc' => 'Estimated cost ' . number_format($repair->estimated_cost, 0) . ' BDT shared, awaiting customer approval.', 
+                            'Title' => 'Waiting Approval',
+                            'Desc' => 'Estimated cost ' . number_format($repair->estimated_cost, 0) . ' BDT shared, awaiting customer approval.',
                             'Icon' => 'tabler-clock'
                         ],
                         'waiting_for_parts' => [
-                            'Title' => 'Waiting for Parts (ঢাকা পার্টস)', 
-                            'Desc' => 'প্রয়োজনীয় পার্টস ঢাকা/বাইরের সাপ্লায়ার থেকে সংগ্রহ করা হচ্ছে।', 
+                            'Title' => 'Waiting for Parts )',
+                            'Desc' => 'প্রয়োজনীয় পার্টস ঢাকা/বাইরের সাপ্লায়ার থেকে সংগ্রহ করা হচ্ছে।',
                             'Icon' => 'tabler-truck-delivery'
                         ],
                         'repairing' => [
-                            'Title' => 'Repairing', 
-                            'Desc' => $techNotes ? $techNotes : 'Replacing components or software flashing in lab.', 
+                            'Title' => 'Repairing',
+                            'Desc' => $techNotes ? $techNotes : 'Replacing components or software flashing in lab.',
                             'Icon' => 'tabler-tool'
                         ],
                         'quality_check' => [
-                            'Title' => 'Quality Check', 
-                            'Desc' => 'Testing screen, cameras, battery, and charging stability.', 
+                            'Title' => 'Quality Check',
+                            'Desc' => 'Testing screen, cameras, battery, and charging stability.',
                             'Icon' => 'tabler-shield-check'
                         ],
                         'completed' => [
-                            'Title' => 'Completed (Ready)', 
-                            'Desc' => 'Job finished! Device ready for pickup.', 
+                            'Title' => 'Completed (Ready)',
+                            'Desc' => 'Job finished! Device ready for pickup.',
                             'Icon' => 'tabler-checkbox'
                         ],
                         'delivered' => [
-                            'Title' => 'Delivered', 
-                            'Desc' => 'Payment settled and device collected by customer.', 
+                            'Title' => 'Delivered',
+                            'Desc' => 'Payment settled and device collected by customer.',
                             'Icon' => 'tabler-archive'
                         ]
                     ];
 
                     $fullStatusOrder = ['pending', 'diagnosing', 'waiting_for_approval', 'waiting_for_parts', 'repairing', 'quality_check', 'completed', 'delivered'];
                     $currentIndex = array_search($status, $fullStatusOrder);
-                    
+
                     if ($status == 'cancelled') {
                         $steps['cancelled'] = ['Title' => 'Cancelled', 'Desc' => 'Repair ticket cancelled.', 'Icon' => 'tabler-square-x'];
                         $statusOrder = ['pending', 'cancelled'];
@@ -619,7 +627,7 @@
                             $dotColor = $isActive ? '#7367f0' : ($isPassed ? '#28c76f' : '#82868b');
                         @endphp
                         <div class="mb-5 position-relative">
-                            <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center text-white" 
+                            <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center text-white"
                                  style="left: -32px; top: 0px; width: 30px; height: 30px; {{ $isActive ? 'box-shadow: 0 0 0 5px rgba(115, 103, 240, 0.25);' : '' }} background-color: {{ $dotColor }};">
                                 <i class="ti {{ $step['Icon'] }} fs-6"></i>
                             </div>
@@ -640,9 +648,9 @@
 <!-- Print layout stylesheet -->
 <style>
 @media print {
-    #layout-menu, 
+    #layout-menu,
     .layout-navbar,
-    .btn, 
+    .btn,
     .nav-tabs,
     .breadcrumb,
     footer {
@@ -770,7 +778,7 @@
                             <option value="pending" {{ $repair->status == 'pending' ? 'selected' : '' }}>১. অপেক্ষমান (Pending confirmation)</option>
                             <option value="diagnosing" {{ $repair->status == 'diagnosing' ? 'selected' : '' }}>২. ডায়াগনসিস চলছে (Diagnosing)</option>
                             <option value="waiting_for_approval" {{ $repair->status == 'waiting_for_approval' ? 'selected' : '' }}>২.১ গ্রাহক অনুমোদনের অপেক্ষা (Waiting Approval)</option>
-                            <option value="waiting_for_parts" {{ $repair->status == 'waiting_for_parts' ? 'selected' : '' }}>২.২ 📦 পার্টস আসার অপেক্ষায় (Waiting for Parts - Dhaka)</option>
+                            <option value="waiting_for_parts" {{ $repair->status == 'waiting_for_parts' ? 'selected' : '' }}>২.২ পার্টস আসার অপেক্ষায় (Waiting for Parts - Dhaka)</option>
                             <option value="repairing" {{ $repair->status == 'repairing' ? 'selected' : '' }}>৩. কাজ চলছে (Repairing)</option>
                             <option value="quality_check" {{ $repair->status == 'quality_check' ? 'selected' : '' }}>৩.১ কোয়ালিটি চেক (Quality Check)</option>
                             <option value="completed" {{ $repair->status == 'completed' ? 'selected' : '' }}>৪. সম্পূর্ণ তৈরি (Completed / Ready for Pickup)</option>
@@ -790,6 +798,41 @@
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary px-4">
                         <i class="ti tabler-check me-1"></i>Save & Update Live Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Customer Info Update Modal -->
+<div class="modal fade" id="updateCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form action="{{ route('admin.repairs.update-customer', $repair->id) }}" method="POST">
+                @csrf
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-dark"><i class="ti tabler-user-edit text-primary me-2"></i>Update Customer Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="modal_customer_name">Customer Name</label>
+                        <input type="text" name="customer_name" id="modal_customer_name" class="form-control" value="{{ $repair->customer ? $repair->customer->name : 'Walk-in Customer' }}" placeholder="e.g. John Doe / Walk-in Customer">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="modal_customer_phone">Customer Mobile Number</label>
+                        <input type="text" name="customer_phone" id="modal_customer_phone" class="form-control" value="{{ $repair->customer ? $repair->customer->phone : '' }}" placeholder="e.g. 01712345678 (ঐচ্ছিক)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="modal_customer_address">Address</label>
+                        <input type="text" name="customer_address" id="modal_customer_address" class="form-control" value="{{ $repair->customer ? $repair->customer->address : '' }}" placeholder="e.g. Dhaka, Bangladesh">
+                    </div>
+                </div>
+                <div class="modal-footer border-top bg-light">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="ti tabler-check me-1"></i>Save Customer Info
                     </button>
                 </div>
             </form>

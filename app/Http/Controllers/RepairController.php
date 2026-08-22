@@ -90,8 +90,8 @@ class RepairController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_phone' => 'required|string|max:20',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_phone' => 'nullable|string|max:20',
             'customer_address' => 'nullable|string|max:500',
             'device_brand' => 'required|string|max:100',
             'device_model' => 'required|string|max:100',
@@ -125,20 +125,36 @@ class RepairController extends Controller
 
         try {
             DB::transaction(function () use ($request) {
-                // Find or create customer
-                $phone = trim($request->input('customer_phone'));
-                $customer = Customer::where('phone', $phone)->first();
-                if (!$customer) {
+                // Find or create customer if provided
+                $phone = trim($request->input('customer_phone') ?? '');
+                $name = trim($request->input('customer_name') ?? '');
+                $address = trim($request->input('customer_address') ?? '');
+
+                $customerId = null;
+
+                if (!empty($phone)) {
+                    $customer = Customer::where('phone', $phone)->first();
+                    $resolvedName = !empty($name) ? $name : ($customer ? $customer->name : 'Walk-in Customer');
+                    if (!$customer) {
+                        $customer = Customer::create([
+                            'name' => $resolvedName,
+                            'phone' => $phone,
+                            'address' => !empty($address) ? $address : null,
+                        ]);
+                    } else {
+                        $customer->update(array_filter([
+                            'name' => !empty($name) ? $name : $customer->name,
+                            'address' => !empty($address) ? $address : $customer->address,
+                        ]));
+                    }
+                    $customerId = $customer->id;
+                } elseif (!empty($name) || !empty($address)) {
                     $customer = Customer::create([
-                        'name' => $request->input('customer_name'),
-                        'phone' => $phone,
-                        'address' => $request->input('customer_address'),
+                        'name' => !empty($name) ? $name : 'Walk-in Customer',
+                        'phone' => null,
+                        'address' => !empty($address) ? $address : null,
                     ]);
-                } else {
-                    $customer->update([
-                        'name' => $request->input('customer_name'),
-                        'address' => $request->input('customer_address') ?? $customer->address,
-                    ]);
+                    $customerId = $customer->id;
                 }
 
                 // Generate unique Ticket ID
@@ -200,7 +216,7 @@ class RepairController extends Controller
 
                 $repair = Repair::create([
                     'ticket_id' => $ticketId,
-                    'customer_id' => $customer->id,
+                    'customer_id' => $customerId,
                     'device_brand' => $request->input('device_brand'),
                     'device_model' => $request->input('device_model'),
                     'serial_imei' => $request->input('serial_imei'),
@@ -244,16 +260,18 @@ class RepairController extends Controller
                 // Sync stock deduction
                 self::syncStockDeduction($repair, $status, $usedParts);
 
-                // Dispatch SMS notification for repair tracking
+                // Dispatch SMS notification for repair tracking if customer phone exists
                 try {
                     $repair->load('customer');
-                    SmsService::sendRepairCreatedSms($repair);
+                    if ($repair->customer && !empty($repair->customer->phone)) {
+                        SmsService::sendRepairCreatedSms($repair);
+                    }
                 } catch (\Throwable $smsEx) {
                     // Suppress SMS exceptions so record creation is not blocked
                 }
             });
 
-            return redirect()->route('admin.repairs.index')->with('success', 'Job Card ticket created successfully and Tracking SMS sent!');
+            return redirect()->route('admin.repairs.index')->with('success', 'Job Card ticket created successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Failed to create repair ticket: ' . $e->getMessage());
         }
@@ -321,7 +339,10 @@ class RepairController extends Controller
         } else {
             // Admin can edit everything
             $request->validate([
-                'customer_id' => 'required|exists:customers,id',
+                'customer_id' => 'nullable|exists:customers,id',
+                'customer_name' => 'nullable|string|max:255',
+                'customer_phone' => 'nullable|string|max:20',
+                'customer_address' => 'nullable|string|max:500',
                 'device_brand' => 'required|string|max:100',
                 'device_model' => 'required|string|max:100',
                 'serial_imei' => 'nullable|string|max:100',
@@ -524,8 +545,48 @@ class RepairController extends Controller
                         $cashReceived = $cashDelivery;
                     }
 
+                    $customerId = $request->filled('customer_id') ? $request->input('customer_id') : null;
+                    $phone = trim($request->input('customer_phone') ?? '');
+                    $name = trim($request->input('customer_name') ?? '');
+                    $address = trim($request->input('customer_address') ?? '');
+
+                    if (!empty($phone)) {
+                        $customer = Customer::where('phone', $phone)->first();
+                        $resolvedName = !empty($name) ? $name : ($customer ? $customer->name : 'Walk-in Customer');
+                        if (!$customer) {
+                            $customer = Customer::create([
+                                'name' => $resolvedName,
+                                'phone' => $phone,
+                                'address' => !empty($address) ? $address : null,
+                            ]);
+                        } else {
+                            $customer->update(array_filter([
+                                'name' => !empty($name) ? $name : $customer->name,
+                                'address' => !empty($address) ? $address : $customer->address,
+                            ]));
+                        }
+                        $customerId = $customer->id;
+                    } elseif (!empty($name) || !empty($address)) {
+                        if ($customerId) {
+                            $customer = Customer::find($customerId);
+                            if ($customer) {
+                                $customer->update(array_filter([
+                                    'name' => !empty($name) ? $name : $customer->name,
+                                    'address' => !empty($address) ? $address : $customer->address,
+                                ]));
+                            }
+                        } else {
+                            $customer = Customer::create([
+                                'name' => !empty($name) ? $name : 'Walk-in Customer',
+                                'phone' => null,
+                                'address' => !empty($address) ? $address : null,
+                            ]);
+                            $customerId = $customer->id;
+                        }
+                    }
+
                     $repair->update([
-                        'customer_id' => $request->input('customer_id'),
+                        'customer_id' => $customerId,
                         'device_brand' => $request->input('device_brand'),
                         'device_model' => $request->input('device_model'),
                         'serial_imei' => $request->input('serial_imei'),
@@ -835,5 +896,66 @@ class RepairController extends Controller
         }
 
         return redirect()->back()->with('success', 'রিপেয়ার স্ট্যাটাস ও লাইভ নোট সফলভাবে আপডেট করা হয়েছে!');
+    }
+
+    /**
+     * Quick update customer information attached to this repair ticket.
+     */
+    public function updateCustomer(Request $request, $id)
+    {
+        $repair = Repair::findOrFail($id);
+
+        $request->validate([
+            'customer_name' => 'nullable|string|max:255',
+            'customer_phone' => 'nullable|string|max:20',
+            'customer_address' => 'nullable|string|max:500',
+        ]);
+
+        $phone = trim($request->input('customer_phone') ?? '');
+        $name = trim($request->input('customer_name') ?? '');
+        $address = trim($request->input('customer_address') ?? '');
+
+        $customerId = null;
+
+        if (!empty($phone)) {
+            $customer = Customer::where('phone', $phone)->first();
+            $resolvedName = !empty($name) ? $name : ($customer ? $customer->name : 'Walk-in Customer');
+            if (!$customer) {
+                $customer = Customer::create([
+                    'name' => $resolvedName,
+                    'phone' => $phone,
+                    'address' => !empty($address) ? $address : null,
+                ]);
+            } else {
+                $customer->update(array_filter([
+                    'name' => !empty($name) ? $name : $customer->name,
+                    'address' => !empty($address) ? $address : $customer->address,
+                ]));
+            }
+            $customerId = $customer->id;
+        } elseif (!empty($name) || !empty($address)) {
+            if ($repair->customer && empty($repair->customer->phone)) {
+                $repair->customer->update([
+                    'name' => !empty($name) ? $name : 'Walk-in Customer',
+                    'address' => !empty($address) ? $address : null,
+                ]);
+                $customerId = $repair->customer->id;
+            } else {
+                $customer = Customer::create([
+                    'name' => !empty($name) ? $name : 'Walk-in Customer',
+                    'phone' => null,
+                    'address' => !empty($address) ? $address : null,
+                ]);
+                $customerId = $customer->id;
+            }
+        } else {
+            $customerId = null;
+        }
+
+        $repair->update([
+            'customer_id' => $customerId,
+        ]);
+
+        return redirect()->back()->with('success', 'কাস্টমার তথ্য সফলভাবে আপডেট করা হয়েছে!');
     }
 }

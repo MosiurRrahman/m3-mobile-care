@@ -73,7 +73,7 @@
                                     <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                     <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                     <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                                    <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
+                                    <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}> Waiting for Parts (পার্টস আসার অপেক্ষায়)</option>
                                     <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                     <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                     <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -116,8 +116,8 @@
                                                     <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[{{ $index }}][inventory_id]">
                                                         <option value="">-- Custom / Sourced Part --</option>
                                                         @foreach($inventoryItems as $item)
-                                                            <option value="{{ $item->id }}" 
-                                                                data-name="{{ $item->name }}" 
+                                                            <option value="{{ $item->id }}"
+                                                                data-name="{{ $item->name }}"
                                                                 data-price="{{ $item->purchase_price }}"
                                                                 {{ isset($part['inventory_id']) && $part['inventory_id'] == $item->id ? 'selected' : '' }}>
                                                                 {{ $item->name }} (Qty: {{ $item->quantity }}, Cost: {{ $item->purchase_price }} BDT)
@@ -178,12 +178,29 @@
                                     </div>
                                     <div class="card-body p-4">
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold" for="customer_id">Select Customer <span class="text-danger">*</span></label>
-                                            <select name="customer_id" id="customer_id" class="form-select" required>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <label class="form-label fw-semibold mb-0" for="customer_id">Select Existing Customer <span class="text-muted small fw-normal">(Optional)</span></label>
+                                                @if(!$repair->customer)
+                                                    <span class="badge bg-label-secondary" style="font-size: 0.72rem;"><i class="ti tabler-user me-1"></i>Currently Walk-in</span>
+                                                @endif
+                                            </div>
+                                            <select name="customer_id" id="customer_id" class="form-select form-select-sm">
+                                                <option value="" {{ empty(old('customer_id', $repair->customer_id)) ? 'selected' : '' }}>-- Walk-in / Unregistered Customer --</option>
                                                 @foreach($customers as $customer)
-                                                <option value="{{ $customer->id }}" {{ old('customer_id', $repair->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name }} ({{ $customer->phone }})</option>
+                                                <option value="{{ $customer->id }}" data-name="{{ $customer->name }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}" {{ old('customer_id', $repair->customer_id) == $customer->id ? 'selected' : '' }}>{{ $customer->name }} ({{ $customer->phone ?? 'No Phone' }})</option>
                                                 @endforeach
                                             </select>
+                                        </div>
+
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold" for="customer_name">Customer Name</label>
+                                                <input type="text" name="customer_name" id="customer_name" class="form-control form-control-sm" value="{{ old('customer_name', $repair->customer ? $repair->customer->name : 'Walk-in Customer') }}" placeholder="e.g. John Doe / Walk-in Customer">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-semibold" for="customer_phone">Customer Phone Number</label>
+                                                <input type="text" name="customer_phone" id="customer_phone" class="form-control form-control-sm" value="{{ old('customer_phone', $repair->customer ? $repair->customer->phone : '') }}" placeholder="e.g. 01712345678 (ঐচ্ছিক)">
+                                            </div>
                                         </div>
 
                                         <div class="row g-2 mb-3">
@@ -342,8 +359,8 @@
                                                                 <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[{{ $index }}][inventory_id]">
                                                                     <option value="">-- Custom / Sourced Part --</option>
                                                                     @foreach($inventoryItems as $item)
-                                                                        <option value="{{ $item->id }}" 
-                                                                            data-name="{{ $item->name }}" 
+                                                                        <option value="{{ $item->id }}"
+                                                                            data-name="{{ $item->name }}"
                                                                             data-price="{{ $item->purchase_price }}"
                                                                             {{ isset($part['inventory_id']) && $part['inventory_id'] == $item->id ? 'selected' : '' }}>
                                                                             {{ $item->name }} (Qty: {{ $item->quantity }}, Cost: {{ $item->purchase_price }} BDT)
@@ -399,7 +416,7 @@
                                                 <option value="pending" {{ old('status', $repair->status) == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                                 <option value="diagnosing" {{ old('status', $repair->status) == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                                 <option value="waiting_for_approval" {{ old('status', $repair->status) == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                                                <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
+                                                <option value="waiting_for_parts" {{ old('status', $repair->status) == 'waiting_for_parts' ? 'selected' : '' }}>Waiting for Parts (পার্টস আসার অপেক্ষায়)</option>
                                                 <option value="repairing" {{ old('status', $repair->status) == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                                 <option value="quality_check" {{ old('status', $repair->status) == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                                 <option value="completed" {{ old('status', $repair->status) == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -483,7 +500,7 @@
                                         <!-- Final Settlement (At Delivery) Spacious Card -->
                                         <div class="p-4 rounded-3 bg-light border border-info border-opacity-25 mb-4">
                                             <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-cash me-2"></i>Final Checkout (স্প্লিট পেমেন্ট)</h6>
-                                            
+
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold small mb-1" for="actual_cost">Actual / Final Cost (Total Bill)</label>
                                                 <input type="number" name="actual_cost" id="actual_cost" step="0.01" min="0" class="form-control fw-bold text-dark" value="{{ old('actual_cost', $repair->actual_cost) }}" placeholder="Fill total bill at delivery">
@@ -613,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const commissionType = commissionTypeSelect.value;
         const commissionRate = parseFloat(commissionRateInput.value) || 0;
-        
+
         let actualCostVal = actualCostInput ? parseFloat(actualCostInput.value) : NaN;
 
         let commissionBase = 0;
@@ -639,20 +656,20 @@ document.addEventListener('DOMContentLoaded', function() {
         let previewHtml = `
             <div class="alert alert-info border-0 shadow-sm p-3 mt-3 d-flex flex-column gap-1 small">
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-semibold">Net Service Fee (কাস্টমার সার্ভিস ফি):</span>
+                    <span class="text-muted fw-semibold">Net Service Fee:</span>
                     <span class="fw-bold text-dark">${commissionBase.toFixed(2)} BDT</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-semibold">Total Parts Buying Cost (পার্টস খরচ):</span>
+                    <span class="text-muted fw-semibold">Total Parts Buying Cost:</span>
                     <span class="fw-bold text-danger">${totalPartsCost.toFixed(2)} BDT</span>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <span class="text-muted fw-semibold">Total Courier / Transport (কুরিয়ার):</span>
+                    <span class="text-muted fw-semibold">Total Courier / Transport:</span>
                     <span class="fw-bold text-warning text-dark">${totalCourierCost.toFixed(2)} BDT</span>
                 </div>
                 <hr class="my-1">
                 <div class="d-flex justify-content-between fs-6">
-                    <span class="text-primary fw-bold">Shop Net Profit (দোকানের নিট লাভ):</span>
+                    <span class="text-primary fw-bold">Shop Net Profit:</span>
                     <span class="fw-bold text-success">${netProfit.toFixed(2)} BDT</span>
                 </div>
             </div>
@@ -678,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 direction: "asc"
             }
         });
-        
+
         ts.on('change', function(value) {
             const nameInput = row.querySelector('.input-part-name');
             const priceInput = row.querySelector('.input-buying-price');
@@ -754,7 +771,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
 
             activeContainer.appendChild(newRow);
-            
+
             // Initialize Tom Select on the new row select dropdown
             const selectEl = newRow.querySelector('.select-part-item');
             if (selectEl) {
@@ -869,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const actualCost = parseFloat(actualCostEl ? actualCostEl.value : 0) || 0;
         const advancePaid = parseFloat(advancePaymentInput ? advancePaymentInput.value : 0) || 0;
         const remainingBalance = Math.max(0, actualCost - advancePaid);
-        
+
         // Update Counter Due helper text label if it exists
         if (actualCostHelperVal) {
             actualCostHelperVal.textContent = remainingBalance.toFixed(2);
@@ -879,7 +896,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bkashDelivery = parseFloat(bkashDeliveryInput ? bkashDeliveryInput.value : 0) || 0;
         const nagadDelivery = parseFloat(nagadDeliveryInput ? nagadDeliveryInput.value : 0) || 0;
         const rocketDelivery = parseFloat(rocketDeliveryInput ? rocketDeliveryInput.value : 0) || 0;
-        
+
         let deliveryPayment = cashDelivery + bkashDelivery + nagadDelivery + rocketDelivery;
 
         if (deliveryPayment > remainingBalance) {
@@ -1104,6 +1121,24 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
             drawLines();
         }, 300);
+    }
+
+    // Customer Select dropdown change listener in edit form
+    const customerSelectEl = document.getElementById('customer_id');
+    const customerNameInput = document.getElementById('customer_name');
+    const customerPhoneInput = document.getElementById('customer_phone');
+
+    if (customerSelectEl) {
+        customerSelectEl.addEventListener('change', function() {
+            const selectedOpt = customerSelectEl.options[customerSelectEl.selectedIndex];
+            if (selectedOpt && selectedOpt.value) {
+                if (customerNameInput) customerNameInput.value = selectedOpt.getAttribute('data-name') || '';
+                if (customerPhoneInput) customerPhoneInput.value = selectedOpt.getAttribute('data-phone') || '';
+            } else {
+                if (customerNameInput) customerNameInput.value = 'Walk-in Customer';
+                if (customerPhoneInput) customerPhoneInput.value = '';
+            }
+        });
     }
 });
 </script>

@@ -111,8 +111,8 @@ class PartnerLedgerController extends Controller
             $monowarRatio = ($monowar->capital_balance / 550000.0) * 0.50;
         } else {
             if ($monowar->payback_completed_at) {
-                $targetDate = Carbon::parse($month . '-01');
-                $paybackDate = Carbon::parse($monowar->payback_completed_at->format('Y-m-d'));
+                $targetDate = Carbon::parse($month . '-01')->startOfMonth();
+                $paybackDate = Carbon::parse($monowar->payback_completed_at->format('Y-m-d'))->startOfMonth();
                 $monthsDiff = $paybackDate->diffInMonths($targetDate, false);
                 if ($monthsDiff >= 0 && $monthsDiff < 36) {
                     $monowarRatio = 0.10;

@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="col-12 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-            <h4 class="fw-bold mb-0">📦 Customer Special Orders (প্রি-অর্ডার ও ঢাকা পার্টস)</h4>
+            <h4 class="fw-bold mb-0">Customer Special Orders</h4>
             <span class="text-muted">কাস্টমারের জন্য ঢাকা বা বাইরে থেকে আনা পার্টস ও বিশেষ প্রোডাক্টের ট্র্যাকিং</span>
         </div>
         <div class="d-flex gap-2">
@@ -68,12 +68,12 @@
             </div>
             <div class="col-md-3">
                 <select name="status" class="form-select">
-                    <option value="">All Statuses (সকল স্ট্যাটাস)</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending (অর্ডার গৃহীত)</option>
-                    <option value="ordered_from_dhaka" {{ request('status') == 'ordered_from_dhaka' ? 'selected' : '' }}>In Transit (ঢাকা থেকে পাঠানো হয়েছে)</option>
-                    <option value="received_in_shop" {{ request('status') == 'received_in_shop' ? 'selected' : '' }}>Received in Shop (দোকানে পৌঁছেছে)</option>
-                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered (ডেলিভারি সম্পন্ন)</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled (বাতিল)</option>
+                    <option value="">All Statuses</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="ordered_from_dhaka" {{ request('status') == 'ordered_from_dhaka' ? 'selected' : '' }}>In Transit</option>
+                    <option value="received_in_shop" {{ request('status') == 'received_in_shop' ? 'selected' : '' }}>Received in Shop</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -147,11 +147,11 @@
                                 'cancelled' => 'bg-danger'
                             ];
                             $statusTitles = [
-                                'pending' => 'অর্ডার গৃহীত',
-                                'ordered_from_dhaka' => 'ঢাকা থেকে আসার পথে',
-                                'received_in_shop' => 'দোকানে পৌঁছেছে',
-                                'delivered' => 'ডেলিভার্ড',
-                                'cancelled' => 'বাতিল'
+                                'pending' => 'Pending',
+                                'ordered_from_dhaka' => 'In Transit',
+                                'received_in_shop' => 'Received in Shop',
+                                'delivered' => 'Delivered',
+                                'cancelled' => 'Cancelled'
                             ];
                         @endphp
                         <span class="badge {{ $statusBadges[$order->status] ?? 'bg-secondary' }}">

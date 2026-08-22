@@ -55,6 +55,7 @@ yarn-error.log
 # Storage runtime files
 /storage/framework/sessions/*
 /storage/framework/views/*
+/storage/framework/testing/*
 /storage/logs/*
 /storage/app/*
 !/storage/app/.gitignore

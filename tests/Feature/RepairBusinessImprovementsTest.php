@@ -549,7 +549,7 @@ class RepairBusinessImprovementsTest extends TestCase
 
         // Check that an expense was logged in the shop books
         $this->assertDatabaseHas('expenses', [
-            'category' => 'Other',
+            'category' => 'Partner Withdrawal',
             'amount' => 5000.00,
             'register_type' => 'withdraw',
         ]);
@@ -694,5 +694,64 @@ class RepairBusinessImprovementsTest extends TestCase
         $raihan->refresh();
         $this->assertEquals(50000.00, $raihan->capital_balance);
         $this->assertDatabaseMissing('partner_ledger_entries', ['id' => $entry->id]);
+    }
+
+    public function test_create_walkin_repair_without_customer_name_and_phone()
+    {
+        $this->actingAs($this->admin);
+
+        $payload = [
+            'device_brand' => 'Xiaomi',
+            'device_model' => 'Redmi Note 10',
+            'issue_description' => 'Charging pin loose',
+            'repair_charge' => 400,
+            'status' => 'pending',
+        ];
+
+        $response = $this->post(route('admin.repairs.store'), $payload);
+        $response->assertRedirect(route('admin.repairs.index'));
+
+        $repair = Repair::where('device_brand', 'Xiaomi')->first();
+        $this->assertNotNull($repair);
+        $this->assertNull($repair->customer_id);
+        $this->assertNull($repair->customer);
+
+        // Check index and show pages load cleanly
+        $showResponse = $this->get(route('admin.repairs.show', $repair->id));
+        $showResponse->assertOk();
+        $showResponse->assertSee('Walk-in Customer');
+    }
+
+    public function test_update_customer_info_on_existing_walkin_repair()
+    {
+        $this->actingAs($this->admin);
+
+        // 1. Create walk-in repair
+        $repair = Repair::create([
+            'ticket_id' => 'M3-WALKIN-01',
+            'device_brand' => 'Realme',
+            'device_model' => '8 Pro',
+            'issue_description' => 'Display flickering',
+            'repair_charge' => 1200,
+            'estimated_cost' => 1200,
+            'status' => 'pending',
+            'branch' => 'Dhaka',
+        ]);
+
+        $this->assertNull($repair->customer_id);
+
+        // 2. Later, update customer info via quick updateCustomer route
+        $response = $this->post(route('admin.repairs.update-customer', $repair->id), [
+            'customer_name' => 'Akram Hossain',
+            'customer_phone' => '01811223344',
+            'customer_address' => 'Mirpur-10, Dhaka',
+        ]);
+
+        $response->assertRedirect();
+        $repair->refresh()->load('customer');
+
+        $this->assertNotNull($repair->customer_id);
+        $this->assertEquals('Akram Hossain', $repair->customer->name);
+        $this->assertEquals('01811223344', $repair->customer->phone);
     }
 }

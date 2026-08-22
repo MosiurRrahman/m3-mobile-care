@@ -36,27 +36,32 @@
                     @csrf
 
                     <!-- SECTION 1: Customer Details -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold text-primary mb-0"><i class="ti tabler-user me-2"></i>1. Customer Information</h5>
-                        <small class="text-muted"><i class="ti tabler-info-circle me-1"></i>Enter phone number to auto-fill existing customer info</small>
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <h5 class="fw-bold text-primary mb-0"><i class="ti tabler-user me-2"></i>1. Customer Information</h5>
+                            {{-- <small class="text-muted"><i class="ti tabler-info-circle me-1"></i>নাম বা মোবাইল নম্বর না থাকলে খালি রেখে সাবমিট করতে পারেন (Walk-in হিসেবে সেভ হবে)</small> --}}
+                        </div>
+                        <button type="button" id="btn-quick-walkin" class="btn btn-sm btn-outline-secondary">
+                            <i class="ti tabler-user-check me-1"></i>Set Walk-in Customer
+                        </button>
                     </div>
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-4 mb-3 mb-md-0 position-relative">
-                            <label class="form-label fw-semibold" for="customer_phone">Mobile Number <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold" for="customer_phone">Mobile Number <span class="text-muted small fw-normal">(Optional)</span></label>
                             <div class="input-group">
-                                <input type="text" name="customer_phone" id="customer_phone" class="form-control" value="{{ old('customer_phone') }}" placeholder="e.g. 01712345678" required autocomplete="off">
+                                <input type="text" name="customer_phone" id="customer_phone" class="form-control" value="{{ old('customer_phone') }}" placeholder="e.g. 01712345678 (ঐচ্ছিক)" autocomplete="off">
                                 <span class="input-group-text d-none" id="customer-lookup-spinner" style="background: transparent;">
                                     <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
                                 </span>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="customer_name">Customer Name <span class="text-danger">*</span></label>
-                            <input type="text" name="customer_name" id="customer_name" class="form-control" value="{{ old('customer_name') }}" placeholder="e.g. John Doe" required>
+                            <label class="form-label fw-semibold" for="customer_name">Customer Name <span class="text-muted small fw-normal">(Optional -: Walk-in)</span></label>
+                            <input type="text" name="customer_name" id="customer_name" class="form-control" value="{{ old('customer_name') }}" placeholder="e.g. John Doe / Walk-in">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold" for="customer_address">Address</label>
+                            <label class="form-label fw-semibold" for="customer_address">Address <span class="text-muted small fw-normal">(Optional)</span></label>
                             <input type="text" name="customer_address" id="customer_address" class="form-control" value="{{ old('customer_address') }}" placeholder="e.g. Dhaka, Bangladesh">
                         </div>
                     </div>
@@ -90,7 +95,7 @@
                             <input type="text" name="serial_imei" id="serial_imei" class="form-control" value="{{ old('serial_imei') }}" placeholder="e.g. 357283920193847">
                         </div>
                     </div>
-                    
+
                     <div class="row mb-4">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="service_id">Catalog Services <span class="text-muted">(Optional price lookup)</span></label>
@@ -105,11 +110,11 @@
                             <label class="form-label fw-semibold" for="password_pattern">Screen Lock Credentials / Unlocking Pattern</label>
                             <input type="text" name="password_pattern" id="password_pattern" class="form-control" value="{{ old('password_pattern') }}" placeholder="Pattern code, PIN or Password">
                             <div class="form-text small">e.g. Pin: 1234. Needed to verify repairs.</div>
-                            
+
                             <div class="d-flex align-items-center gap-2 mt-2">
                                 <button type="button" id="btn-toggle-pattern" class="btn btn-sm btn-outline-primary"><i class="ti tabler-grid me-1"></i>Draw Pattern Lock</button>
                             </div>
-                            
+
                             <div id="pattern-lock-wrapper" class="mt-2 card p-2 border" style="display: none; width: fit-content; background: #f8f9fa;">
                                 <div id="pattern-holder" style="width: 180px; height: 180px; position: relative; background: #eef1f6; border-radius: 8px; touch-action: none; overflow: hidden;">
                                     <svg id="pattern-svg" style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"></svg>
@@ -144,7 +149,7 @@
                     <div class="row mb-4">
                         <div class="col-md-6 mb-3 mb-md-0">
                             <label class="form-label fw-bold d-block mb-3 text-dark">Pre-Repair Physical Diagnostics</label>
-                            
+
                             <div class="row g-3">
                                 <div class="col-6">
                                     <div class="form-check form-switch">
@@ -202,7 +207,7 @@
                                 <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                 <option value="diagnosing" {{ old('status') == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                 <option value="waiting_for_approval" {{ old('status') == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                                <option value="waiting_for_parts" {{ old('status') == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা থেকে পার্টস আসার অপেক্ষায়)</option>
+                                <option value="waiting_for_parts" {{ old('status') == 'waiting_for_parts' ? 'selected' : '' }}>Waiting for Parts (পার্টস আসার অপেক্ষায়)</option>
                                 <option value="repairing" {{ old('status') == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                 <option value="quality_check" {{ old('status') == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                 <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -375,7 +380,7 @@
                             if (data.found && data.customer) {
                                 nameInput.value = data.customer.name || '';
                                 addressInput.value = data.customer.address || '';
-                                
+
                                 // Visual feedback
                                 nameInput.classList.add('is-valid');
                                 addressInput.classList.add('is-valid');
@@ -389,6 +394,16 @@
                             if (spinner) spinner.classList.add('d-none');
                         });
                 }, 400);
+            });
+        }
+
+        const btnQuickWalkin = document.getElementById('btn-quick-walkin');
+        if (btnQuickWalkin) {
+            btnQuickWalkin.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (nameInput) nameInput.value = 'Walk-in Customer';
+                if (phoneInput) phoneInput.value = '';
+                if (addressInput) addressInput.value = '';
             });
         }
 
@@ -445,20 +460,20 @@
             let previewHtml = `
                 <div class="alert alert-info border-0 shadow-sm p-3 mt-3 d-flex flex-column gap-1 small col-12">
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Net Service Fee (কাস্টমার সার্ভিস ফি):</span>
+                        <span class="text-muted fw-semibold">Net Service Fee:</span>
                         <span class="fw-bold text-dark">${commissionBase.toFixed(2)} BDT</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Total Parts Buying Cost (পার্টস খরচ):</span>
+                        <span class="text-muted fw-semibold">Total Parts Buying Cost:</span>
                         <span class="fw-bold text-danger">${totalPartsCost.toFixed(2)} BDT</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Total Courier / Transport (কুরিয়ার/যাতায়াত):</span>
+                        <span class="text-muted fw-semibold">Total Courier / Transport:</span>
                         <span class="fw-bold text-warning text-dark">${totalCourierCost.toFixed(2)} BDT</span>
                     </div>
                     <hr class="my-1">
                     <div class="d-flex justify-content-between fs-6">
-                        <span class="text-primary fw-bold">Shop Net Profit (দোকানের নিট লাভ):</span>
+                        <span class="text-primary fw-bold">Shop Net Profit:</span>
                         <span class="fw-bold text-success">${netProfit.toFixed(2)} BDT</span>
                     </div>
                 </div>
@@ -518,7 +533,7 @@
                 `;
 
                 partsContainer.appendChild(newRow);
-                
+
                 // Initialize Tom Select on the newly created select element
                 const selectEl = newRow.querySelector('.select-part-item');
                 if (selectEl) {
@@ -530,7 +545,7 @@
                             direction: "asc"
                         }
                     });
-                    
+
                     ts.on('change', function(value) {
                         const nameInput = newRow.querySelector('.input-part-name');
                         const priceInput = newRow.querySelector('.input-buying-price');

@@ -25,7 +25,7 @@
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="diagnosing" {{ request('status') == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                     <option value="waiting_for_approval" {{ request('status') == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                    <option value="waiting_for_parts" {{ request('status') == 'waiting_for_parts' ? 'selected' : '' }}>📦 Waiting for Parts (ঢাকা পার্টস)</option>
+                    <option value="waiting_for_parts" {{ request('status') == 'waiting_for_parts' ? 'selected' : '' }}> Waiting for Parts</option>
                     <option value="repairing" {{ request('status') == 'repairing' ? 'selected' : '' }}>Repairing</option>
                     <option value="quality_check" {{ request('status') == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                     <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -126,7 +126,7 @@
                         <div class="d-inline-flex">
                             <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1" title="View details"><i class="ti tabler-eye"></i></a>
                             <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-primary me-1" title="Update Job Card"><i class="ti tabler-edit"></i></a>
-                            
+
                             @if(auth()->user()->isSuperAdmin())
                             <form action="{{ route('admin.repairs.destroy', $repair->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this Job Card ticket?');">
                                 @csrf

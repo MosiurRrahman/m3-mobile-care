@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/repairs/{id}/pay-due', [RepairController::class, 'payDue'])->name('admin.repairs.pay-due');
         Route::post('/admin/repairs/{id}/send-sms', [RepairController::class, 'sendManualSms'])->name('admin.repairs.send-sms');
         Route::post('/admin/repairs/{id}/quick-status', [RepairController::class, 'quickStatus'])->name('admin.repairs.quick-status');
+        Route::post('/admin/repairs/{id}/update-customer', [RepairController::class, 'updateCustomer'])->name('admin.repairs.update-customer');
     });
 
     // Customer Special Orders / Pre-orders & Dhaka Sourced Items
