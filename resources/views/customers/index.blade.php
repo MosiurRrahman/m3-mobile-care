@@ -87,10 +87,10 @@
                                         <span class="text-muted small">0.00 BDT</span>
                                     @endif
                                 </td>
-                                <td class="text-end">
-                                    <div class="d-inline-flex">
-                                        <a href="{{ route('admin.customers.show', $customer->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1" title="Customer Profile & History"><i class="ti tabler-user-check"></i></a>
-                                        <button class="btn btn-icon btn-sm btn-outline-primary me-1 edit-customer-btn" 
+                                <td class="text-end pe-3">
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('admin.customers.show', $customer->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="Customer Profile & History"><i class="ti tabler-user-check"></i></a>
+                                        <button class="btn btn-icon btn-sm btn-label-primary rounded edit-customer-btn" 
                                                 data-id="{{ $customer->id }}"
                                                 data-name="{{ $customer->name }}"
                                                 data-phone="{{ $customer->phone }}"
@@ -104,11 +104,11 @@
                                             <i class="ti tabler-edit"></i>
                                         </button>
                                         
-                                        @if(auth()->user()->isSuperAdmin())
-                                        <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this customer? This will break their transaction history.');">
+                                        @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                                        <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this customer?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-icon btn-sm btn-outline-danger" title="Delete"><i class="ti tabler-trash"></i></button>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-label-danger rounded" title="Delete"><i class="ti tabler-trash"></i></button>
                                         </form>
                                         @endif
                                     </div>

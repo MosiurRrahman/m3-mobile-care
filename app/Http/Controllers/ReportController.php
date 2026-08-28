@@ -18,13 +18,17 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $timeframe = $request->input('timeframe', 'month'); // day, week, month, 3months, 6months, year
+        $timeframe = $request->input('timeframe', 'month'); // day, week, month, 3months, 6months, year, custom
 
         // Set date filter
         $startDate = now()->startOfMonth()->toDateString();
         $endDate = now()->endOfMonth()->toDateString();
 
-        if ($timeframe === 'day') {
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $timeframe = 'custom';
+        } elseif ($timeframe === 'day') {
             $startDate = now()->toDateString();
             $endDate = now()->toDateString();
         } elseif ($timeframe === 'week') {
@@ -68,17 +72,16 @@ class ReportController extends Controller
         $commissionsTotal = $completedRepairs->sum('commission_amount');
 
         // 2. POS Sales Income (Sales paid_amount sum)
-        $salesIncome = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+        $salesIncome = (float) Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->sum('paid_amount');
-        $salesPaid = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-            ->sum('paid_amount');
-        $salesDue = Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+        $salesPaid = $salesIncome;
+        $salesDue = (float) Sale::whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
             ->sum('due_amount');
 
         $totalIncome = $serviceIncome + $salesIncome;
 
         // 3. Expenses Sum (excluding Purchase category and partner withdrawals)
-        $expenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
+        $expenses = (float) Expense::whereBetween('expense_date', [$startDate, $endDate])
             ->where('category', '!=', 'Purchase')
             ->where(function($q) {
                 $q->whereNull('register_type')
@@ -86,14 +89,11 @@ class ReportController extends Controller
             })
             ->sum('amount');
 
-        // POS COGS — purchase price of accessories sold via POS
-        $posSaleDetails = SaleDetail::whereHas('sale', function($q) use ($startDate, $endDate) {
+        // POS COGS — purchase price of accessories sold via POS computed directly in DB
+        $posCogs = (float) SaleDetail::whereHas('sale', function($q) use ($startDate, $endDate) {
                 $q->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
             })
-            ->get();
-        $posCogs = $posSaleDetails->sum(function($detail) {
-            return floatval($detail->purchase_price ?? 0) * intval($detail->quantity);
-        });
+            ->sum(DB::raw('COALESCE(purchase_price, 0) * quantity'));
 
         // Net Profit = Revenue - Parts COGS - POS COGS - Commissions - Expenses
         $netProfit = $totalIncome - $partsCogs - $posCogs - $commissionsTotal - $expenses;
@@ -154,8 +154,12 @@ class ReportController extends Controller
             ->orderBy('completed_jobs_count', 'desc')
             ->get();
 
-        // 8. Low Stock Alerts
-        $lowStockItems = InventoryItem::whereColumn('quantity', '<=', 'alert_quantity')->get();
+        // 8. Low Stock Alerts (10 items per page with stock_page pagination parameter)
+        $lowStockItems = InventoryItem::whereColumn('quantity', '<=', 'alert_quantity')
+            ->orderBy('quantity', 'asc')
+            ->paginate(10, ['*'], 'stock_page')
+            ->fragment('stock-alerts')
+            ->withQueryString();
 
         // 9. Payment Methods Cash Flow Breakdown
         $paymentLogsBreakdown = DB::table('payment_logs')

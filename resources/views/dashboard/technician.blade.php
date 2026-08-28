@@ -25,7 +25,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-7 mb-3 mb-md-0">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-label-info p-2.5 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
+                            <div class="rounded-circle bg-label-info p-2 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
                                 <i class="ti tabler-search text-info fs-3"></i>
                             </div>
                             <div>
@@ -152,9 +152,11 @@
                             </td>
                             <td><span class="small text-dark">{{ \Illuminate\Support\Str::limit($repair->issue_description, 50) }}</span></td>
                             <td><span class="small text-muted">{{ $repair->password_pattern ?? 'None' }}</span></td>
-                            <td class="text-end">
-                                <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1" title="View Detail"><i class="ti tabler-eye"></i></a>
-                                <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-primary" title="Update status/notes"><i class="ti tabler-edit"></i></a>
+                            <td class="text-end pe-3">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View Detail"><i class="ti tabler-eye"></i></a>
+                                    <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-label-primary rounded" title="Update status/notes"><i class="ti tabler-edit"></i></a>
+                                </div>
                             </td>
                         </tr>
                         @empty

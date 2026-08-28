@@ -19,10 +19,10 @@
     <div class="container">
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}" aria-label="M3 Mobile Care Homepage">
-            <img src="{{ asset('assets/img/branding/logo-light-icon.png') }}" alt="M3 Mobile Care Logo" width="40" height="40" style="height: 40px; width: auto; object-fit: contain;" class="me-2.5">
+            <img src="{{ asset('assets/img/branding/logo-light-icon.png') }}" alt="M3 Mobile Care Logo" width="40" height="40" style="height: 40px; width: auto; object-fit: contain;" class="me-2">
             <div class="d-flex flex-column">
                 <span class="fs-4 fw-extrabold text-dark lh-1" style="font-family: 'Outfit', sans-serif;">M3 <span style="color: #f37021;">MOBILE CARE</span></span>
-                <span class="text-muted fs-8 fw-medium">Trusted Mobile Repair Center</span>
+                <span class="text-muted fs-8 fw-medium">Trusted Mobile Repair & Accessories Shop</span>
             </div>
         </a>
 
@@ -38,11 +38,17 @@
                     <a class="nav-link fw-semibold px-3 text-dark {{ request()->routeIs('home') ? 'active-nav-link text-orange' : '' }}" href="{{ route('home') }}">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link fw-semibold px-3 text-dark {{ request()->routeIs('products') || request()->routeIs('shop') ? 'active-nav-link text-orange' : '' }}" href="{{ route('products') }}">
+                        <span class="badge bg-warning text-dark rounded-pill me-1 px-1.5 py-0.5 fs-8">HOT</span>
+                        Shop Store
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link fw-semibold px-3 text-dark {{ request()->routeIs('services') ? 'active-nav-link text-orange' : '' }}" href="{{ route('services') }}">Services</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fw-bold px-3 {{ request()->routeIs('track.form') || request()->routeIs('ert') ? 'active-nav-link text-orange' : '' }}" href="{{ route('track.form') }}">
-                        <span class="badge bg-danger text-white rounded-pill me-1 px-2 py-0.5 fs-8">LIVE</span>
+                        <span class="badge bg-danger text-white rounded-pill me-1 px-2 py-1 fs-8">LIVE</span>
                         ERT Tracking
                     </a>
                 </li>
@@ -55,7 +61,7 @@
                 
                 <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
                     <a href="{{ route('book.form') }}" class="btn btn-brand-cta text-white rounded-3 px-4 py-2 fw-bold d-flex align-items-center shadow-sm">
-                        <i class="ti tabler-calendar-plus me-1.5"></i> Book Repair
+                        <i class="ti tabler-calendar-plus me-1"></i> Book Repair
                     </a>
                 </li>
             </ul>

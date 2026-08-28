@@ -84,11 +84,17 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label fw-medium small">হতে (From)</label>
-                        <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                            <input type="{{ request('date_from') ? 'date' : 'text' }}" name="date_from" class="form-control" value="{{ request('date_from') }}" placeholder="From Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <label class="form-label fw-medium small">পর্যন্ত (To)</label>
-                        <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                            <input type="{{ request('date_to') ? 'date' : 'text' }}" name="date_to" class="form-control" value="{{ request('date_to') }}" placeholder="To Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                        </div>
                     </div>
                     <div class="col-md-1 d-flex gap-2">
                         <button type="submit" class="btn btn-primary w-100" title="ফিল্টার করুন">
@@ -164,21 +170,21 @@
                                 <td>
                                     <small class="text-muted">{{ $doc->creator ? $doc->creator->name : 'System' }}</small>
                                 </td>
-                                <td class="text-end">
-                                    <div class="d-inline-flex gap-1">
-                                        <a href="{{ route('admin.documents.show', $doc->id) }}" class="btn btn-sm btn-icon btn-label-info" title="প্রিভিউ দেখুন">
+                                <td class="text-end pe-3">
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('admin.documents.show', $doc->id) }}" class="btn btn-sm btn-icon btn-label-info rounded" title="প্রিভিউ দেখুন">
                                             <i class="ti tabler-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.documents.print', $doc->id) }}" target="_blank" class="btn btn-sm btn-icon btn-label-primary" title="প্যাডে প্রিন্ট করুন">
+                                        <a href="{{ route('admin.documents.print', $doc->id) }}" target="_blank" class="btn btn-sm btn-icon btn-label-secondary rounded" title="প্যাডে প্রিন্ট করুন">
                                             <i class="ti tabler-printer"></i>
                                         </a>
-                                        <a href="{{ route('admin.documents.edit', $doc->id) }}" class="btn btn-sm btn-icon btn-label-warning" title="এডিট করুন">
+                                        <a href="{{ route('admin.documents.edit', $doc->id) }}" class="btn btn-sm btn-icon btn-label-primary rounded" title="এডিট করুন">
                                             <i class="ti tabler-pencil"></i>
                                         </a>
                                         <form action="{{ route('admin.documents.destroy', $doc->id) }}" method="POST" class="d-inline" onsubmit="return confirm('আপনি কি নিশ্চিত যে এই ডকুমেন্টটি মুছে ফেলতে চান?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="মুছে ফেলুন">
+                                            <button type="submit" class="btn btn-sm btn-icon btn-label-danger rounded" title="মুছে ফেলুন">
                                                 <i class="ti tabler-trash"></i>
                                             </button>
                                         </form>

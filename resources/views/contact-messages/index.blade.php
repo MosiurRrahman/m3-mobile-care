@@ -190,15 +190,15 @@
                                     <div>{{ $msg->created_at->format('d M Y') }}</div>
                                     <small>{{ $msg->created_at->format('h:i A') }} ({{ $msg->created_at->diffForHumans() }})</small>
                                 </td>
-                                <td class="text-center">
-                                    <div class="d-flex gap-1 justify-content-center">
+                                <td class="text-center pe-3">
+                                    <div class="d-flex gap-1 justify-content-center align-items-center">
                                         <!-- View Modal Trigger -->
-                                        <button type="button" class="btn btn-sm btn-icon btn-outline-info" data-bs-toggle="modal" data-bs-target="#viewMsgModal{{ $msg->id }}" title="View Message">
+                                        <button type="button" class="btn btn-sm btn-icon btn-label-info rounded" data-bs-toggle="modal" data-bs-target="#viewMsgModal{{ $msg->id }}" title="View Message">
                                             <i class="ti tabler-eye"></i>
                                         </button>
 
                                         <!-- Reply SMS Modal Trigger -->
-                                        <button type="button" class="btn btn-sm btn-icon btn-outline-primary" data-bs-toggle="modal" data-bs-target="#replySmsModal{{ $msg->id }}" title="Send Reply SMS">
+                                        <button type="button" class="btn btn-sm btn-icon btn-label-primary rounded" data-bs-toggle="modal" data-bs-target="#replySmsModal{{ $msg->id }}" title="Send Reply SMS">
                                             <i class="ti tabler-send"></i>
                                         </button>
 
@@ -206,7 +206,7 @@
                                         <form action="{{ route('admin.contact-messages.destroy', $msg->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this message?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Delete">
+                                            <button type="submit" class="btn btn-sm btn-icon btn-label-danger rounded" title="Delete">
                                                 <i class="ti tabler-trash"></i>
                                             </button>
                                         </form>
@@ -286,7 +286,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold">Customer Message</label>
-                                                    <div class="p-2.5 bg-light rounded border text-muted small">{{ $msg->message }}</div>
+                                                    <div class="p-3 bg-light rounded border text-muted small">{{ $msg->message }}</div>
                                                 </div>
                                                 <div class="mb-0">
                                                     <label class="form-label fw-semibold" for="sms_message_{{ $msg->id }}">SMS Reply Message <span class="text-danger">*</span></label>

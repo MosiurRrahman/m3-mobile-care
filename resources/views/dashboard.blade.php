@@ -14,7 +14,7 @@
                         <p class="mb-0 text-white opacity-85">Here's a summary of M3 Mobile Care repairs and revenue. You can manage tickets, track statuses, and update services catalog.</p>
                     </div>
                     <div class="col-md-4 text-md-end">
-                        <a href="{{ route('admin.repairs.create') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2.5 shadow-sm"><i class="ti tabler-plus me-1"></i>New Repair Ticket</a>
+                        <a href="{{ route('admin.repairs.create') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2 shadow-sm"><i class="ti tabler-plus me-1"></i>New Repair Ticket</a>
                     </div>
                 </div>
             </div>
@@ -156,10 +156,11 @@
                                 @endphp
                                 <span class="badge {{ $badges[$repair->status] ?? 'bg-secondary' }}">{{ $labels[$repair->status] ?? $repair->status }}</span>
                             </td>
-                            <td>{{ number_format($repair->estimated_cost, 0) }} BDT</td>
-                            <td class="text-end">
-                                <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1"><i class="ti tabler-eye"></i></a>
-                                <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-primary"><i class="ti tabler-edit"></i></a>
+                            <td class="text-end pe-3">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View Ticket"><i class="ti tabler-eye"></i></a>
+                                    <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-label-primary rounded" title="Edit Ticket"><i class="ti tabler-edit"></i></a>
+                                </div>
                             </td>
                         </tr>
                         @empty

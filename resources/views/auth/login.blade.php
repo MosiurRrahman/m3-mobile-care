@@ -37,8 +37,8 @@
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
                                 <label class="form-check-label text-muted small" for="remember">Remember me on this device</label>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-2.5 mb-3"><i class="ti tabler-login me-2"></i>Sign In</button>
-                            <a href="{{ route('home') }}" class="btn btn-outline-secondary w-100 py-2.5"><i class="ti tabler-arrow-left me-2"></i>Back to Homepage</a>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-2 mb-3"><i class="ti tabler-login me-2"></i>Sign In</button>
+                            <a href="{{ route('home') }}" class="btn btn-outline-secondary w-100 py-2"><i class="ti tabler-arrow-left me-2"></i>Back to Homepage</a>
                         </form>
                     </div>
                 </div>

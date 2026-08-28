@@ -49,7 +49,7 @@
                 <ul class="nav nav-tabs" id="purchaseTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active fw-bold" id="purchases-tab" data-bs-toggle="tab" data-bs-target="#purchases-content" type="button" role="tab" aria-controls="purchases-content" aria-selected="true">
-                            <i class="ti tabler-receipt me-1"></i>Stock-In Purchase Logs ({{ count($purchases) }})
+                            <i class="ti tabler-receipt me-1"></i>Stock-In Purchase Logs ({{ $purchases instanceof \Illuminate\Pagination\LengthAwarePaginator ? $purchases->total() : count($purchases) }})
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -64,37 +64,75 @@
                 <!-- Tab: Purchases -->
                 <div class="tab-pane fade show active p-3" id="purchases-content" role="tabpanel" aria-labelledby="purchases-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 0.84rem;">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Purchase No</th>
-                                    <th>Supplier Name</th>
-                                    <th>Items Restocked</th>
-                                    <th>Total Cost</th>
-                                    <th>Date Ordered</th>
-                                    <th class="text-end" style="width: 120px;">Actions</th>
+                                    <th class="py-2 ps-3 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Purchase No</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Supplier</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Restocked Items</th>
+                                    <th class="py-2 text-end text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Total Cost</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Date Ordered</th>
+                                    <th class="py-2 text-end pe-3 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px; width: 130px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($purchases as $purchase)
                                 <tr>
-                                    <td><span class="fw-bold text-dark">{{ $purchase->purchase_no }}</span></td>
-                                    <td>{{ $purchase->supplier ? $purchase->supplier->name : 'N/A' }}</td>
-                                    <td>
-                                        <ul class="list-unstyled mb-0 small">
-                                            @foreach($purchase->details as $detail)
-                                            <li><i class="ti tabler-circle-filled fs-9 text-primary me-1"></i><strong>{{ $detail->item ? $detail->item->name : 'Deleted Item' }}</strong> @if($detail->item && ($detail->item->brand || $detail->item->model || $detail->item->sub_category)) <span class="text-muted fs-7">[Brand: {{ $detail->item->brand ?? "-" }}, Model: {{ $detail->item->model ?? $detail->item->sub_category ?? "-" }}]</span> @endif (x{{ $detail->quantity }} @ {{ number_format($detail->cost_price, 0) }} BDT)</li>
-                                            @endforeach
-                                        </ul>
+                                    <td class="py-2 ps-3">
+                                        <span class="badge bg-label-secondary font-monospace text-dark fw-bold px-2 py-1" style="font-size: 0.76rem;">
+                                            {{ $purchase->purchase_no }}
+                                        </span>
                                     </td>
-                                    <td><span class="fw-extrabold text-danger">{{ number_format($purchase->total_amount, 2) }} BDT</span></td>
-                                    <td>{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('M d, Y') }}</td>
-                                    <td class="text-end">
-                                        <div class="d-inline-flex gap-1">
-                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary" data-bs-toggle="modal" data-bs-target="#editPurchaseModal{{ $purchase->id }}" title="Edit Purchase">
+                                    <td class="py-2">
+                                        <div class="fw-bold text-dark">{{ $purchase->supplier ? $purchase->supplier->name : 'N/A' }}</div>
+                                        @if($purchase->supplier && $purchase->supplier->phone)
+                                            @php
+                                                $sPhones = array_filter(array_map('trim', explode(',', $purchase->supplier->phone)));
+                                            @endphp
+                                            @if(!empty($sPhones))
+                                                <div class="text-muted" style="font-size: 0.74rem;">
+                                                    <i class="ti tabler-phone fs-8 text-primary"></i> {{ $sPhones[0] }}
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td class="py-2" style="max-width: 380px;">
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex align-items-center gap-1 flex-wrap">
+                                                <span class="badge bg-label-primary rounded-pill px-2 py-1 fw-bold" style="font-size: 0.74rem;">
+                                                    <i class="ti tabler-packages me-1"></i>{{ $purchase->details->count() }} Products
+                                                </span>
+                                                <span class="text-muted fw-medium" style="font-size: 0.75rem;">({{ $purchase->details->sum('quantity') }} pcs total)</span>
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-1 align-items-center">
+                                                @foreach($purchase->details->take(2) as $detail)
+                                                    <span class="badge bg-light text-secondary border px-2 py-1 text-truncate" style="font-size: 0.72rem; max-width: 170px;" title="{{ $detail->item ? $detail->item->name : 'Item' }}">
+                                                        {{ $detail->item ? $detail->item->name : 'Item' }} <span class="text-dark fw-bold">(x{{ $detail->quantity }})</span>
+                                                    </span>
+                                                @endforeach
+                                                @if($purchase->details->count() > 2)
+                                                    <button type="button" class="btn btn-xs btn-label-info py-0 px-2 rounded fw-medium" data-bs-toggle="modal" data-bs-target="#viewPurchaseModal{{ $purchase->id }}" style="font-size: 0.72rem;">
+                                                        +{{ $purchase->details->count() - 2 }} more
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 text-end fw-bold text-dark" style="font-size: 0.88rem;">
+                                        {{ number_format($purchase->total_amount, 2) }} ৳
+                                    </td>
+                                    <td class="py-2 text-muted" style="font-size: 0.8rem;">
+                                        {{ \Carbon\Carbon::parse($purchase->purchase_date)->format('M d, Y') }}
+                                    </td>
+                                    <td class="py-2 text-end pe-3">
+                                        <div class="d-inline-flex align-items-center gap-1">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-info rounded" data-bs-toggle="modal" data-bs-target="#viewPurchaseModal{{ $purchase->id }}" title="View Purchase Receipt & Breakdown">
+                                                <i class="ti tabler-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary rounded" data-bs-toggle="modal" data-bs-target="#editPurchaseModal{{ $purchase->id }}" title="Edit Purchase">
                                                 <i class="ti tabler-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger" data-bs-toggle="modal" data-bs-target="#deletePurchaseModal{{ $purchase->id }}" title="Delete Purchase">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger rounded" data-bs-toggle="modal" data-bs-target="#deletePurchaseModal{{ $purchase->id }}" title="Delete Purchase">
                                                 <i class="ti tabler-trash"></i>
                                             </button>
                                         </div>
@@ -102,32 +140,46 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">No stock-in purchases logged.</td>
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="ti tabler-receipt-off fs-2 d-block mb-2 text-muted"></i>
+                                        No stock-in purchases logged yet. Click "New Stock-In Entry" to log a purchase.
+                                    </td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+
+                    @if($purchases instanceof \Illuminate\Pagination\LengthAwarePaginator && $purchases->hasPages())
+                        <div class="px-3 py-2 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span class="text-muted small">
+                                Showing {{ $purchases->firstItem() }} to {{ $purchases->lastItem() }} of {{ $purchases->total() }} entries
+                            </span>
+                            <div>
+                                {{ $purchases->links() }}
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Tab: Suppliers -->
                 <div class="tab-pane fade p-3" id="suppliers-content" role="tabpanel" aria-labelledby="suppliers-tab">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 0.84rem;">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Supplier Name</th>
-                                    <th>Phone Number(s)</th>
-                                    <th>Address Details</th>
-                                    <th>Date Registered</th>
-                                    <th class="text-end" style="width: 120px;">Actions</th>
+                                    <th class="py-2 ps-3 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Supplier Name</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Phone Number(s)</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Address Details</th>
+                                    <th class="py-2 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px;">Date Registered</th>
+                                    <th class="py-2 text-end pe-3 text-uppercase text-muted fw-semibold" style="font-size: 0.74rem; letter-spacing: 0.5px; width: 120px;">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($suppliers as $supplier)
                                 <tr>
-                                    <td><span class="fw-bold text-dark">{{ $supplier->name }}</span></td>
-                                    <td>
+                                    <td class="py-2 ps-3"><span class="fw-bold text-dark">{{ $supplier->name }}</span></td>
+                                    <td class="py-2">
                                         @php
                                             $phoneList = array_map('trim', explode(',', $supplier->phone ?? ''));
                                         @endphp
@@ -139,14 +191,14 @@
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td>{{ $supplier->address ?? 'N/A' }}</td>
-                                    <td>{{ $supplier->created_at->format('M d, Y') }}</td>
-                                    <td class="text-end">
-                                        <div class="d-inline-flex gap-1">
-                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal{{ $supplier->id }}" title="Edit Supplier">
+                                    <td class="py-2 text-muted">{{ $supplier->address ?? 'N/A' }}</td>
+                                    <td class="py-2 text-muted" style="font-size: 0.8rem;">{{ $supplier->created_at->format('M d, Y') }}</td>
+                                    <td class="py-2 text-end pe-3">
+                                        <div class="d-inline-flex align-items-center gap-1">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-primary rounded" data-bs-toggle="modal" data-bs-target="#editSupplierModal{{ $supplier->id }}" title="Edit Supplier">
                                                 <i class="ti tabler-edit"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger" data-bs-toggle="modal" data-bs-target="#deleteSupplierModal{{ $supplier->id }}" title="Delete Supplier">
+                                            <button type="button" class="btn btn-sm btn-icon btn-label-danger rounded" data-bs-toggle="modal" data-bs-target="#deleteSupplierModal{{ $supplier->id }}" title="Delete Supplier">
                                                 <i class="ti tabler-trash"></i>
                                             </button>
                                         </div>
@@ -154,7 +206,10 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center py-4 text-muted">No registered suppliers found.</td>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="ti tabler-users-minus fs-2 d-block mb-2 text-muted"></i>
+                                        No registered suppliers found. Click "Register Supplier" to add one.
+                                    </td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -289,6 +344,108 @@
 
 <!-- Modals for Purchase Iteration -->
 @foreach($purchases as $purchase)
+    <!-- Modal: View Purchase Details & Breakdown Receipt -->
+    <div class="modal fade" id="viewPurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-light py-3">
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0">
+                            <i class="ti tabler-receipt me-1 text-primary"></i>Purchase Receipt: {{ $purchase->purchase_no }}
+                        </h5>
+                        <div class="text-muted small">Ordered on {{ \Carbon\Carbon::parse($purchase->purchase_date)->format('d M, Y') }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Supplier Info Card -->
+                    <div class="card bg-lighter border mb-3">
+                        <div class="card-body p-3">
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <span class="text-muted small d-block">Supplier / Vendor:</span>
+                                    <span class="fw-bold text-dark fs-6">{{ $purchase->supplier ? $purchase->supplier->name : 'N/A' }}</span>
+                                    @if($purchase->supplier && $purchase->supplier->address)
+                                        <div class="text-muted small">{{ $purchase->supplier->address }}</div>
+                                    @endif
+                                </div>
+                                <div class="col-sm-6 text-sm-end">
+                                    <span class="text-muted small d-block">Contact Phone:</span>
+                                    <span class="fw-semibold text-dark">{{ $purchase->supplier ? ($purchase->supplier->phone ?: 'N/A') : 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items Breakdown Table -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-dark mb-0"><i class="ti tabler-packages me-1 text-primary"></i>Restocked Items Breakdown</h6>
+                        <span class="badge bg-label-primary">{{ $purchase->details->count() }} Products ({{ $purchase->details->sum('quantity') }} pcs)</span>
+                    </div>
+                    <div class="table-responsive border rounded mb-3">
+                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3 py-2" style="width: 40px;">#</th>
+                                    <th class="py-2">Item Name & SKU</th>
+                                    <th class="py-2">Brand / Model</th>
+                                    <th class="text-center py-2" style="width: 90px;">Qty</th>
+                                    <th class="text-end py-2" style="width: 120px;">Unit Cost</th>
+                                    <th class="text-end pe-3 py-2" style="width: 130px;">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($purchase->details as $pIndex => $detail)
+                                <tr>
+                                    <td class="ps-3 text-muted">{{ $pIndex + 1 }}</td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">{{ $detail->item ? $detail->item->name : 'Deleted Item' }}</div>
+                                        @if($detail->item && $detail->item->sku)
+                                            <span class="text-muted font-monospace" style="font-size: 0.72rem;">SKU: {{ $detail->item->sku }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($detail->item && ($detail->item->brand || $detail->item->model || $detail->item->sub_category))
+                                            <span class="badge bg-label-secondary font-monospace" style="font-size: 0.72rem;">
+                                                {{ $detail->item->brand ?? '-' }} | {{ $detail->item->model ?? $detail->item->sub_category ?? '-' }}
+                                            </span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-label-primary px-2 py-0.5 fw-bold">{{ $detail->quantity }}</span>
+                                    </td>
+                                    <td class="text-end text-muted">
+                                        {{ number_format($detail->cost_price, 2) }} ৳
+                                    </td>
+                                    <td class="text-end pe-3 fw-bold text-dark">
+                                        {{ number_format($detail->quantity * $detail->cost_price, 2) }} ৳
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot class="table-light border-top">
+                                <tr>
+                                    <th colspan="3" class="ps-3 text-end fw-bold">Total Summary:</th>
+                                    <th class="text-center fw-bold">{{ $purchase->details->sum('quantity') }} pcs</th>
+                                    <th class="text-end fw-bold">Grand Total:</th>
+                                    <th class="text-end pe-3 fw-bold text-danger fs-6">{{ number_format($purchase->total_amount, 2) }} ৳</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light py-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#editPurchaseModal{{ $purchase->id }}">
+                        <i class="ti tabler-edit me-1"></i>Edit Purchase
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Edit Purchase -->
     <div class="modal fade" id="editPurchaseModal{{ $purchase->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">

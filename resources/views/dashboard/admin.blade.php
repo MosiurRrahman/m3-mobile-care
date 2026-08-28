@@ -5,7 +5,7 @@
 @section('content')
 <div class="row">
     <!-- Welcome Header -->
-    <div class="col-12 mb-4">
+    {{-- <div class="col-12 mb-4">
         <div class="card bg-primary text-white border-0 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #7367f0 0%, #a097ff 100%) !important;">
             <div class="card-body p-4 p-md-5">
                 <div class="row align-items-center">
@@ -20,21 +20,21 @@
                         </p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="{{ route('admin.repairs.create') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2.5 shadow-sm"><i class="ti tabler-plus me-1"></i>Create Job Card</a>
+                        <a href="{{ route('admin.repairs.create') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2 shadow-sm"><i class="ti tabler-plus me-1"></i>Create Job Card</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Live Ticket Tracker Card -->
-    <div class="col-12 mb-4">
+    {{-- <div class="col-12 mb-4">
         <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; color: #fff;">
             <div class="card-body p-4">
                 <div class="row align-items-center">
                     <div class="col-md-7 mb-3 mb-md-0">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-label-info p-2.5 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
+                            <div class="rounded-circle bg-label-info p-2 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
                                 <i class="ti tabler-search text-info fs-3"></i>
                             </div>
                             <div>
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Alert Banner: Low Stock -->
     @if($stockAlertsCount > 0)
@@ -266,10 +266,11 @@
                                 @endphp
                                 <span class="badge {{ $badges[$repair->status] ?? 'bg-secondary' }}">{{ ucfirst(str_replace('_', ' ', $repair->status)) }}</span>
                             </td>
-                            <td>{{ number_format($repair->estimated_cost, 0) }} BDT</td>
-                            <td class="text-end">
-                                <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1"><i class="ti tabler-eye"></i></a>
-                                <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-primary"><i class="ti tabler-edit"></i></a>
+                            <td class="text-end pe-3">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View Details"><i class="ti tabler-eye"></i></a>
+                                    <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-label-primary rounded" title="Edit Job Card"><i class="ti tabler-edit"></i></a>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -442,7 +443,7 @@
                                         $badgeClass = $actionBadges[$log->action] ?? 'bg-label-secondary';
                                         $iconClass = $actionIcons[$log->action] ?? 'tabler-info-circle';
                                     @endphp
-                                    <span class="badge {{ $badgeClass }} d-inline-flex align-items-center px-2.5 py-1">
+                                    <span class="badge {{ $badgeClass }} d-inline-flex align-items-center px-2 py-1">
                                         <i class="ti {{ $iconClass }} fs-6 me-1"></i>{{ ucfirst($log->action) }}
                                     </span>
                                 </td>
@@ -454,31 +455,31 @@
                                         $modelClass = class_basename($log->loggable_type);
                                     @endphp
                                     @if($modelClass === 'Repair')
-                                        <a href="{{ route('admin.repairs.show', $log->loggable_id) }}" class="badge bg-primary text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.repairs.show', $log->loggable_id) }}" class="badge bg-primary text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-ticket me-1"></i>View Repair
                                         </a>
                                     @elseif($modelClass === 'SocialPost')
-                                        <a href="{{ route('admin.social.index') }}" class="badge bg-info text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.social.index') }}" class="badge bg-info text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-share me-1"></i>View Social Posts
                                         </a>
                                     @elseif($modelClass === 'Expense')
-                                        <a href="{{ route('admin.expenses.index') }}" class="badge bg-danger text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.expenses.index') }}" class="badge bg-danger text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-receipt me-1"></i>View Expenses
                                         </a>
                                     @elseif($modelClass === 'Sale')
-                                        <a href="{{ route('admin.pos.invoice', $log->loggable_id) }}" class="badge bg-success text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.pos.invoice', $log->loggable_id) }}" class="badge bg-success text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-file-invoice me-1"></i>View Invoice
                                         </a>
                                     @elseif($modelClass === 'Purchase')
-                                        <a href="{{ route('admin.purchases.index') }}" class="badge bg-warning text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.purchases.index') }}" class="badge bg-warning text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-shopping-cart me-1"></i>View Purchases
                                         </a>
                                     @elseif($modelClass === 'InventoryItem')
-                                        <a href="{{ route('admin.inventory.edit', $log->loggable_id) }}" class="badge bg-secondary text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.inventory.edit', $log->loggable_id) }}" class="badge bg-secondary text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-box me-1"></i>Edit Item
                                         </a>
                                     @elseif($modelClass === 'User')
-                                        <a href="{{ route('admin.users.index') }}" class="badge bg-dark text-white text-decoration-none py-1.5 px-2.5">
+                                        <a href="{{ route('admin.users.index') }}" class="badge bg-dark text-white text-decoration-none py-1 px-2">
                                             <i class="ti tabler-users me-1"></i>View Users
                                         </a>
                                     @else

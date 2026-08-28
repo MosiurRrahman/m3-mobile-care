@@ -675,6 +675,10 @@ class RepairController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action. Only administrators can delete repair tickets.');
+        }
+
         $repair = Repair::findOrFail($id);
 
         try {

@@ -323,7 +323,7 @@
                                     <div class="card-header bg-light py-3 border-bottom d-flex align-items-center justify-content-between">
                                         <div>
                                             <h6 class="fw-bold text-primary mb-0"><i class="ti tabler-box me-2"></i>3. Technical Diagnostics & Installed Spare Parts</h6>
-                                            <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span>
+                                            {{-- <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span> --}}
                                         </div>
                                         <button type="button" class="btn btn-xs btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Part</button>
                                     </div>
@@ -331,7 +331,7 @@
                                         <div class="mb-3">
                                             <label class="form-label fw-semibold" for="technician_notes">
                                                 Technician Diagnostic Notes & Lab Update
-                                                <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি গ্রাহক ERT লাইভ ট্র্যাকিং টাইমলাইনে দেখতে পাবেন)</small>
+                                                {{-- <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি গ্রাহক ERT লাইভ ট্র্যাকিং টাইমলাইনে দেখতে পাবেন)</small> --}}
                                             </label>
                                             <textarea name="technician_notes" id="technician_notes" rows="3" class="form-control form-control-sm" placeholder="যেমন: নতুন অরিজিনাল ডিসপ্লে লাগানো হচ্ছে / মাদারবোর্ড আইসি ডায়াগনসিস সম্পন্ন...">{{ old('technician_notes', $repair->technician_notes) }}</textarea>
                                         </div>
@@ -341,10 +341,10 @@
                                                 <thead class="table-light small fw-bold">
                                                     <tr>
                                                         <th style="min-width: 200px;">Part Item / Manual Name</th>
-                                                        <th style="width: 140px;">Source (উৎস)</th>
+                                                        <th style="width: 140px;">Source </th>
                                                         <th style="width: 140px;">Supplier / Shop</th>
                                                         <th style="width: 110px;">Buying Price</th>
-                                                        <th style="width: 90px;">Courier (৳)</th>
+                                                        <th style="width: 90px;">Courier </th>
                                                         <th style="width: 65px;">Qty</th>
                                                         <th style="width: 45px;" class="text-center">Action</th>
                                                     </tr>
@@ -373,7 +373,7 @@
                                                                 @php $pSource = $part['source'] ?? (isset($part['inventory_id']) && $part['inventory_id'] ? 'in_house' : 'dhaka_supplier'); @endphp
                                                                 <select name="used_parts[{{ $index }}][source]" class="form-select form-select-sm select-part-source">
                                                                     <option value="in_house" {{ $pSource == 'in_house' ? 'selected' : '' }}>দোকানের স্টক</option>
-                                                                    <option value="dhaka_supplier" {{ $pSource == 'dhaka_supplier' ? 'selected' : '' }}>ঢাকা সাপ্লায়ার</option>
+                                                                    <option value="dhaka_supplier" {{ $pSource == 'dhaka_supplier' ? 'selected' : '' }}> সাপ্লায়ার</option>
                                                                     <option value="local_shop" {{ $pSource == 'local_shop' ? 'selected' : '' }}>লোকাল দোকান</option>
                                                                     <option value="other" {{ $pSource == 'other' ? 'selected' : '' }}>অন্যান্য</option>
                                                                 </select>
@@ -499,7 +499,7 @@
 
                                         <!-- Final Settlement (At Delivery) Spacious Card -->
                                         <div class="p-4 rounded-3 bg-light border border-info border-opacity-25 mb-4">
-                                            <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-cash me-2"></i>Final Checkout (স্প্লিট পেমেন্ট)</h6>
+                                            <h6 class="fw-bold mb-3 text-primary"><i class="ti tabler-cash me-2"></i>Final Checkout</h6>
 
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold small mb-1" for="actual_cost">Actual / Final Cost (Total Bill)</label>
@@ -509,7 +509,7 @@
                                                 </div>
                                             </div>
 
-                                            <label class="form-label fw-semibold text-dark small mb-2 d-block border-top pt-2">Delivery Payment Methods (ডেলিভারি পেমেন্ট)</label>
+                                            <label class="form-label fw-semibold text-dark small mb-2 d-block border-top pt-2">Delivery Payment Methods</label>
                                             <div class="row g-2 mb-3">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-sm">
@@ -757,10 +757,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <input type="text" name="used_parts[${partIndex}][supplier_name]" class="form-control form-control-sm" placeholder="যেমন: মোতালেব প্লাজা">
                 </td>
                 <td>
-                    <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="0.00" step="0.01" min="0" required>
+                    <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="" step="0.01" min="0" placeholder="0.00" required>
                 </td>
                 <td>
-                    <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="0.00" step="0.01" min="0" placeholder="0.00">
+                    <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="" step="0.01" min="0" placeholder="0.00">
                 </td>
                 <td>
                     <input type="number" name="used_parts[${partIndex}][quantity]" class="form-control form-control-sm input-quantity text-center" value="1" min="1" required>

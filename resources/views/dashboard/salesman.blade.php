@@ -14,7 +14,7 @@
                         <p class="mb-0 text-white opacity-85">Manage POS product checkout sales, register new customers, and review stock availability of mobile accessories.</p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="{{ route('admin.pos.index') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2.5 shadow-sm"><i class="ti tabler-device-laptop me-1"></i>Open POS Terminal</a>
+                        <a href="{{ route('admin.pos.index') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2 shadow-sm"><i class="ti tabler-device-laptop me-1"></i>Open POS Terminal</a>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-7 mb-3 mb-md-0">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-label-info p-2.5 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
+                            <div class="rounded-circle bg-label-info p-2 d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: rgba(0, 207, 232, 0.16) !important;">
                                 <i class="ti tabler-search text-info fs-3"></i>
                             </div>
                             <div>
@@ -161,8 +161,8 @@
                             <td><span class="fw-bold text-success">{{ number_format($sale->payable_amount, 2) }} BDT</span></td>
                             <td><span class="badge bg-label-primary">{{ $sale->payment_method }}</span></td>
                             <td><span class="small text-muted">{{ $sale->created_at->format('M d, Y H:i A') }}</span></td>
-                            <td class="text-end">
-                                <a href="{{ route('admin.pos.invoice', $sale->id) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-info" title="Print Invoice"><i class="ti tabler-printer"></i></a>
+                            <td class="text-end pe-3">
+                                <a href="{{ route('admin.pos.invoice', $sale->id) }}" target="_blank" class="btn btn-icon btn-sm btn-label-secondary rounded" title="Print Invoice"><i class="ti tabler-printer"></i></a>
                             </td>
                         </tr>
                         @empty

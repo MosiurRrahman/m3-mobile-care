@@ -47,10 +47,10 @@
                         </div>
 
                         <div class="d-flex flex-wrap gap-2 justify-content-center mt-5">
-                            <a href="{{ route('home', ['ticket_id' => $repair->ticket_id]) }}" class="btn btn-primary px-4 py-2.5">
+                            <a href="{{ route('home', ['ticket_id' => $repair->ticket_id]) }}" class="btn btn-primary px-4 py-2">
                                 <i class="ti tabler-search me-1"></i>Track status now
                             </a>
-                            <a href="{{ route('home') }}" class="btn btn-outline-secondary px-4 py-2.5">
+                            <a href="{{ route('home') }}" class="btn btn-outline-secondary px-4 py-2">
                                 Return to Homepage
                             </a>
                         </div>

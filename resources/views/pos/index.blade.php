@@ -69,7 +69,7 @@
             <div class="card-header bg-transparent border-0 pb-1">
                 <h5 class="fw-bold mb-0 text-dark"><i class="ti tabler-search me-2 text-primary"></i>Product Catalog</h5>
             </div>
-            
+
             <!-- Real-time search bar -->
             <div class="card-body">
                 <div class="mb-4">
@@ -99,13 +99,13 @@
                                     <i class="ti tabler-photo fs-2 text-secondary"></i>
                                 </div>
                             @endif
-                            
+
                             <!-- Info Column -->
                             <div class="product-info-container mb-3">
                                 <h6 class="fw-bold text-dark mb-1 text-wrap text-start" style="font-size: 0.85rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.3rem;" title="{{ $item->name }}">{{ $item->name }}</h6>
                                 <span class="text-muted d-block text-start mb-2" style="font-size: 0.72rem;">{{ $item->sku }} · <span class="fw-semibold text-info">{{ str_replace('_', ' ', ucfirst($item->type)) }}</span></span>
                             </div>
-                            
+
                             <!-- Bottom row -->
                             <div class="d-flex align-items-end justify-content-between">
                                 <div class="text-start">
@@ -116,7 +116,7 @@
                                         <span class="stock-pill-success">{{ $item->quantity }} Piece</span>
                                     @endif
                                 </div>
-                                
+
                                 <button class="btn btn-teal-accent add-to-cart-btn position-relative" data-id="{{ $item->id }}" style="width: 40px; height: 40px; border-radius: 10px; padding: 0;">
                                     <i class="ti tabler-shopping-cart fs-4"></i>
                                     <!-- Dynamic Qty Badge -->
@@ -143,7 +143,7 @@
                     </h5>
                     <span class="badge bg-label-primary px-3 py-1.5 rounded-pill fw-bold" id="cart-item-count-pill" style="font-size: 0.75rem;">0 Items</span>
                 </div>
-                
+
                 <div class="cart-items-wrapper" style="max-height: 360px; overflow-y: auto; padding-right: 4px;" id="cart-container">
                     <div id="empty-cart-row" class="text-center py-5 text-muted">
                         <div class="rounded-circle bg-light d-inline-flex p-4 mb-3 border">
@@ -162,7 +162,7 @@
                     <span class="text-muted fw-semibold" style="font-size: 0.85rem;">Subtotal</span>
                     <span class="fw-bold text-dark" id="summary-subtotal" style="font-size: 0.95rem;">0.00 BDT</span>
                 </div>
-                
+
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label class="form-label text-muted fw-semibold mb-0" for="pos-discount" style="font-size: 0.85rem;">Apply Discount</label>
@@ -183,8 +183,8 @@
 
                 <!-- Split Payment Breakdown -->
                 <div class="mb-3.5">
-                    <label class="form-label text-muted fw-semibold mb-2" style="font-size: 0.85rem;">Payment Breakdown (স্প্লিট পেমেন্ট)</label>
-                    
+                    <label class="form-label text-muted fw-semibold mb-2" style="font-size: 0.85rem;">Payment Breakdown</label>
+
                     <!-- Cash Input Block -->
                     <div class="p-2 border rounded bg-white mb-2" style="border-radius: 8px;">
                         <div class="d-flex align-items-center justify-content-between mb-1">
@@ -202,7 +202,7 @@
                     <!-- Add MFS dropdown + button -->
                     <div class="input-group input-group-sm">
                         <select id="mfs-method-select" class="form-select border bg-light text-muted fw-semibold" style="border-radius: 6px 0 0 6px; font-size: 0.78rem;">
-                            <option value="">+ Add MFS (বিকাশ/নগদ/রকেট)</option>
+                            <option value="">+ Add MFS</option>
                             <option value="bKash">bKash</option>
                             <option value="Nagad">Nagad</option>
                             <option value="Rocket">Rocket</option>
@@ -239,12 +239,12 @@
 
                 <!-- Paid & Due Displays -->
                 <div class="d-flex justify-content-between align-items-center mb-1.5 pt-1.5 border-top border-dashed" style="border-color: #e2e8f0 !important;">
-                    <span class="fw-semibold text-muted" style="font-size: 0.85rem;">Total Paid (পরিশোধিত)</span>
+                    <span class="fw-semibold text-muted" style="font-size: 0.85rem;">Total Paid</span>
                     <span class="fw-bold text-dark" id="summary-total-paid" style="font-size: 0.95rem;">0.00 BDT</span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="fw-semibold text-muted" style="font-size: 0.85rem;">Remaining Due (বকেয়া)</span>
+                    <span class="fw-semibold text-muted" style="font-size: 0.85rem;">Remaining Due</span>
                     <span class="fw-extrabold text-success" id="summary-due" style="font-size: 1.1rem; font-weight: 800;">0.00 BDT</span>
                 </div>
 
@@ -424,7 +424,7 @@
                             </div>
                             <h4 class="fw-bold text-dark mb-1" id="qv-product-name">Product Name</h4>
                             <p class="text-muted small mb-3" id="qv-product-sku">SKU: N/A</p>
-                            
+
                             <div class="row g-2 mb-3 p-3 bg-light rounded-3">
                                 <div class="col-4">
                                     <span class="text-muted small d-block" style="font-size: 0.7rem;">Cost Price</span>
@@ -446,13 +446,13 @@
                                     <!-- Dynamic variants tags will be loaded here -->
                                 </div>
                             </div>
-                            
+
                             <div class="mb-0">
                                 <h6 class="fw-bold text-dark mb-1" style="font-size: 0.85rem;">Description:</h6>
                                 <p class="text-muted small mb-0" id="qv-product-desc">No description available for this product.</p>
                             </div>
                         </div>
-                        
+
                         <div class="mt-4 pt-3 border-top d-flex gap-2">
                             <button type="button" class="btn btn-teal-accent flex-grow-1 py-2 fw-semibold" id="qv-add-to-cart-btn">
                                 <i class="ti tabler-shopping-cart me-1"></i>Add To Cart
@@ -628,7 +628,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const cart = [];
-        
+
         // DOM Nodes
         const barcodeSearch = document.getElementById('barcode-search');
         const catalogList = document.getElementById('products-catalog-list');
@@ -702,7 +702,7 @@
                     });
                 }
             });
-            
+
             tomSelectCustomer.on('change', function() {
                 let subtotal = 0;
                 cart.forEach(item => subtotal += item.price * item.qty);
@@ -726,13 +726,13 @@
                 showAllProducts();
                 return;
             }
-            
+
             // Check exact barcode match first
             let exactMatchFound = false;
             document.querySelectorAll('.product-card-wrapper').forEach(wrapper => {
                 const barcode = wrapper.getAttribute('data-barcode').toLowerCase();
                 const sku = wrapper.getAttribute('data-sku').toLowerCase();
-                
+
                 if (barcode === query || sku === query) {
                     exactMatchFound = true;
                     addToCart(wrapper.getAttribute('data-id'));
@@ -749,7 +749,7 @@
             document.querySelectorAll('.product-card-wrapper').forEach(wrapper => {
                 const name = wrapper.getAttribute('data-name').toLowerCase();
                 const sku = wrapper.getAttribute('data-sku').toLowerCase();
-                
+
                 if (name.includes(query) || sku.includes(query)) {
                     wrapper.classList.remove('d-none');
                 } else {
@@ -779,7 +779,7 @@
 
         // Quick View Modal Controller
         const quickViewModal = new bootstrap.Modal(document.getElementById('quickViewModal'));
-        
+
         function openQuickView(id) {
             const card = document.querySelector(`.product-card-wrapper[data-id="${id}"]`);
             if (!card) return;
@@ -804,7 +804,7 @@
             document.getElementById('qv-product-price').innerText = price.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' BDT';
             document.getElementById('qv-product-stock').innerText = qty + ' Piece';
             document.getElementById('qv-product-desc').innerText = description || 'No description available for this product.';
-            
+
             const qvImage = document.getElementById('qv-product-image');
             if (image) {
                 qvImage.src = image;
@@ -827,7 +827,7 @@
             const variantsContainer = document.getElementById('qv-variants-container');
             const variantsSection = document.getElementById('qv-variants-section');
             variantsContainer.innerHTML = '';
-            
+
             let variants = [];
             try {
                 if (variantsRaw) {
@@ -915,7 +915,7 @@
                 dueLabel.innerText = '0.00 BDT';
                 dueLabel.className = 'fw-bold text-success';
                 isPaidManuallyEdited = false;
-                
+
                 updateCatalogQtyBadges();
                 return;
             }
@@ -972,7 +972,7 @@
 
             // Update calculations
             subtotalLabel.innerText = subtotal.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' BDT';
-            
+
             updatePayable(subtotal);
             updateCatalogQtyBadges();
         }
@@ -1020,12 +1020,12 @@
             const discount = parseFloat(discountInput.value) || 0;
             const payable = Math.max(0, subtotal - discount);
             payableLabel.innerText = payable.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' BDT';
-            
+
             if (!isPaidManuallyEdited) {
                 cashInput.value = payable;
                 mfsContainer.innerHTML = '';
             }
-            
+
             if (parseFloat(cashInput.value) > 0 && cashGivenInput.value !== '') {
                 calculateCashChange();
             } else {
@@ -1044,7 +1044,7 @@
             totalPaidDisplay.innerText = paid.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' BDT';
             const due = Math.max(0, payable - paid);
             dueLabel.innerText = due.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' BDT';
-            
+
             const dueWarningAlert = document.getElementById('due-warning-alert');
             const customerId = customerSelect.value;
 
@@ -1092,7 +1092,7 @@
                 cart.forEach(item => subtotal += item.price * item.qty);
                 const discount = parseFloat(discountInput.value) || 0;
                 const payable = Math.max(0, subtotal - discount);
-                
+
                 const cashVal = parseFloat(cashInput.value) || 0;
                 let mfsVal = 0;
                 document.querySelectorAll('.mfs-amount-input').forEach(input => {
@@ -1147,7 +1147,7 @@
             const row = document.createElement('div');
             row.className = `mfs-payment-row p-2 border rounded bg-white shadow-xs d-flex flex-column gap-1.5 border-start border-3 ${borderClass}`;
             row.setAttribute('data-method', method);
-            
+
             // Inline style helper to fix color codes
             let inlineStyle = '';
             if (method === 'bKash') {
@@ -1195,7 +1195,7 @@
             const amountInput = row.querySelector('.mfs-amount-input');
             amountInput.addEventListener('input', function() {
                 isPaidManuallyEdited = true;
-                
+
                 let subtotal = 0;
                 cart.forEach(item => subtotal += item.price * item.qty);
                 const discount = parseFloat(discountInput.value) || 0;
@@ -1233,7 +1233,7 @@
             cart.forEach(item => subtotal += item.price * item.qty);
             const discount = parseFloat(discountInput.value) || 0;
             const payable = Math.max(0, subtotal - discount);
-            
+
             // Automatically allocate remaining due to the newly added MFS
             const cashVal = parseFloat(cashInput.value) || 0;
             let mfsTotal = 0;
@@ -1265,7 +1265,7 @@
 
             const cashPayment = parseFloat(cashInput.value) || 0;
             const cashGiven = parseFloat(cashGivenInput.value) || 0;
-            
+
             if (cashGivenInput.value === '') {
                 changeGroup.classList.add('d-none');
                 changeLabel.innerText = '0.00 BDT';
@@ -1305,7 +1305,7 @@
                 const input = e.target;
                 const id = input.getAttribute('data-id');
                 let newPrice = parseFloat(input.value) || 0;
-                
+
                 const item = cart.find(i => i.id === id);
                 if (item) {
                     if (newPrice < item.minPrice) {
@@ -1323,7 +1323,7 @@
                 const input = e.target;
                 const id = input.getAttribute('data-id');
                 let newQty = parseInt(input.value) || 1;
-                
+
                 const item = cart.find(item => item.id === id);
                 if (item) {
                     if (newQty > item.maxQty) {
@@ -1413,7 +1413,7 @@
                         opt.selected = true;
                         customerSelect.appendChild(opt);
                     }
-                    
+
                     // Close modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('quickCustomerModal'));
                     modal.hide();
@@ -1451,7 +1451,7 @@
             cart.forEach(item => subtotalVal += item.price * item.qty);
             const discountVal = parseFloat(discountInput.value) || 0;
             const payableVal = Math.max(0, subtotalVal - discountVal);
-            
+
             const cashVal = parseFloat(cashInput.value) || 0;
             const bkashVal = getMfsAmount('bKash');
             const nagadVal = getMfsAmount('Nagad');
@@ -1480,7 +1480,7 @@
             // Populate Modal Items
             const previewItemsContainer = document.getElementById('preview-invoice-items');
             previewItemsContainer.innerHTML = '';
-            
+
             let subtotal = 0;
             cart.forEach(item => {
                 const itemTotal = item.price * item.qty;
@@ -1503,7 +1503,7 @@
             const due = dueVal;
 
             document.getElementById('preview-invoice-subtotal').innerText = subtotal.toFixed(2) + ' BDT';
-            
+
             const discountRow = document.getElementById('preview-invoice-discount-row');
             if (discount > 0) {
                 discountRow.style.display = '';
@@ -1514,16 +1514,16 @@
 
             document.getElementById('preview-invoice-payable').innerText = payable.toFixed(2) + ' BDT';
             document.getElementById('preview-invoice-paid').innerText = paid.toFixed(2) + ' BDT';
-            
+
             // Cash Given and Change returned in preview
             const cashGivenRow = document.getElementById('preview-invoice-cash-given-row');
             const changeRow = document.getElementById('preview-invoice-change-row');
             const cashGivenVal = parseFloat(cashGivenInput.value) || 0;
-            
+
             if (cashVal > 0 && cashGivenVal > 0) {
                 cashGivenRow.classList.remove('d-none');
                 document.getElementById('preview-invoice-cash-given').innerText = cashGivenVal.toFixed(2) + ' BDT';
-                
+
                 if (cashGivenVal > cashVal) {
                     changeRow.classList.remove('d-none');
                     document.getElementById('preview-invoice-change').innerText = (cashGivenVal - cashVal).toFixed(2) + ' BDT';
@@ -1626,10 +1626,10 @@
                     }
                     renderCart();
                     updateCatalogQtyBadges();
-                    
+
                     // Open invoice printable in new tab
                     window.open(`/admin/pos/invoice/${data.sale_id}`, '_blank');
-                    
+
                     // Reload window to update stock displays
                     window.location.reload();
                 } else {

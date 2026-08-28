@@ -58,4 +58,9 @@ class Sale extends Model
     {
         return $this->morphMany(PaymentLog::class, 'payable');
     }
+
+    public function paymentLogs(): MorphMany
+    {
+        return $this->morphMany(PaymentLog::class, 'payable');
+    }
 }

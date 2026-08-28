@@ -101,9 +101,29 @@ class User extends Authenticatable
         }
 
         $defaults = [
-            'admin' => ['pos' => true, 'repairs' => true, 'inventory' => true, 'purchases' => true, 'expenses' => true, 'reports' => true, 'social_media' => true],
-            'technician' => ['repairs' => true],
-            'salesman' => ['pos' => true, 'inventory' => true],
+            'admin' => [
+                'pos' => true,
+                'repairs' => true,
+                'inventory' => true,
+                'purchases' => true,
+                'expenses' => true,
+                'reports' => true,
+                'social_media' => true,
+                'cash' => true,
+                'documents' => true,
+                'special_orders' => true,
+            ],
+            'technician' => [
+                'repairs' => true,
+                'documents' => true,
+            ],
+            'salesman' => [
+                'pos' => true,
+                'inventory' => true,
+                'cash' => true,
+                'documents' => true,
+                'special_orders' => true,
+            ],
         ];
 
         return !empty($defaults[$this->role][$feature]);

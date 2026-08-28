@@ -207,7 +207,7 @@
                                 <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>Pending confirmation</option>
                                 <option value="diagnosing" {{ old('status') == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
                                 <option value="waiting_for_approval" {{ old('status') == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
-                                <option value="waiting_for_parts" {{ old('status') == 'waiting_for_parts' ? 'selected' : '' }}>Waiting for Parts (পার্টস আসার অপেক্ষায়)</option>
+                                <option value="waiting_for_parts" {{ old('status') == 'waiting_for_parts' ? 'selected' : '' }}>Waiting for Parts</option>
                                 <option value="repairing" {{ old('status') == 'repairing' ? 'selected' : '' }}>Repairing</option>
                                 <option value="quality_check" {{ old('status') == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
                                 <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed (Ready)</option>
@@ -242,7 +242,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold" for="commission_rate">Commission Value</label>
-                            <input type="number" name="commission_rate" id="commission_rate" step="0.01" min="0" class="form-control" value="{{ old('commission_rate', 0) }}">
+                            <input type="number" name="commission_rate" id="commission_rate" step="0.01" min="0" class="form-control" value="{{ old('commission_rate') }}" placeholder="0.00">
                             <div class="form-text small">e.g. 15 for 15% of actual repair charge, or 250 for a flat 250 BDT commission.</div>
                         </div>
                     </div>
@@ -251,16 +251,16 @@
                     <div class="row mb-4">
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="repair_charge">Repair Charge / Service Fee (BDT)</label>
-                            <input type="number" name="repair_charge" id="repair_charge" step="0.01" min="0" class="form-control" value="{{ old('repair_charge', 0) }}">
+                            <input type="number" name="repair_charge" id="repair_charge" step="0.01" min="0" class="form-control" value="{{ old('repair_charge') }}" placeholder="0.00">
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="estimated_cost">Estimated Cost (BDT)</label>
-                            <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control bg-light" value="{{ old('estimated_cost', 0) }}" readonly>
+                            <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control bg-light" value="{{ old('estimated_cost') }}" placeholder="0.00" readonly>
                             <div class="form-text small">Auto-calculated (Service Fee + Parts + Courier)</div>
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="advance_payment">Advance Deposit Paid (BDT)</label>
-                            <input type="number" name="advance_payment" id="advance_payment" step="0.01" min="0" class="form-control" value="{{ old('advance_payment', 0) }}">
+                            <input type="number" name="advance_payment" id="advance_payment" step="0.01" min="0" class="form-control" value="{{ old('advance_payment') }}" placeholder="0.00">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold" for="advance_payment_method">Advance Payment Method</label>
@@ -277,7 +277,7 @@
                     <div class="row mb-4">
                         <div class="col-md-4 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="warranty_days">Warranty Period (Days)</label>
-                            <input type="number" name="warranty_days" id="warranty_days" min="0" class="form-control" value="{{ old('warranty_days', 0) }}" placeholder="e.g. 90">
+                            <input type="number" name="warranty_days" id="warranty_days" min="0" class="form-control" value="{{ old('warranty_days') }}" placeholder="0">
                             <div class="form-text small">Number of days parts/labor warranty. Starts upon completion.</div>
                         </div>
                         <div class="col-md-8 d-flex align-items-center mt-md-3">
@@ -298,7 +298,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Outsourced Sourcing</h6>
-                                <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span>
+                                {{-- <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span> --}}
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Spare Part</button>
                         </div>
@@ -308,10 +308,10 @@
                                 <thead class="table-light small fw-bold">
                                     <tr>
                                         <th style="min-width: 220px;">Part Item / Manual Name</th>
-                                        <th style="width: 170px;">Source (উৎস)</th>
+                                        <th style="width: 170px;">Source </th>
                                         <th style="width: 170px;">Supplier / Shop Name</th>
                                         <th style="width: 130px;">Buying Price</th>
-                                        <th style="width: 110px;">Courier (৳)</th>
+                                        <th style="width: 110px;">Courier</th>
                                         <th style="width: 80px;">Qty</th>
                                         <th style="width: 60px;" class="text-center">Action</th>
                                     </tr>
@@ -435,13 +435,17 @@
             // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
             const estimatedCost = repairCharge + totalPartsCost + totalCourierCost;
             if (estimatedCostInput) {
-                estimatedCostInput.value = estimatedCost.toFixed(2);
+                estimatedCostInput.value = estimatedCost > 0 ? estimatedCost.toFixed(2) : '';
             }
 
             // Commission base is exactly the Repair Charge (Service Charge)
             const commissionBase = repairCharge;
 
-            if (!commissionTypeSelect || !commissionRateInput) return;
+            let previewContainer = document.getElementById('commission-preview-container');
+            if (!commissionTypeSelect || !commissionRateInput || (!commissionTypeSelect.value && estimatedCost === 0)) {
+                if (previewContainer) previewContainer.innerHTML = '';
+                return;
+            }
 
             const commissionType = commissionTypeSelect.value;
             const commissionRate = parseFloat(commissionRateInput.value) || 0;
@@ -479,7 +483,6 @@
                 </div>
             `;
 
-            let previewContainer = document.getElementById('commission-preview-container');
             if (!previewContainer) {
                 previewContainer = document.createElement('div');
                 previewContainer.id = 'commission-preview-container';
@@ -519,10 +522,10 @@
                         <input type="text" name="used_parts[${partIndex}][supplier_name]" class="form-control form-control-sm" placeholder="e.g. মোতালেব প্লাজা / রাসেল">
                     </td>
                     <td>
-                        <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="0.00" step="0.01" min="0" required>
+                        <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="" step="0.01" min="0" placeholder="0.00" required>
                     </td>
                     <td>
-                        <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="0.00" step="0.01" min="0" placeholder="0.00">
+                        <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="" step="0.01" min="0" placeholder="0.00">
                     </td>
                     <td>
                         <input type="number" name="used_parts[${partIndex}][quantity]" class="form-control form-control-sm input-quantity text-center" value="1" min="1" required>

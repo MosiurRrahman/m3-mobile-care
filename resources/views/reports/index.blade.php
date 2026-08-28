@@ -10,7 +10,7 @@
             <h4 class="fw-bold mb-0">Financial & Operational Reports</h4>
             <span class="text-muted small">Analyze shop performance metrics: sales profit, service counts, technician statistics</span>
         </div>
-        
+
         <!-- Timeframe filter -->
         <form action="{{ route('admin.reports.index') }}" method="GET" class="d-flex align-items-center gap-2 bg-white p-2 rounded border shadow-sm">
             <label class="fw-bold text-dark small mb-0 ms-1">Timeframe:</label>
@@ -30,7 +30,7 @@
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <h5 class="card-title fw-bold mb-4"><i class="ti tabler-cash me-2 text-primary"></i>Financial Summary ({{ \Carbon\Carbon::parse($startDate)->format('M d') }} - {{ \Carbon\Carbon::parse($endDate)->format('M d, Y') }})</h5>
-                
+
                 <div class="row g-3">
                     <div class="col-md-6 col-lg-3">
                         <div class="p-3 bg-light rounded border-start border-primary border-4 h-100">
@@ -101,7 +101,7 @@
     <div class="col-12 mb-4">
         <div class="card border-0 shadow-sm border-start border-success border-3">
             <div class="card-body p-4">
-                <h5 class="card-title fw-bold mb-3"><i class="ti tabler-report-money me-2 text-success"></i>Collected Cash Flow Breakdown (ক্যাশ ফ্লো ব্রেকডাউন)</h5>
+                <h5 class="card-title fw-bold mb-3"><i class="ti tabler-report-money me-2 text-success"></i>Collected Cash Flow Breakdown</h5>
                 <div class="row g-3">
                     <div class="col-md-3">
                         <div class="p-3 border rounded bg-white text-center h-100 shadow-xs">
@@ -136,36 +136,68 @@
         </div>
     </div>
 
-    <!-- Product-wise sales & Brand Service Reports -->
+    <!-- Product-Wise Sales (Top Items) -->
     <div class="col-lg-7 mb-4">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0 pt-3">
-                <h5 class="fw-bold mb-0"><i class="ti tabler-shopping-cart-check me-2 text-primary"></i>Product-Wise POS Sales</h5>
+            <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(115, 103, 240, 0.12);">
+                        <i class="ti tabler-shopping-cart-check text-primary fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Product-Wise POS Sales</h6>
+                        <small class="text-muted" style="font-size: 0.75rem;">Top selling accessories & parts</small>
+                    </div>
+                </div>
+                <span class="badge bg-label-primary rounded-pill px-2 py-1 fw-bold" style="font-size: 0.78rem;">
+                    {{ count($productSales) }} Items Sold
+                </span>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th class="text-center">Quantity Sold</th>
-                            <th class="text-end">Revenue Generated</th>
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                    <thead class="bg-light">
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <th class="py-2 text-uppercase text-muted fw-bold ps-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Product Name</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Category</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-center" style="font-size: 0.72rem; letter-spacing: 0.5px;">Qty Sold</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-end pe-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Revenue</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($productSales as $sale)
-                        <tr>
-                            <td>
-                                <span class="fw-bold text-dark">{{ $sale->item ? $sale->item->name : 'Deleted product' }}</span>
-                                <div class="text-muted small">SKU: {{ $sale->item ? $sale->item->sku : '' }}</div>
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.035);">
+                            <td class="py-2 ps-3">
+                                <div class="fw-semibold text-dark text-truncate" style="max-width: 200px;" title="{{ $sale->item ? $sale->item->name : 'Deleted product' }}">
+                                    {{ $sale->item ? $sale->item->name : 'Deleted product' }}
+                                </div>
+                                @if($sale->item && $sale->item->sku)
+                                <span class="badge bg-label-secondary font-monospace text-dark" style="font-size: 0.68rem; padding: 1px 4px;">
+                                    {{ $sale->item->sku }}
+                                </span>
+                                @endif
                             </td>
-                            <td>{{ $sale->item ? $sale->item->category : 'N/A' }}</td>
-                            <td class="text-center fw-bold">{{ $sale->qty_sold }}</td>
-                            <td class="text-end fw-bold text-success">{{ number_format($sale->revenue, 2) }} BDT</td>
+                            <td class="py-2">
+                                <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.72rem;">
+                                    {{ $sale->item ? ($sale->item->category ?? 'N/A') : 'N/A' }}
+                                </span>
+                            </td>
+                            <td class="py-2 text-center">
+                                <span class="badge bg-label-success rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+                                    {{ $sale->qty_sold }} pcs
+                                </span>
+                            </td>
+                            <td class="py-2 text-end pe-3">
+                                <span class="fw-bold text-success" style="font-size: 0.84rem;">
+                                    {{ number_format($sale->revenue, 2) }} BDT
+                                </span>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">No product sales logged in this timeframe.</td>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                <i class="ti tabler-basket-off fs-3 d-block mb-1 text-muted"></i>
+                                No product sales logged in this timeframe.
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -174,30 +206,58 @@
         </div>
     </div>
 
+    <!-- Brand-Wise Service Volume -->
     <div class="col-lg-5 mb-4">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0 pt-3">
-                <h5 class="fw-bold mb-0"><i class="ti tabler-device-mobile-message me-2 text-primary"></i>Brand-Wise Service Volume</h5>
+            <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(0, 207, 232, 0.12);">
+                        <i class="ti tabler-device-mobile-message text-info fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Brand-Wise Service Volume</h6>
+                        <small class="text-muted" style="font-size: 0.75rem;">Repair jobs by device brand</small>
+                    </div>
+                </div>
+                <span class="badge bg-label-info rounded-pill px-2 py-1 fw-bold" style="font-size: 0.78rem;">
+                    {{ count($brandRepairs) }} Brands
+                </span>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Device Brand</th>
-                            <th class="text-center">Tickets Logged</th>
-                            <th class="text-end">Service Revenue</th>
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                    <thead class="bg-light">
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <th class="py-2 text-uppercase text-muted fw-bold ps-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Brand</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-center" style="font-size: 0.72rem; letter-spacing: 0.5px;">Tickets</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-end pe-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Revenue</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($brandRepairs as $brand)
-                        <tr>
-                            <td><span class="fw-bold text-dark">{{ $brand->device_brand }}</span></td>
-                            <td class="text-center fw-bold">{{ $brand->count }}</td>
-                            <td class="text-end fw-bold text-success">{{ number_format($brand->total_cost ?? 0, 2) }} BDT</td>
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.035);">
+                            <td class="py-2 ps-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="ti tabler-device-mobile text-muted me-1 fs-6"></i>
+                                    <span class="fw-bold text-dark">{{ $brand->device_brand ?: 'Other / Generic' }}</span>
+                                </div>
+                            </td>
+                            <td class="py-2 text-center">
+                                <span class="badge bg-label-primary rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+                                    {{ $brand->count }}
+                                </span>
+                            </td>
+                            <td class="py-2 text-end pe-3">
+                                <span class="fw-bold text-success" style="font-size: 0.84rem;">
+                                    {{ number_format($brand->total_cost ?? 0, 2) }} BDT
+                                </span>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="text-center py-4 text-muted">No service tickets logged in this timeframe.</td>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                <i class="ti tabler-device-mobile-off fs-3 d-block mb-1 text-muted"></i>
+                                No service tickets logged in this timeframe.
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -209,37 +269,65 @@
     <!-- Top Technician Performance -->
     <div class="col-lg-6 mb-4">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0 pt-3">
-                <h5 class="fw-bold mb-0"><i class="ti tabler-award me-2 text-primary"></i>Technician Productivity Leaderboard</h5>
+            <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(255, 171, 0, 0.12);">
+                        <i class="ti tabler-award text-warning fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">Technician Leaderboard</h6>
+                        <small class="text-muted" style="font-size: 0.75rem;">Productivity & commissions</small>
+                    </div>
+                </div>
+                <span class="badge bg-label-warning rounded-pill px-2 py-1 fw-bold" style="font-size: 0.78rem;">
+                    {{ count($topTechnicians) }} Technicians
+                </span>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Technician</th>
-                            <th class="text-center">Jobs Resolved</th>
-                            <th class="text-end">Revenue Contribution</th>
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                    <thead class="bg-light">
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <th class="py-2 text-uppercase text-muted fw-bold ps-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Technician</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-center" style="font-size: 0.72rem; letter-spacing: 0.5px;">Resolved</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-end" style="font-size: 0.72rem; letter-spacing: 0.5px;">Revenue</th>
                             @if(auth()->user()->isSuperAdmin())
-                            <th class="text-end text-success">Commission Earned</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-end pe-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Commission</th>
                             @endif
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($topTechnicians as $tech)
-                        <tr>
-                            <td>
-                                <span class="fw-bold text-dark">{{ $tech->name }}</span>
-                                <div class="text-muted small">{{ $tech->skill_level }}</div>
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.035);">
+                            <td class="py-2 ps-3">
+                                <div class="fw-bold text-dark">{{ $tech->name }}</div>
+                                <span class="badge bg-light text-muted border" style="font-size: 0.65rem; padding: 1px 4px;">
+                                    {{ $tech->skill_level ?: 'Technician' }}
+                                </span>
                             </td>
-                            <td class="text-center"><span class="badge bg-success fs-6">{{ $tech->completed_jobs_count }}</span></td>
-                            <td class="text-end fw-bold text-dark">{{ number_format($tech->revenue_generated ?? 0, 2) }} BDT</td>
+                            <td class="py-2 text-center">
+                                <span class="badge bg-label-success rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+                                    {{ $tech->completed_jobs_count }}
+                                </span>
+                            </td>
+                            <td class="py-2 text-end">
+                                <span class="fw-bold text-dark" style="font-size: 0.84rem;">
+                                    {{ number_format($tech->revenue_generated ?? 0, 2) }} BDT
+                                </span>
+                            </td>
                             @if(auth()->user()->isSuperAdmin())
-                            <td class="text-end fw-bold text-success">{{ number_format($tech->commission_earned ?? 0, 2) }} BDT</td>
+                            <td class="py-2 text-end pe-3">
+                                <span class="fw-bold text-success" style="font-size: 0.84rem;">
+                                    +{{ number_format($tech->commission_earned ?? 0, 2) }} BDT
+                                </span>
+                            </td>
                             @endif
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="{{ auth()->user()->isSuperAdmin() ? 4 : 3 }}" class="text-center py-4 text-muted">No technician diagnostics recorded in this timeframe.</td>
+                            <td colspan="{{ auth()->user()->isSuperAdmin() ? 4 : 3 }}" class="text-center py-4 text-muted">
+                                <i class="ti tabler-user-off fs-3 d-block mb-1 text-muted"></i>
+                                No technician diagnostics recorded in this timeframe.
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -251,41 +339,88 @@
     <!-- Stock Warning Alerts -->
     <div class="col-lg-6 mb-4" id="stock-alerts">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-transparent border-0 pt-3">
-                <h5 class="fw-bold mb-0 text-danger"><i class="ti tabler-package-off me-2"></i>Low Stock Inventory Alert</h5>
+            <div class="card-header bg-transparent border-bottom py-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background: rgba(234, 84, 85, 0.12);">
+                        <i class="ti tabler-alert-triangle text-danger fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-danger" style="font-size: 0.95rem;">Low Stock Inventory Alert</h6>
+                        <small class="text-muted" style="font-size: 0.75rem;">Items below or at threshold</small>
+                    </div>
+                </div>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-20 rounded-pill px-2 py-1 fw-bold" style="font-size: 0.78rem;">
+                    {{ $lowStockItems->total() }} Items Alert
+                </span>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>SKU Code</th>
-                            <th>Item Name</th>
-                            <th>Stock Left</th>
-                            <th>Threshold</th>
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                    <thead class="bg-light">
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.06);">
+                            <th class="py-2 text-uppercase text-muted fw-bold ps-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">SKU</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold" style="font-size: 0.72rem; letter-spacing: 0.5px;">Item & Type</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-center" style="font-size: 0.72rem; letter-spacing: 0.5px;">Stock</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-center" style="font-size: 0.72rem; letter-spacing: 0.5px;">Alert Level</th>
+                            <th class="py-2 text-uppercase text-muted fw-bold text-end pe-3" style="font-size: 0.72rem; letter-spacing: 0.5px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($lowStockItems as $item)
-                        <tr>
-                            <td><span class="fw-bold text-dark">{{ $item->sku }}</span></td>
-                            <td>
-                                <span class="text-dark small">{{ $item->name }}</span>
-                                <span class="badge bg-label-{{ $item->type === 'spare_part' ? 'primary' : 'info' }} ms-1 fs-9">{{ ucfirst($item->type) }}</span>
+                        <tr style="border-bottom: 1px solid rgba(0,0,0,0.035);">
+                            <td class="py-2 ps-3">
+                                <span class="badge bg-label-secondary font-monospace text-dark px-2 py-1" style="font-size: 0.74rem;">
+                                    {{ $item->sku }}
+                                </span>
                             </td>
-                            <td><span class="fw-extrabold text-danger fs-6">{{ $item->quantity }}</span> pcs</td>
-                            <td><span class="fw-semibold text-muted">{{ $item->alert_quantity }} pcs</span></td>
+                            <td class="py-2">
+                                <div class="fw-semibold text-dark text-truncate" style="max-width: 190px;" title="{{ $item->name }}">
+                                    {{ $item->name }}
+                                </div>
+                                <span class="badge bg-label-{{ $item->type === 'spare_part' ? 'primary' : 'info' }}" style="font-size: 0.65rem; padding: 2px 5px; line-height: 1;">
+                                    {{ ucfirst(str_replace('_', ' ', $item->type)) }}
+                                </span>
+                            </td>
+                            <td class="py-2 text-center">
+                                @if($item->quantity == 0)
+                                <span class="badge bg-danger rounded-pill px-2 py-1 text-white fw-bold" style="font-size: 0.72rem;">
+                                    0 Out
+                                </span>
+                                @else
+                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 fw-bold" style="font-size: 0.72rem;">
+                                    {{ $item->quantity }} pcs
+                                </span>
+                                @endif
+                            </td>
+                            <td class="py-2 text-center">
+                                <span class="text-muted small fw-medium" style="font-size: 0.75rem;">
+                                    ≤ {{ $item->alert_quantity }} pcs
+                                </span>
+                            </td>
+                            <td class="py-2 text-end pe-3">
+                                <a href="{{ route('admin.inventory.edit', $item->id) }}" class="btn btn-xs btn-label-primary px-2 py-1 rounded" style="font-size: 0.72rem;" title="Restock item">
+                                    <i class="ti tabler-plus me-1" style="font-size: 0.72rem;"></i>Restock
+                                </a>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-success fw-bold">
-                                <i class="ti tabler-check-circle fs-2 d-block mb-1 text-success"></i>
-                                All inventory levels are above alert thresholds!
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="ti tabler-circle-check fs-3 text-success d-block mb-1"></i>
+                                Great! All inventory stock levels are healthy.
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+            @if($lowStockItems->hasPages())
+            <div class="card-footer bg-transparent border-top py-2 px-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <small class="text-muted" style="font-size: 0.75rem;">Showing {{ $lowStockItems->firstItem() ?? 0 }}-{{ $lowStockItems->lastItem() ?? 0 }} of {{ $lowStockItems->total() }} alerts</small>
+                <div>
+                    {{ $lowStockItems->links() }}
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

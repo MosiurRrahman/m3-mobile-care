@@ -48,11 +48,17 @@
                 <form action="{{ route('admin.cash.index') }}" method="GET" class="row g-3 align-items-end">
                     <div class="col-md-3 col-sm-6">
                         <label class="form-label fw-semibold" for="start_date">From Date</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $startDate }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                            <input type="{{ $startDate ? 'date' : 'text' }}" name="start_date" id="start_date" class="form-control" value="{{ $startDate }}" placeholder="From Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                        </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label class="form-label fw-semibold" for="end_date">To Date</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $endDate }}">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                            <input type="{{ $endDate ? 'date' : 'text' }}" name="end_date" id="end_date" class="form-control" value="{{ $endDate }}" placeholder="To Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                        </div>
                     </div>
                     <div class="col-md-3 col-sm-6">
                         <label class="form-label fw-semibold" for="payment_method">Account / Payment Method</label>

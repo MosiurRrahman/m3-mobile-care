@@ -63,7 +63,7 @@ class SmsService
             ];
         }
 
-        $apiKey = Setting::get('sms_api_key', 'JbOhNywIOVzaA71IMVo06');
+        $apiKey = Setting::get('sms_api_key', '');
         $senderId = Setting::get('sms_sender_id', '');
 
         if (empty($apiKey)) {

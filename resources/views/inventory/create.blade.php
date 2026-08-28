@@ -121,7 +121,7 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4 mb-3 mb-md-0">
                                         <label class="form-label fw-semibold" for="quantity">Quantity in Stock <span class="text-danger">*</span></label>
-                                        <input type="number" name="quantity" id="quantity" class="form-control" value="{{ old('quantity', 0) }}" min="0">
+                                        <input type="number" name="quantity" id="quantity" class="form-control" value="{{ old('quantity') }}" placeholder="0" min="0">
                                     </div>
                                     <div class="col-md-4 mb-3 mb-md-0">
                                         <label class="form-label fw-semibold" for="sale_price">Retail Price (BDT) <span class="text-danger">*</span></label>
@@ -143,7 +143,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold" for="discount_value">Discount Value / Amount</label>
-                                        <input type="number" name="discount_value" id="discount_value" step="0.01" min="0" class="form-control" value="{{ old('discount_value', 0) }}" placeholder="e.g. 50 BDT or 10%">
+                                        <input type="number" name="discount_value" id="discount_value" step="0.01" min="0" class="form-control" value="{{ old('discount_value') }}" placeholder="e.g. 50 BDT or 10%">
                                     </div>
                                 </div>
                             </div>

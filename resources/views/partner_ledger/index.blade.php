@@ -7,7 +7,7 @@
     <!-- Header -->
     <div class="col-12 mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-            <h4 class="fw-bold mb-0">Partner Profit & Capital Ledger (অংশীদারী খতিয়ান)</h4>
+            <h4 class="fw-bold mb-0">Partner Profit & Capital Ledger</h4>
             <span class="text-muted small">Manage capital investments, dynamic profit ratios, payouts, and monthly closings</span>
         </div>
     </div>
@@ -64,11 +64,11 @@
                     <div class="card-body pt-3">
                         <div class="row g-2 text-center mb-3">
                             <div class="col-6 border-end">
-                                <span class="text-muted small d-block mb-1">Capital (মূলধন)</span>
+                                <span class="text-muted small d-block mb-1">Capital</span>
                                 <h5 class="fw-bold mb-0 text-dark">{{ number_format($bal->capital_balance, 2) }} BDT</h5>
                             </div>
                             <div class="col-6">
-                                <span class="text-muted small d-block mb-1">Profit Bal (লভ্যাংশ)</span>
+                                <span class="text-muted small d-block mb-1">Profit Bal</span>
                                 <h5 class="fw-bold mb-0 text-success">{{ number_format($bal->accumulated_profit, 2) }} BDT</h5>
                             </div>
                         </div>
@@ -108,7 +108,10 @@
             <div class="card-header border-bottom d-flex align-items-center justify-content-between py-3">
                 <h5 class="card-title fw-bold mb-0">Month Closing & Profit Distribution</h5>
                 <form action="" method="GET" id="monthFilterForm" class="d-flex align-items-center gap-2">
-                    <input type="month" name="month" class="form-control form-control-sm" value="{{ $selectedMonth }}" onchange="document.getElementById('monthFilterForm').submit()">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                        <input type="month" name="month" class="form-control form-control-sm" value="{{ $selectedMonth }}" onchange="document.getElementById('monthFilterForm').submit()">
+                    </div>
                 </form>
             </div>
             <div class="card-body pt-3">
@@ -122,7 +125,7 @@
                     <span class="text-muted small">Automatically computed from service repairs, POS sales, technician commissions, and general expenses</span>
                 </div>
 
-                <h6 class="fw-bold mb-2">Split Allocation (অনুপাত বন্টন):</h6>
+                <h6 class="fw-bold mb-2">Split Allocation:</h6>
                 <div class="table-responsive mb-3">
                     <table class="table table-bordered table-sm align-middle text-center mb-0">
                         <thead class="table-light">
@@ -186,12 +189,12 @@
                 <ul class="nav nav-tabs card-header-tabs" id="partnerActionTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active fw-bold text-success" id="deposit-tab" data-bs-toggle="tab" data-bs-target="#deposit-tab-pane" type="button" role="tab" aria-controls="deposit-tab-pane" aria-selected="true">
-                            <i class="ti tabler-circle-plus me-1"></i> Add Investment / Deposit (বিনিয়োগ / জমা)
+                            <i class="ti tabler-circle-plus me-1"></i> Add Investment / Deposit
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-bold text-danger" id="withdraw-tab" data-bs-toggle="tab" data-bs-target="#withdraw-tab-pane" type="button" role="tab" aria-controls="withdraw-tab-pane" aria-selected="false">
-                            <i class="ti tabler-cash me-1"></i> Cash Withdrawal (উত্তোলন)
+                            <i class="ti tabler-cash me-1"></i> Cash Withdrawal
                         </button>
                     </li>
                 </ul>
@@ -214,8 +217,8 @@
                             <div class="col-6">
                                 <label class="form-label fw-semibold" for="deposit_account_type">Account Type <span class="text-danger">*</span></label>
                                 <select name="account_type" id="deposit_account_type" class="form-select" required>
-                                    <option value="capital">Capital Account (মূলধন)</option>
-                                    <option value="profit">Profit Share Account (লভ্যাংশ)</option>
+                                    <option value="capital">Capital Account </option>
+                                    <option value="profit">Profit Share Account</option>
                                 </select>
                             </div>
                             <div class="col-6">
@@ -252,8 +255,8 @@
                             <div class="col-6">
                                 <label class="form-label fw-semibold" for="account_type">Account Type <span class="text-danger">*</span></label>
                                 <select name="account_type" id="account_type" class="form-select" required>
-                                    <option value="profit">Profit Share Account (লভ্যাংশ)</option>
-                                    <option value="capital">Capital Account (মূলধন)</option>
+                                    <option value="profit">Profit Share Account </option>
+                                    <option value="capital">Capital Account </option>
                                 </select>
                             </div>
                             <div class="col-6">
@@ -280,7 +283,7 @@
     <div class="col-12">
         <div class="card border-0 shadow-sm">
             <div class="card-header border-bottom py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <h5 class="card-title fw-bold mb-0">Ledger Statement (খতিয়ান বিবরণী)</h5>
+                <h5 class="card-title fw-bold mb-0">Ledger Statement </h5>
                 <form action="" method="GET" class="d-flex align-items-center gap-2">
                     <input type="hidden" name="month" value="{{ $selectedMonth }}">
                     <select name="partner" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -334,17 +337,19 @@
                             <td class="fw-bold">{{ number_format($entry->balance_after, 2) }} BDT</td>
                             <td style="max-width: 250px; white-space: normal;">{{ $entry->description }}</td>
                             <td><span class="text-muted small">{{ $entry->creator ? $entry->creator->name : 'System' }}</span></td>
-                            <td class="text-end">
-                                <button type="button" class="btn btn-sm btn-icon btn-label-primary me-1" data-bs-toggle="modal" data-bs-target="#editEntryModal{{ $entry->id }}" title="Edit Entry">
-                                    <i class="ti tabler-pencil fs-6"></i>
-                                </button>
-                                <form action="{{ route('admin.partner-ledger.destroy', $entry->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this ledger entry? Partner balances will be adjusted automatically.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="Delete Entry">
-                                        <i class="ti tabler-trash fs-6"></i>
+                            <td class="text-end pe-3">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <button type="button" class="btn btn-sm btn-icon btn-label-primary rounded" data-bs-toggle="modal" data-bs-target="#editEntryModal{{ $entry->id }}" title="Edit Entry">
+                                        <i class="ti tabler-pencil fs-6"></i>
                                     </button>
-                                </form>
+                                    <form action="{{ route('admin.partner-ledger.destroy', $entry->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this ledger entry? Partner balances will be adjusted automatically.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-icon btn-label-danger rounded" title="Delete Entry">
+                                            <i class="ti tabler-trash fs-6"></i>
+                                        </button>
+                                    </form>
+                                </div>
 
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="editEntryModal{{ $entry->id }}" tabindex="-1" aria-hidden="true" style="white-space: normal;">
@@ -370,8 +375,8 @@
                                                         <div class="col-6">
                                                             <label class="form-label fw-semibold">Account Type</label>
                                                             <select name="account_type" class="form-select" required>
-                                                                <option value="capital" {{ $entry->account_type === 'capital' ? 'selected' : '' }}>Capital Account (মূলধন)</option>
-                                                                <option value="profit" {{ $entry->account_type === 'profit' ? 'selected' : '' }}>Profit Share Account (লভ্যাংশ)</option>
+                                                                <option value="capital" {{ $entry->account_type === 'capital' ? 'selected' : '' }}>Capital Account </option>
+                                                                <option value="profit" {{ $entry->account_type === 'profit' ? 'selected' : '' }}>Profit Share Account</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-6">

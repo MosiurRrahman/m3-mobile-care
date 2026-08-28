@@ -34,7 +34,10 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="month" name="month" class="form-control" value="{{ request('month') }}">
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                    <input type="{{ request('month') ? 'month' : 'text' }}" name="month" class="form-control" value="{{ request('month') }}" placeholder="Filter Month" title="Pick Any Specific Month" onfocus="(this.type='month')" onblur="if(!this.value)this.type='text'">
+                </div>
             </div>
             <div class="col-md-2">
                 <select name="per_page" class="form-select">
@@ -44,7 +47,7 @@
                     <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100 / Page</option>
                 </select>
             </div>
-            <div class="col-md-2 d-flex gap-1.5">
+            <div class="col-md-2 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100 px-2"><i class="ti tabler-search me-1"></i>Filter</button>
                 <a href="{{ route('admin.repairs.index') }}" class="btn btn-outline-secondary w-100 px-2">Reset</a>
             </div>
@@ -122,16 +125,16 @@
                     <td>
                         {{ $repair->expected_delivery_date ? \Carbon\Carbon::parse($repair->expected_delivery_date)->format('M d, Y') : 'Not Set' }}
                     </td>
-                    <td class="text-end">
-                        <div class="d-inline-flex">
-                            <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info me-1" title="View details"><i class="ti tabler-eye"></i></a>
-                            <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-primary me-1" title="Update Job Card"><i class="ti tabler-edit"></i></a>
+                    <td class="text-end pe-3">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View details"><i class="ti tabler-eye"></i></a>
+                            <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-icon btn-sm btn-label-primary rounded" title="Update Job Card"><i class="ti tabler-edit"></i></a>
 
-                            @if(auth()->user()->isSuperAdmin())
-                            <form action="{{ route('admin.repairs.destroy', $repair->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this Job Card ticket?');">
+                            @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                            <form action="{{ route('admin.repairs.destroy', $repair->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this Job Card ticket?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-icon btn-sm btn-outline-danger" title="Delete"><i class="ti tabler-trash"></i></button>
+                                <button type="submit" class="btn btn-icon btn-sm btn-label-danger rounded" title="Delete"><i class="ti tabler-trash"></i></button>
                             </form>
                             @endif
                         </div>

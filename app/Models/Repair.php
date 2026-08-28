@@ -60,6 +60,7 @@ class Repair extends Model
             'device_checklist' => 'array',
             'device_photos' => 'array',
             'used_parts' => 'array',
+            'data_loss_consent' => 'boolean',
         ];
     }
 
@@ -83,6 +84,11 @@ class Repair extends Model
      * Get all payment logs associated with this repair.
      */
     public function payments(): MorphMany
+    {
+        return $this->morphMany(PaymentLog::class, 'payable');
+    }
+
+    public function paymentLogs(): MorphMany
     {
         return $this->morphMany(PaymentLog::class, 'payable');
     }

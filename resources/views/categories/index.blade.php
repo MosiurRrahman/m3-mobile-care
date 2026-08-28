@@ -61,19 +61,21 @@
                     @endif
                   </td>
                   <td class="small text-muted">{{ $category->created_at->format('M d, Y') }}</td>
-                  <td class="text-end">
-                    <button class="btn btn-icon btn-sm btn-outline-primary edit-category-btn"
-                      data-id="{{ $category->id }}" data-name="{{ $category->name }}" data-slug="{{ $category->slug }}"
-                      data-status="{{ $category->status }}" data-bs-toggle="modal" data-bs-target="#editCategoryModal">
-                      <i class="ti tabler-edit"></i>
-                    </button>
-                    <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline"
-                      onsubmit="return confirm('Are you sure you want to delete this category?');">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-icon btn-sm btn-outline-danger"><i
-                          class="ti tabler-trash"></i></button>
-                    </form>
+                  <td class="text-end pe-3">
+                    <div class="d-inline-flex align-items-center gap-1">
+                      <button class="btn btn-icon btn-sm btn-label-primary rounded edit-category-btn"
+                        data-id="{{ $category->id }}" data-name="{{ $category->name }}" data-slug="{{ $category->slug }}"
+                        data-status="{{ $category->status }}" data-bs-toggle="modal" data-bs-target="#editCategoryModal" title="Edit Category">
+                        <i class="ti tabler-edit"></i>
+                      </button>
+                      <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline"
+                        onsubmit="return confirm('Are you sure you want to delete this category?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-icon btn-sm btn-label-danger rounded" title="Delete Category"><i
+                            class="ti tabler-trash"></i></button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               @empty

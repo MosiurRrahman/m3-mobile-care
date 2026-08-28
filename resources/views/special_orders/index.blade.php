@@ -77,7 +77,10 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="month" name="month" class="form-control" value="{{ request('month') }}">
+                <div class="input-group">
+                    <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                    <input type="{{ request('month') ? 'month' : 'text' }}" name="month" class="form-control" value="{{ request('month') }}" placeholder="Filter Month" title="Pick Any Specific Month" onfocus="(this.type='month')" onblur="if(!this.value)this.type='text'">
+                </div>
             </div>
             <div class="col-md-3 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100"><i class="ti tabler-filter me-1"></i>Filter</button>
@@ -161,15 +164,15 @@
                     <td>
                         {{ $order->expected_delivery_date ? $order->expected_delivery_date->format('d M, Y') : 'N/A' }}
                     </td>
-                    <td class="text-end">
-                        <div class="d-inline-flex gap-1">
-                            <a href="{{ route('admin.special-orders.show', $order->id) }}" class="btn btn-icon btn-sm btn-outline-primary" title="View Details">
+                    <td class="text-end pe-3">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            <a href="{{ route('admin.special-orders.show', $order->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View Details">
                                 <i class="ti tabler-eye"></i>
                             </a>
-                            <a href="{{ route('admin.special-orders.print', $order->id) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-secondary" title="Print Slip">
+                            <a href="{{ route('admin.special-orders.print', $order->id) }}" target="_blank" class="btn btn-icon btn-sm btn-label-secondary rounded" title="Print Slip">
                                 <i class="ti tabler-printer"></i>
                             </a>
-                            <a href="{{ route('admin.special-orders.edit', $order->id) }}" class="btn btn-icon btn-sm btn-outline-warning" title="Edit Order">
+                            <a href="{{ route('admin.special-orders.edit', $order->id) }}" class="btn btn-icon btn-sm btn-label-primary rounded" title="Edit Order">
                                 <i class="ti tabler-edit"></i>
                             </a>
                         </div>

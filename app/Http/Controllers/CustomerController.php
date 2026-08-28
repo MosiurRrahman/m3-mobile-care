@@ -125,7 +125,7 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'alt_phone' => 'nullable|string|max:20',
@@ -134,7 +134,7 @@ class CustomerController extends Controller
             'district' => 'nullable|string|max:100',
         ]);
 
-        $customer->update($request->all());
+        $customer->update($validated);
 
         return redirect()->route('admin.customers.index')->with('success', 'Customer profile updated successfully!');
     }
@@ -144,6 +144,10 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isAdmin()) {
+            abort(403, 'Unauthorized action. Only administrators can delete customers.');
+        }
+
         $customer = Customer::findOrFail($id);
         $customer->delete();
 

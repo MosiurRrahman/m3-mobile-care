@@ -108,9 +108,9 @@
                                         <span class="badge bg-label-secondary fw-bold">Inactive</span>
                                     @endif
                                 </td>
-                                <td class="text-end">
-                                    <div class="d-inline-flex align-items-center">
-                                        <button class="btn btn-icon btn-sm btn-outline-primary me-1 edit-user-btn" 
+                                <td class="text-end pe-3">
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <button class="btn btn-icon btn-sm btn-label-primary rounded edit-user-btn" 
                                                 data-id="{{ $user->id }}"
                                                 data-name="{{ $user->name }}"
                                                 data-email="{{ $user->email }}"
@@ -128,24 +128,24 @@
                                         </button>
                                         
                                         @if(auth()->id() !== $user->id)
-                                        <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST" class="me-1" onsubmit="return confirm('Are you sure you want to change the status of this staff account?');">
+                                        <form action="{{ route('admin.users.toggle-status', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to change the status of this staff account?');">
                                             @csrf
-                                            <button type="submit" class="btn btn-icon btn-sm {{ $user->is_active ? 'btn-outline-warning' : 'btn-outline-success' }}" title="{{ $user->is_active ? 'Deactivate User' : 'Activate User' }}">
+                                            <button type="submit" class="btn btn-icon btn-sm {{ $user->is_active ? 'btn-label-warning' : 'btn-label-success' }} rounded" title="{{ $user->is_active ? 'Deactivate User' : 'Activate User' }}">
                                                 <i class="ti {{ $user->is_active ? 'tabler-user-off' : 'tabler-user-check' }}"></i>
                                             </button>
                                         </form>
                                         @else
-                                            <button class="btn btn-icon btn-sm btn-outline-secondary me-1" disabled title="Cannot deactivate yourself"><i class="ti tabler-user-off"></i></button>
+                                            <button class="btn btn-icon btn-sm btn-label-secondary rounded" disabled title="Cannot deactivate yourself"><i class="ti tabler-user-off"></i></button>
                                         @endif
                                         
                                         @if(auth()->id() !== $user->id)
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this staff account?');">
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this staff account?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-icon btn-sm btn-outline-danger" title="Delete"><i class="ti tabler-trash"></i></button>
+                                            <button type="submit" class="btn btn-icon btn-sm btn-label-danger rounded" title="Delete"><i class="ti tabler-trash"></i></button>
                                         </form>
                                         @else
-                                            <button class="btn btn-icon btn-sm btn-outline-secondary" disabled title="Cannot delete yourself"><i class="ti tabler-trash"></i></button>
+                                            <button class="btn btn-icon btn-sm btn-label-secondary rounded" disabled title="Cannot delete yourself"><i class="ti tabler-trash"></i></button>
                                         @endif
                                     </div>
                                 </td>

@@ -5,7 +5,7 @@
             <!-- Col 1: Shop Brand & About -->
             <div class="col-lg-4 col-md-6">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('assets/img/branding/logo-light-icon.png') }}" alt="M3 Mobile Care Logo" width="42" height="42" class="me-2.5">
+                    <img src="{{ asset('assets/img/branding/logo-light-icon.png') }}" alt="M3 Mobile Care Logo" width="42" height="42" class="me-2">
                     <span class="fs-4 fw-extrabold text-white" style="font-family: 'Outfit', sans-serif;">M3 <span style="color: #f37021;">MOBILE CARE</span></span>
                 </div>
                 <p class="text-slate-400 fs-7 lh-base mb-4">
@@ -23,6 +23,7 @@
                 <h6 class="text-white fw-bold mb-3">কুইক লিংকস (Links)</h6>
                 <ul class="list-unstyled d-flex flex-column gap-2 fs-7 mb-0">
                     <li><a href="{{ route('home') }}" class="text-slate-400 text-decoration-none hover-text-warning"><i class="ti tabler-chevron-right fs-8 me-1"></i> হোম (Home)</a></li>
+                    <li><a href="{{ route('products') }}" class="text-slate-400 text-decoration-none hover-text-warning"><i class="ti tabler-chevron-right fs-8 me-1"></i> শপ ও এক্সেসরিজ (Store)</a></li>
                     <li><a href="{{ route('services') }}" class="text-slate-400 text-decoration-none hover-text-warning"><i class="ti tabler-chevron-right fs-8 me-1"></i> সার্ভিসসমূহ</a></li>
                     <li><a href="{{ route('track.form') }}" class="text-slate-400 text-decoration-none hover-text-warning"><i class="ti tabler-chevron-right fs-8 me-1"></i> ERT ট্র্যাকিং</a></li>
                     <li><a href="{{ route('about') }}" class="text-slate-400 text-decoration-none hover-text-warning"><i class="ti tabler-chevron-right fs-8 me-1"></i> আমাদের সম্পর্কে</a></li>
@@ -45,9 +46,9 @@
             <!-- Col 4: Address & Contact Info -->
             <div class="col-lg-3 col-md-6">
                 <h6 class="text-white fw-bold mb-3">যোগাযোগের ঠিকানা</h6>
-                <ul class="list-unstyled d-flex flex-column gap-2.5 fs-7 mb-0 text-slate-400">
+                <ul class="list-unstyled d-flex flex-column gap-2 fs-7 mb-0 text-slate-400">
                     <li class="d-flex align-items-start">
-                        <i class="ti tabler-map-pin text-warning me-2 fs-5 mt-0.5"></i>
+                        <i class="ti tabler-map-pin text-warning me-2 fs-5 mt-1"></i>
                         <span>(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও</span>
                     </li>
                     <li class="d-flex align-items-center">

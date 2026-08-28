@@ -73,4 +73,17 @@ class SpecialOrder extends Model
     {
         return floatval($this->selling_price) - (floatval($this->estimated_cost) + floatval($this->courier_cost));
     }
+
+    /**
+     * Get all payment logs associated with this special order.
+     */
+    public function payments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(PaymentLog::class, 'payable');
+    }
+
+    public function paymentLogs(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(PaymentLog::class, 'payable');
+    }
 }

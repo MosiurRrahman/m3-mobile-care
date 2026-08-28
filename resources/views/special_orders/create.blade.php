@@ -71,23 +71,19 @@
                     <div class="row mb-3">
                         <div class="col-md-3 col-6 mb-3">
                             <label class="form-label fw-semibold" for="estimated_cost">Dhaka Buying Cost (৳) <span class="text-danger">*</span></label>
-                            <input type="number" name="estimated_cost" id="estimated_cost" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('estimated_cost', 0) }}" required>
-                            {{-- <div class="form-text small">ঢাকা থেকে কেনার খরচ</div> --}}
+                            <input type="number" name="estimated_cost" id="estimated_cost" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('estimated_cost') }}" required>
                         </div>
                         <div class="col-md-3 col-6 mb-3">
                             <label class="form-label fw-semibold" for="courier_cost">Courier / Transport (৳)</label>
-                            <input type="number" name="courier_cost" id="courier_cost" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('courier_cost', 100) }}">
-                            {{-- <div class="form-text small">কুরিয়ার বা যাতায়াত চার্জ</div> --}}
+                            <input type="number" name="courier_cost" id="courier_cost" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('courier_cost') }}">
                         </div>
                         <div class="col-md-3 col-6 mb-3">
                             <label class="form-label fw-semibold" for="selling_price">Customer Selling Price (৳) <span class="text-danger">*</span></label>
-                            <input type="number" name="selling_price" id="selling_price" class="form-control text-end calc-input fw-bold text-dark" step="0.01" min="0" placeholder="0.00" value="{{ old('selling_price', 0) }}" required>
-                            {{-- <div class="form-text small">কাস্টমারের মোট বিক্রয়মূল্য</div> --}}
+                            <input type="number" name="selling_price" id="selling_price" class="form-control text-end calc-input fw-bold text-dark" step="0.01" min="0" placeholder="0.00" value="{{ old('selling_price') }}" required>
                         </div>
                         <div class="col-md-3 col-6 mb-3">
                             <label class="form-label fw-semibold" for="advance_paid">Advance Deposit (৳)</label>
-                            <input type="number" name="advance_paid" id="advance_paid" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('advance_paid', 0) }}">
-                            {{-- <div class="form-text small">কাস্টমার অগ্রিম জমা</div> --}}
+                            <input type="number" name="advance_paid" id="advance_paid" class="form-control text-end calc-input" step="0.01" min="0" placeholder="0.00" value="{{ old('advance_paid') }}">
                         </div>
                     </div>
 

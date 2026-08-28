@@ -410,6 +410,42 @@ class RepairBusinessImprovementsTest extends TestCase
         $response->assertDontSee('created test record log description');
     }
 
+    public function test_super_admin_can_purge_old_activity_logs()
+    {
+        $this->actingAs($this->admin);
+
+        // Create an old log (100 days old)
+        $oldLog = \App\Models\ActivityLog::create([
+            'user_id' => $this->admin->id,
+            'loggable_type' => 'App\Models\User',
+            'loggable_id' => $this->admin->id,
+            'action' => 'created',
+            'description' => 'old log 100 days ago',
+            'ip_address' => '127.0.0.1',
+        ]);
+        \App\Models\ActivityLog::where('id', $oldLog->id)->update(['created_at' => now()->subDays(100)]);
+
+        // Create a recent log (5 days old)
+        $recentLog = \App\Models\ActivityLog::create([
+            'user_id' => $this->admin->id,
+            'loggable_type' => 'App\Models\User',
+            'loggable_id' => $this->admin->id,
+            'action' => 'created',
+            'description' => 'recent log 5 days ago',
+            'ip_address' => '127.0.0.1',
+        ]);
+        \App\Models\ActivityLog::where('id', $recentLog->id)->update(['created_at' => now()->subDays(5)]);
+
+        // Purge logs older than 90 days
+        $response = $this->post(route('admin.activity-logs.purge'), [
+            'period' => '90'
+        ]);
+
+        $response->assertRedirect(route('admin.activity-logs.index'));
+        $this->assertDatabaseMissing('activity_logs', ['id' => $oldLog->id]);
+        $this->assertDatabaseHas('activity_logs', ['id' => $recentLog->id]);
+    }
+
     public function test_only_super_admin_can_create_custom_expense_category()
     {
         // 1. Admin manager who has expenses permission but is NOT super_admin

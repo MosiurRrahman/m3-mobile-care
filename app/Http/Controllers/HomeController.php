@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\InventoryItem;
 use App\Models\Setting;
 use App\Models\ContactMessage;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\SmsService;
@@ -60,7 +61,9 @@ class HomeController extends Controller
             'logo' => Setting::get('logo'),
         ];
 
-        return view('home', compact('repair', 'searched', 'recentRepairs', 'repairsByStatus', 'inventoryProducts', 'shopSettings'));
+        $services = Service::all();
+
+        return view('home', compact('repair', 'searched', 'recentRepairs', 'repairsByStatus', 'inventoryProducts', 'services', 'shopSettings'));
     }
 
     /**
@@ -229,25 +232,86 @@ class HomeController extends Controller
     }
 
     /**
-     * Show E-Commerce Products / Accessories page.
+     * Show E-Commerce Products / Mobikart Storefront page.
      */
-    public function products(Request $request)
+     public function products(Request $request)
+     {
+         $query = InventoryItem::where('quantity', '>', 0);
+
+         // Search Filter
+         if ($request->filled('search')) {
+             $term = trim($request->input('search'));
+             $query->where(function ($q) use ($term) {
+                 $q->where('name', 'like', "%{$term}%")
+                   ->orWhere('brand', 'like', "%{$term}%")
+                   ->orWhere('model', 'like', "%{$term}%")
+                   ->orWhere('description', 'like', "%{$term}%")
+                   ->orWhere('category', 'like', "%{$term}%");
+             });
+         }
+
+         // Category Filter
+         if ($request->filled('category') && $request->input('category') !== 'all') {
+             $query->where('category', $request->input('category'));
+         }
+
+         // Brand Filter
+         if ($request->filled('brand')) {
+             $query->where('brand', $request->input('brand'));
+         }
+
+         // Sorting
+         $sort = $request->input('sort', 'latest');
+         if ($sort === 'price_asc') {
+             $query->orderBy('sale_price', 'asc');
+         } elseif ($sort === 'price_desc') {
+             $query->orderBy('sale_price', 'desc');
+         } elseif ($sort === 'name_asc') {
+             $query->orderBy('name', 'asc');
+         } else {
+             $query->latest();
+         }
+
+         $products = $query->paginate(24)->withQueryString();
+         $shopSettings = $this->getShopSettings();
+
+         // Categories from DB Category model and InventoryItem
+         $dbCategories = Category::where('status', 'active')->pluck('name')->toArray();
+         $itemCategories = InventoryItem::distinct()->pluck('category')->filter()->toArray();
+         $categories = array_values(array_unique(array_merge($dbCategories, $itemCategories)));
+
+         // Brands
+         $brands = InventoryItem::distinct()->pluck('brand')->filter()->values()->toArray();
+
+         // Featured Deals & New Arrivals
+         $featuredProducts = InventoryItem::where('quantity', '>', 0)->inRandomOrder()->take(8)->get();
+         $dealProducts = InventoryItem::where('quantity', '>', 0)->whereNotNull('sale_price')->latest()->take(6)->get();
+
+         return view('products', compact('products', 'shopSettings', 'categories', 'brands', 'featuredProducts', 'dealProducts'));
+    }
+
+    /**
+     * Show Product Details (Mobikart Product Single page).
+     */
+    public function productSingle(Request $request, $id = null)
     {
-        $query = InventoryItem::where('quantity', '>', 0);
-
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . trim($request->input('search')) . '%');
+        $product = null;
+        if ($id) {
+            $product = InventoryItem::find($id);
         }
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->input('category'));
-        }
+        // Related Products
+        $relatedProducts = InventoryItem::when($id, function($q) use ($id) {
+                return $q->where('id', '!=', $id);
+            })
+            ->where('quantity', '>', 0)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
 
-        $products = $query->orderBy('name', 'asc')->paginate(16)->withQueryString();
         $shopSettings = $this->getShopSettings();
-        $categories = InventoryItem::distinct()->pluck('category')->filter()->values();
 
-        return view('products', compact('products', 'shopSettings', 'categories'));
+        return view('product-single', compact('product', 'relatedProducts', 'shopSettings'));
     }
 
     /**

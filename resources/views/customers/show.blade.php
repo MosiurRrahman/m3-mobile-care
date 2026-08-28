@@ -53,7 +53,7 @@
                             </div>
                             <div class="text-center text-md-start">
                                 <h5 class="fw-bold text-dark mb-1">{{ $customer->name }}</h5>
-                                <span class="badge bg-label-primary px-2.5 py-1 rounded-pill" style="font-size: 0.75rem;">Registered Customer</span>
+                                <span class="badge bg-label-primary px-2 py-1 rounded-pill" style="font-size: 0.75rem;">Registered Customer</span>
                             </div>
                         </div>
                     </div>
@@ -62,25 +62,25 @@
                     <div class="col-md-5 border-end-md pb-3 pb-md-0">
                         <div class="row g-3">
                             <div class="col-sm-6">
-                                <span class="small text-muted d-block mb-0.5"><i class="ti tabler-phone text-primary me-1 fs-5"></i>Phone</span>
+                                <span class="small text-muted d-block mb-1"><i class="ti tabler-phone text-primary me-1 fs-5"></i>Phone</span>
                                 <a href="tel:{{ $customer->phone }}" class="fw-bold text-dark text-decoration-none">{{ $customer->phone }}</a>
                             </div>
                             @if($customer->alt_phone)
                             <div class="col-sm-6">
-                                <span class="small text-muted d-block mb-0.5"><i class="ti tabler-phone text-muted me-1 fs-5"></i>Alt Phone</span>
+                                <span class="small text-muted d-block mb-1"><i class="ti tabler-phone text-muted me-1 fs-5"></i>Alt Phone</span>
                                 <span class="fw-bold text-dark">{{ $customer->alt_phone }}</span>
                             </div>
                             @endif
                             <div class="col-sm-6">
-                                <span class="small text-muted d-block mb-0.5"><i class="ti tabler-mail text-success me-1 fs-5"></i>Email</span>
+                                <span class="small text-muted d-block mb-1"><i class="ti tabler-mail text-success me-1 fs-5"></i>Email</span>
                                 <span class="fw-bold text-dark text-break">{{ $customer->email ?? 'N/A' }}</span>
                             </div>
                             <div class="col-sm-6">
-                                <span class="small text-muted d-block mb-0.5"><i class="ti tabler-map-pin text-danger me-1 fs-5"></i>District</span>
+                                <span class="small text-muted d-block mb-1"><i class="ti tabler-map-pin text-danger me-1 fs-5"></i>District</span>
                                 <span class="fw-bold text-dark">{{ $customer->district ?? 'N/A' }}</span>
                             </div>
                             <div class="col-12">
-                                <span class="small text-muted d-block mb-0.5"><i class="ti tabler-map text-warning me-1 fs-5"></i>Address</span>
+                                <span class="small text-muted d-block mb-1"><i class="ti tabler-map text-warning me-1 fs-5"></i>Address</span>
                                 <span class="fw-bold text-dark small text-wrap d-block">{{ $customer->address ?? 'N/A' }}</span>
                             </div>
                         </div>
@@ -90,13 +90,13 @@
                     <div class="col-md-4">
                         <div class="row g-2">
                             <div class="col-6">
-                                <div class="p-2.5 rounded bg-label-success text-center border-xs-success" style="border: 1px solid rgba(46, 204, 113, 0.1) !important;">
+                                <div class="p-2 rounded bg-label-success text-center border-xs-success" style="border: 1px solid rgba(46, 204, 113, 0.1) !important;">
                                     <span class="text-muted d-block small mb-1">Total Paid</span>
                                     <h5 class="fw-bold text-success mb-0">{{ number_format($totalSpent, 2) }} ৳</h5>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="p-2.5 rounded bg-label-danger text-center border-xs-danger" style="border: 1px solid rgba(231, 76, 60, 0.1) !important;">
+                                <div class="p-2 rounded bg-label-danger text-center border-xs-danger" style="border: 1px solid rgba(231, 76, 60, 0.1) !important;">
                                     <span class="text-muted d-block small mb-1">Total Due</span>
                                     <h5 class="fw-bold text-danger mb-0">{{ number_format($totalDue, 2) }} ৳</h5>
                                 </div>
@@ -107,7 +107,7 @@
                                         <i class="ti tabler-tool text-info fs-4" style="color: #3498db !important;"></i>
                                         <span class="fw-bold text-dark small">Active repairs</span>
                                     </div>
-                                    <span class="badge bg-info rounded-pill px-2.5 py-1 text-white fw-bold" style="background-color: #3498db !important;">{{ $activeRepairsCount }}</span>
+                                    <span class="badge bg-info rounded-pill px-2 py-1 text-white fw-bold" style="background-color: #3498db !important;">{{ $activeRepairsCount }}</span>
                                 </div>
                             </div>
                         </div>
@@ -132,11 +132,11 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="py-2.5 ps-3">ID / Reference</th>
-                                <th class="py-2.5">Due Type</th>
-                                <th class="py-2.5">Product & Service Details</th>
-                                <th class="py-2.5">Outstanding Due</th>
-                                <th class="py-2.5 text-end pe-3">Action</th>
+                                <th class="py-2 ps-3">ID / Reference</th>
+                                <th class="py-2">Due Type</th>
+                                <th class="py-2">Product & Service Details</th>
+                                <th class="py-2">Outstanding Due</th>
+                                <th class="py-2 text-end pe-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -242,7 +242,7 @@
                                                 'cancelled' => 'bg-label-danger'
                                             ];
                                         @endphp
-                                        <span class="badge {{ $badges[$repair->status] ?? 'bg-label-secondary' }} px-2.5 py-1 rounded">
+                                        <span class="badge {{ $badges[$repair->status] ?? 'bg-label-secondary' }} px-2 py-1 rounded">
                                             {{ ucfirst(str_replace('_', ' ', $repair->status)) }}
                                         </span>
                                     </td>
@@ -252,7 +252,7 @@
                                                 <div class="text-dark">Bill: <span class="fw-bold">{{ number_format($repair->actual_cost, 2) }} ৳</span></div>
                                                 <div class="text-success">Paid: <span class="fw-bold">{{ number_format($repair->paid_amount, 2) }} ৳</span></div>
                                                 @if($repair->due_amount > 0)
-                                                    <div class="text-danger mt-0.5">Due: <span class="fw-bold px-1.5 py-0.5 bg-light-danger rounded text-danger" style="font-size: 0.75rem;">{{ number_format($repair->due_amount, 2) }} ৳</span></div>
+                                                    <div class="text-danger mt-1">Due: <span class="fw-bold px-2 py-1 bg-light-danger rounded text-danger" style="font-size: 0.75rem;">{{ number_format($repair->due_amount, 2) }} ৳</span></div>
                                                 @endif
                                             @else
                                                 <div class="text-muted">Est: {{ number_format($repair->estimated_cost, 2) }} ৳</div>
@@ -271,7 +271,7 @@
                                             @endphp
                                             @if($isWarrantyValid)
                                                 <span class="badge bg-label-success rounded-pill" title="Expires {{ $warrantyExpires->format('M d, Y') }}">
-                                                    <i class="ti tabler-shield-check me-0.5 small"></i>Valid
+                                                    <i class="ti tabler-shield-check me-1 small"></i>Valid
                                                 </span>
                                             @else
                                                 <span class="badge bg-label-danger rounded-pill">Expired</span>
@@ -281,13 +281,13 @@
                                         @endif
                                     </td>
                                     <td class="text-end pe-4">
-                                        <div class="d-inline-flex gap-1.5 align-items-center">
+                                        <div class="d-inline-flex gap-1 align-items-center">
                                             @if($repair->due_amount > 0)
-                                                <button type="button" class="btn btn-sm btn-warning pay-due-btn px-2.5 py-1 rounded text-dark" data-id="{{ $repair->id }}" data-invoice="{{ $repair->ticket_id }}" data-due="{{ $repair->due_amount }}" data-type="repair" data-bs-toggle="modal" data-bs-target="#payDueModal" title="Pay Due Balance">
+                                                <button type="button" class="btn btn-sm btn-warning pay-due-btn px-2 py-1 rounded text-dark" data-id="{{ $repair->id }}" data-invoice="{{ $repair->ticket_id }}" data-due="{{ $repair->due_amount }}" data-type="repair" data-bs-toggle="modal" data-bs-target="#payDueModal" title="Pay Due Balance">
                                                     <i class="ti tabler-cash me-1 fs-6"></i>Pay Due
                                                 </button>
                                             @endif
-                                            <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-outline-info rounded" title="View Ticket Details"><i class="ti tabler-eye"></i></a>
+                                            <a href="{{ route('admin.repairs.show', $repair->id) }}" class="btn btn-icon btn-sm btn-label-info rounded" title="View Ticket Details"><i class="ti tabler-eye"></i></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -344,16 +344,16 @@
                                             <span class="text-muted small">0.00 ৳</span>
                                         @endif
                                     </td>
-                                    <td><span class="badge bg-label-primary px-2.5 py-1 rounded">{{ $sale->payment_method }}</span></td>
+                                    <td><span class="badge bg-label-primary px-2 py-1 rounded">{{ $sale->payment_method }}</span></td>
                                     <td><span class="small text-muted">{{ $sale->created_at->format('M d, Y') }}</span></td>
                                     <td class="text-end pe-4">
-                                        <div class="d-inline-flex gap-1.5 align-items-center">
+                                        <div class="d-inline-flex gap-1 align-items-center">
                                             @if($sale->due_amount > 0)
-                                                <button type="button" class="btn btn-sm btn-success pay-due-btn px-2.5 py-1 rounded" data-id="{{ $sale->id }}" data-invoice="{{ $sale->invoice_no }}" data-due="{{ $sale->due_amount }}" data-type="sale" data-bs-toggle="modal" data-bs-target="#payDueModal" title="Pay Due Balance">
+                                                <button type="button" class="btn btn-sm btn-success pay-due-btn px-2 py-1 rounded" data-id="{{ $sale->id }}" data-invoice="{{ $sale->invoice_no }}" data-due="{{ $sale->due_amount }}" data-type="sale" data-bs-toggle="modal" data-bs-target="#payDueModal" title="Pay Due Balance">
                                                     <i class="ti tabler-cash me-1 fs-6"></i>Pay Due
                                                 </button>
                                             @endif
-                                            <a href="{{ route('admin.pos.invoice', $sale->id) }}" target="_blank" class="btn btn-icon btn-sm btn-outline-info rounded" title="Invoice Print"><i class="ti tabler-printer"></i></a>
+                                            <a href="{{ route('admin.pos.invoice', $sale->id) }}" target="_blank" class="btn btn-icon btn-sm btn-label-secondary rounded" title="Invoice Print"><i class="ti tabler-printer"></i></a>
                                         </div>
                                     </td>
                                 </tr>

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Sale;
 use App\Models\Repair;
 use App\Models\Expense;
+use App\Models\PaymentLog;
+use App\Models\SpecialOrder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -40,30 +42,110 @@ class CashController extends Controller
             : false;
 
         // Calculate opening balance (cumulative inflow - outflow before start_date)
-        $posInflowBefore = 0;
-        $repairAdvanceBefore = 0;
-        $repairFinalBefore = 0;
-        $expensesBefore = 0;
+        $paymentLogsBeforeQuery = PaymentLog::where('payment_method', $paymentMethod)
+            ->where('created_at', '<', $startDate . ' 00:00:00');
 
+        if ($registerType === 'pos') {
+            $paymentLogsBeforeQuery->where('payable_type', 'App\\Models\\Sale');
+        } elseif ($registerType === 'service') {
+            $paymentLogsBeforeQuery->where('payable_type', 'App\\Models\\Repair');
+        }
+
+        $inflowBefore = $paymentLogsBeforeQuery->sum('amount');
+        $legacyInflowBefore = 0;
+        $legacyTransactions = collect();
+
+        // Legacy / direct model fallback
         if ($registerType === 'pos' || $registerType === 'combined') {
-            $posInflowBefore = Sale::where('payment_method', $paymentMethod)
+            $legacySalesBefore = Sale::whereDoesntHave('paymentLogs')
+                ->where('payment_method', $paymentMethod)
                 ->where('created_at', '<', $startDate . ' 00:00:00')
                 ->sum('paid_amount');
+            $legacyInflowBefore += $legacySalesBefore;
+
+            $legacySales = Sale::with('customer')
+                ->whereDoesntHave('paymentLogs')
+                ->where('payment_method', $paymentMethod)
+                ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+                ->get()
+                ->map(function($sale) {
+                    return [
+                        'date' => $sale->created_at,
+                        'type' => 'POS Sale',
+                        'ref' => $sale->invoice_no,
+                        'customer' => $sale->customer->name ?? 'Walk-in Customer',
+                        'inflow' => floatval($sale->paid_amount),
+                        'outflow' => 0,
+                        'payment_method' => $sale->payment_method
+                    ];
+                });
+            $legacyTransactions = $legacyTransactions->concat($legacySales);
         }
 
         if ($registerType === 'service' || $registerType === 'combined') {
-            $repairAdvanceBefore = Repair::where('advance_payment_method', $paymentMethod)
+            $legacyRepairAdvanceBefore = Repair::whereDoesntHave('paymentLogs')
+                ->where('advance_payment_method', $paymentMethod)
                 ->where('created_at', '<', $startDate . ' 00:00:00')
                 ->sum('advance_payment');
 
-            $repairFinalBefore = Repair::where('payment_method', $paymentMethod)
+            $legacyRepairFinalBefore = Repair::whereDoesntHave('paymentLogs')
+                ->where('payment_method', $paymentMethod)
                 ->whereIn('status', ['completed', 'delivered'])
                 ->where('completed_at', '<', $startDate . ' 00:00:00')
                 ->get()
                 ->sum(function($r) {
                     return floatval($r->actual_cost) - floatval($r->advance_payment);
                 });
+
+            $legacyInflowBefore += ($legacyRepairAdvanceBefore + $legacyRepairFinalBefore);
+
+            $legacyRepairAdvances = Repair::with('customer')
+                ->whereDoesntHave('paymentLogs')
+                ->where('advance_payment_method', $paymentMethod)
+                ->where('advance_payment', '>', 0)
+                ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+                ->get()
+                ->map(function($repair) use ($paymentMethod) {
+                    return [
+                        'date' => $repair->created_at,
+                        'type' => 'Repair Advance',
+                        'ref' => $repair->ticket_id,
+                        'customer' => $repair->customer->name ?? 'Walk-in Customer',
+                        'inflow' => floatval($repair->advance_payment),
+                        'outflow' => 0,
+                        'payment_method' => $paymentMethod
+                    ];
+                });
+
+            $legacyRepairFinals = Repair::with('customer')
+                ->whereDoesntHave('paymentLogs')
+                ->where('payment_method', $paymentMethod)
+                ->whereIn('status', ['completed', 'delivered'])
+                ->where(function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('completed_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+                      ->orWhere(function($q2) use ($startDate, $endDate) {
+                          $q2->whereNull('completed_at')
+                             ->whereBetween('updated_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+                      });
+                })
+                ->get()
+                ->map(function($repair) use ($paymentMethod) {
+                    $finalPayment = floatval($repair->actual_cost) - floatval($repair->advance_payment);
+                    return [
+                        'date'           => $repair->completed_at ?? $repair->updated_at,
+                        'type'           => $finalPayment < 0 ? 'Repair Refund / Change' : 'Repair Final Payment',
+                        'ref'            => $repair->ticket_id,
+                        'customer'       => $repair->customer->name ?? 'Walk-in Customer',
+                        'inflow'         => $finalPayment,
+                        'outflow'        => 0,
+                        'payment_method' => $paymentMethod
+                    ];
+                });
+
+            $legacyTransactions = $legacyTransactions->concat($legacyRepairAdvances)->concat($legacyRepairFinals);
         }
+
+        $expensesBefore = 0;
 
         if ($paymentMethod === 'Cash') {
             $expensesQuery = Expense::where('expense_date', '<', $startDate);
@@ -90,70 +172,64 @@ class CashController extends Controller
             }
         }
 
-        $openingBalance = ($posInflowBefore + $repairAdvanceBefore + $repairFinalBefore) - $expensesBefore;
+        $openingBalance = ($inflowBefore + $legacyInflowBefore) - $expensesBefore;
 
         // Fetch details for the selected period
-        $posSales = collect();
-        if ($registerType === 'pos' || $registerType === 'combined') {
-            $posSales = Sale::where('payment_method', $paymentMethod)
-                ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-                ->get()
-                ->map(function($sale) {
-                    return [
-                        'date' => $sale->created_at,
-                        'type' => 'POS Sale',
-                        'ref' => $sale->invoice_no,
-                        'customer' => $sale->customer->name ?? 'Walk-in Customer',
-                        'inflow' => $sale->paid_amount,
-                        'outflow' => 0,
-                        'payment_method' => $sale->payment_method
-                    ];
-                });
+        $paymentLogsQuery = PaymentLog::with('payable')
+            ->where('payment_method', $paymentMethod)
+            ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+
+        if ($registerType === 'pos') {
+            $paymentLogsQuery->where('payable_type', 'App\\Models\\Sale');
+        } elseif ($registerType === 'service') {
+            $paymentLogsQuery->where('payable_type', 'App\\Models\\Repair');
         }
 
-        $repairAdvances = collect();
-        $repairFinals = collect();
-        if ($registerType === 'service' || $registerType === 'combined') {
-            $repairAdvances = Repair::where('advance_payment_method', $paymentMethod)
-                ->where('advance_payment', '>', 0)
-                ->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-                ->get()
-                ->map(function($repair) use ($paymentMethod) {
-                    return [
-                        'date' => $repair->created_at,
-                        'type' => 'Repair Advance',
-                        'ref' => $repair->ticket_id,
-                        'customer' => $repair->customer->name ?? 'Walk-in Customer',
-                        'inflow' => $repair->advance_payment,
-                        'outflow' => 0,
-                        'payment_method' => $paymentMethod
-                    ];
-                });
+        $inflowTransactions = $paymentLogsQuery->get()
+            ->map(function($log) {
+                $type = 'Payment';
+                $ref = 'PLOG-' . $log->id;
+                $customerName = 'Walk-in Customer';
 
-            $repairFinals = Repair::where('payment_method', $paymentMethod)
-                ->where('actual_cost', '>', 0)
-                ->whereIn('status', ['completed', 'delivered'])
-                ->where(function($q) use ($startDate, $endDate) {
-                    $q->whereBetween('completed_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
-                      ->orWhere(function($q2) use ($startDate, $endDate) {
-                          $q2->whereNull('completed_at')
-                             ->whereBetween('updated_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
-                      });
-                })
-                ->get()
-                ->map(function($repair) use ($paymentMethod) {
-                    $finalPayment = floatval($repair->actual_cost) - floatval($repair->advance_payment);
-                    return [
-                        'date'           => $repair->completed_at ?? $repair->updated_at,
-                        'type'           => 'Repair Final Payment',
-                        'ref'            => $repair->ticket_id,
-                        'customer'       => $repair->customer->name ?? 'Walk-in Customer',
-                        'inflow'         => $finalPayment,
-                        'outflow'        => 0,
-                        'payment_method' => $paymentMethod
-                    ];
-                });
-        }
+                if ($log->payable instanceof \App\Models\Sale) {
+                    $sale = $log->payable;
+                    $type = $log->transaction_type === 'due_payment' ? 'POS Due Payment' : 'POS Sale';
+                    $ref = $sale->invoice_no ?? ('INV-#' . $log->payable_id);
+                    $customerName = $sale->customer->name ?? 'Walk-in Customer';
+                } elseif ($log->payable instanceof \App\Models\Repair) {
+                    $repair = $log->payable;
+                    if ($log->transaction_type === 'initial') {
+                        $type = 'Repair Advance';
+                    } elseif ($log->transaction_type === 'due_payment') {
+                        $type = 'Repair Due Payment';
+                    } else {
+                        $type = 'Repair Delivery Payment';
+                    }
+                    $ref = $repair->ticket_id ?? ('M3-#' . $log->payable_id);
+                    $customerName = $repair->customer->name ?? 'Walk-in Customer';
+                } elseif ($log->payable instanceof \App\Models\SpecialOrder) {
+                    $order = $log->payable;
+                    if ($log->transaction_type === 'initial') {
+                        $type = 'Special Order Advance';
+                    } elseif ($log->transaction_type === 'due_payment') {
+                        $type = 'Special Order Due Payment';
+                    } else {
+                        $type = 'Special Order Delivery Payment';
+                    }
+                    $ref = $order->order_number ?? ('SORD-#' . $log->payable_id);
+                    $customerName = $order->customer_name ?? 'Special Order Customer';
+                }
+
+                return [
+                    'date' => $log->created_at,
+                    'type' => $type,
+                    'ref' => $ref,
+                    'customer' => $customerName,
+                    'inflow' => floatval($log->amount),
+                    'outflow' => 0,
+                    'payment_method' => $log->payment_method,
+                ];
+            });
 
         $expenses = collect();
         if ($paymentMethod === 'Cash') {
@@ -189,9 +265,8 @@ class CashController extends Controller
 
         // Merge all and sort by date descending
         $transactions = collect()
-            ->concat($posSales)
-            ->concat($repairAdvances)
-            ->concat($repairFinals)
+            ->concat($inflowTransactions)
+            ->concat($legacyTransactions)
             ->concat($expenses)
             ->sortByDesc('date');
 

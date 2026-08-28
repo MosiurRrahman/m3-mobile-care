@@ -29,7 +29,10 @@ Route::get('/services', [HomeController::class, 'services'])->name('services');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact', [HomeController::class, 'submitContact'])->name('contact.submit');
-Route::get('/products', function() { return redirect()->route('home'); })->name('products');
+Route::get('/products', [HomeController::class, 'products'])->name('products');
+Route::get('/shop', [HomeController::class, 'products'])->name('shop');
+Route::get('/product/{id?}', [HomeController::class, 'productSingle'])->name('product.single');
+Route::get('/product-single', [HomeController::class, 'productSingle'])->name('product.single.view');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/track', [HomeController::class, 'trackView'])->name('track.form');
 Route::get('/ert', [HomeController::class, 'trackView'])->name('ert');
@@ -87,16 +90,18 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Customer Special Orders / Pre-orders & Dhaka Sourced Items
-    Route::get('/admin/special-orders', [SpecialOrderController::class, 'index'])->name('admin.special-orders.index');
-    Route::get('/admin/special-orders/create', [SpecialOrderController::class, 'create'])->name('admin.special-orders.create');
-    Route::post('/admin/special-orders', [SpecialOrderController::class, 'store'])->name('admin.special-orders.store');
-    Route::get('/admin/special-orders/{id}', [SpecialOrderController::class, 'show'])->name('admin.special-orders.show');
-    Route::get('/admin/special-orders/{id}/edit', [SpecialOrderController::class, 'edit'])->name('admin.special-orders.edit');
-    Route::put('/admin/special-orders/{id}', [SpecialOrderController::class, 'update'])->name('admin.special-orders.update');
-    Route::delete('/admin/special-orders/{id}', [SpecialOrderController::class, 'destroy'])->name('admin.special-orders.destroy');
-    Route::get('/admin/special-orders/{id}/print', [SpecialOrderController::class, 'printSlip'])->name('admin.special-orders.print');
-    Route::post('/admin/special-orders/{id}/quick-status', [SpecialOrderController::class, 'quickStatus'])->name('admin.special-orders.quick-status');
-    Route::post('/admin/special-orders/{id}/pay-due', [SpecialOrderController::class, 'payDue'])->name('admin.special-orders.pay-due');
+    Route::middleware(['role:super_admin,admin,salesman'])->group(function () {
+        Route::get('/admin/special-orders', [SpecialOrderController::class, 'index'])->name('admin.special-orders.index');
+        Route::get('/admin/special-orders/create', [SpecialOrderController::class, 'create'])->name('admin.special-orders.create');
+        Route::post('/admin/special-orders', [SpecialOrderController::class, 'store'])->name('admin.special-orders.store');
+        Route::get('/admin/special-orders/{id}', [SpecialOrderController::class, 'show'])->name('admin.special-orders.show');
+        Route::get('/admin/special-orders/{id}/edit', [SpecialOrderController::class, 'edit'])->name('admin.special-orders.edit');
+        Route::put('/admin/special-orders/{id}', [SpecialOrderController::class, 'update'])->name('admin.special-orders.update');
+        Route::delete('/admin/special-orders/{id}', [SpecialOrderController::class, 'destroy'])->name('admin.special-orders.destroy');
+        Route::get('/admin/special-orders/{id}/print', [SpecialOrderController::class, 'printSlip'])->name('admin.special-orders.print');
+        Route::post('/admin/special-orders/{id}/quick-status', [SpecialOrderController::class, 'quickStatus'])->name('admin.special-orders.quick-status');
+        Route::post('/admin/special-orders/{id}/pay-due', [SpecialOrderController::class, 'payDue'])->name('admin.special-orders.pay-due');
+    });
 
     // Inventory Catalog (Parts & Accessories)
     Route::middleware(['permission:inventory'])->group(function () {
@@ -140,6 +145,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/customers/lookup', [CustomerController::class, 'lookup'])->name('admin.customers.lookup');
         Route::get('/admin/customers/{id}', [CustomerController::class, 'show'])->name('admin.customers.show');
         Route::put('/admin/customers/{id}', [CustomerController::class, 'update'])->name('admin.customers.update');
+    });
+    Route::middleware(['role:super_admin,admin'])->group(function () {
         Route::delete('/admin/customers/{id}', [CustomerController::class, 'destroy'])->name('admin.customers.destroy');
     });
 
@@ -200,6 +207,7 @@ Route::middleware(['auth'])->group(function () {
 
         // System Activity Logs
         Route::get('/admin/activity-logs', [UserController::class, 'activityLogs'])->name('admin.activity-logs.index');
+        Route::post('/admin/activity-logs/purge', [UserController::class, 'purgeActivityLogs'])->name('admin.activity-logs.purge');
 
         // Partner Profit & Capital Ledger Management
         Route::get('/admin/partner-ledger', [PartnerLedgerController::class, 'index'])->name('admin.partner-ledger.index');

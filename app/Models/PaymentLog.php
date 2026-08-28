@@ -17,6 +17,7 @@ class PaymentLog extends Model
         'payable_id',
         'payment_method',
         'amount',
+        'transaction_reference',
         'transaction_type',
     ];
 

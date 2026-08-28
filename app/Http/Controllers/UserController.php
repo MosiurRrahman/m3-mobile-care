@@ -38,7 +38,7 @@ class UserController extends Controller
         ]);
 
         $permissions = [];
-        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash'];
+        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
         foreach ($allowedPermissions as $perm) {
             $permissions[$perm] = $request->has("permissions.{$perm}");
         }
@@ -85,7 +85,7 @@ class UserController extends Controller
         ]);
 
         $permissions = [];
-        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash'];
+        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
         foreach ($allowedPermissions as $perm) {
             $permissions[$perm] = $request->has("permissions.{$perm}");
         }
@@ -237,10 +237,49 @@ class UserController extends Controller
             $query->whereDate('created_at', '<=', $request->input('end_date'));
         }
 
-        $logs = $query->orderBy('created_at', 'desc')->paginate(10);
+        $logs = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
         $users = User::orderBy('name', 'asc')->get();
+        $totalLogsCount = \App\Models\ActivityLog::count();
+        $logsOlderThan30Days = \App\Models\ActivityLog::where('created_at', '<=', now()->subDays(30))->count();
+        $logsOlderThan60Days = \App\Models\ActivityLog::where('created_at', '<=', now()->subDays(60))->count();
+        $logsOlderThan90Days = \App\Models\ActivityLog::where('created_at', '<=', now()->subDays(90))->count();
 
-        return view('users.activity-logs', compact('logs', 'users'));
+        return view('users.activity-logs', compact(
+            'logs', 
+            'users', 
+            'totalLogsCount', 
+            'logsOlderThan30Days', 
+            'logsOlderThan60Days', 
+            'logsOlderThan90Days'
+        ));
+    }
+
+    /**
+     * Purge old activity logs based on retention period (Super Admin only).
+     */
+    public function purgeActivityLogs(Request $request)
+    {
+        if (!auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized access. Only Super Admin can purge system activity logs.');
+        }
+
+        $request->validate([
+            'period' => 'required|in:30,60,90,180,all',
+        ]);
+
+        $period = $request->input('period');
+        $query = \App\Models\ActivityLog::query();
+
+        if ($period === 'all') {
+            $deletedCount = $query->delete();
+            $message = "All system activity logs ({$deletedCount} entries) have been purged successfully.";
+        } else {
+            $cutoffDate = now()->subDays((int)$period);
+            $deletedCount = $query->where('created_at', '<=', $cutoffDate)->delete();
+            $message = "Activity logs older than {$period} days ({$deletedCount} entries) have been purged successfully.";
+        }
+
+        return redirect()->route('admin.activity-logs.index')->with('success', $message);
     }
 
     /**

@@ -59,7 +59,7 @@
                 </div>
                 @if(session('whatsapp_url'))
                     <a href="{{ session('whatsapp_url') }}" target="_blank" class="btn btn-success btn-sm px-3 py-2 fw-bold text-white shadow-xs text-nowrap">
-                        <i class="ti tabler-brand-whatsapp me-1"></i> হোয়াটসঅ্যাপে মেসেজ পাঠান
+                        <i class="ti tabler-brand-whatsapp me-1"></i>হোয়াটসঅ্যাপে মেসেজ পাঠান
                     </a>
                 @endif
             </div>
@@ -116,7 +116,7 @@
         <div class="col-lg-7">
             <div class="contact-card">
                 <h4 class="fw-extrabold text-dark mb-4">মেসেজ পাঠান</h4>
-                
+
                 <!-- Dynamic AJAX Alert Box -->
                 <div id="ajaxContactAlert" class="alert alert-success alert-dismissible fade show mb-4 rounded-3 p-3 shadow-xs d-none" role="alert">
                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">

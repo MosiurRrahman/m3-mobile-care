@@ -117,10 +117,13 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input type="month" name="month" class="form-control form-control-sm" value="{{ request('month') }}" title="Pick Any Specific Month">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white text-muted px-2"><i class="ti tabler-calendar fs-6"></i></span>
+                            <input type="{{ request('month') ? 'month' : 'text' }}" name="month" class="form-control form-control-sm" value="{{ request('month') }}" placeholder="Specific Month" title="Pick Any Specific Month" onfocus="(this.type='month')" onblur="if(!this.value)this.type='text'">
+                        </div>
                     </div>
                     <div class="col-md-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-sm btn-primary w-100"><i class="ti tabler-search me-0.5"></i>Filter</button>
+                        <button type="submit" class="btn btn-sm btn-primary w-100"><i class="ti tabler-search me-1"></i>Filter</button>
                         <a href="{{ route('admin.expenses.index') }}" class="btn btn-sm btn-outline-secondary w-100">Reset</a>
                     </div>
                 </form>
@@ -154,9 +157,9 @@
                             <td><span class="text-dark">{{ $expense->description ?? 'N/A' }}</span></td>
                             <td><span class="fw-bold text-danger">{{ number_format($expense->amount, 2) }} BDT</span></td>
                             <td>{{ \Carbon\Carbon::parse($expense->expense_date)->format('M d, Y') }}</td>
-                            <td class="text-end">
-                                <div class="d-inline-flex">
-                                    <button class="btn btn-icon btn-sm btn-outline-primary me-1 edit-expense-btn" 
+                            <td class="text-end pe-3">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    <button class="btn btn-icon btn-sm btn-label-primary rounded edit-expense-btn" 
                                             data-id="{{ $expense->id }}"
                                             data-category="{{ $expense->category }}"
                                             data-amount="{{ $expense->amount }}"
@@ -168,10 +171,10 @@
                                         <i class="ti tabler-edit"></i>
                                     </button>
                                     
-                                    <form action="{{ route('admin.expenses.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense record?');">
+                                    <form action="{{ route('admin.expenses.destroy', $expense->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this expense record?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-icon btn-sm btn-outline-danger" title="Delete"><i class="ti tabler-trash"></i></button>
+                                        <button type="submit" class="btn btn-icon btn-sm btn-label-danger rounded" title="Delete"><i class="ti tabler-trash"></i></button>
                                     </form>
                                 </div>
                             </td>

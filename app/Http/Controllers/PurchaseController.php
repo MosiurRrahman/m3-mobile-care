@@ -16,11 +16,15 @@ class PurchaseController extends Controller
     /**
      * Display listing of purchases & suppliers.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = (int) $request->input('per_page', 20);
+        $perPage = in_array($perPage, [10, 20, 50, 100]) ? $perPage : 20;
+
         $purchases = Purchase::with(['supplier', 'details.item'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
             
         $suppliers = Supplier::orderBy('name', 'asc')->get();
         

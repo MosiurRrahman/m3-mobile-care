@@ -27,7 +27,7 @@ class SettingController extends Controller
 
             // SMS Gateway Configuration
             'sms_enabled' => Setting::get('sms_enabled', '1'),
-            'sms_api_key' => Setting::get('sms_api_key', 'JbOhNywIOVzaA71IMVo06'),
+            'sms_api_key' => Setting::get('sms_api_key', ''),
             'sms_sender_id' => Setting::get('sms_sender_id', ''),
             'sms_send_on_repair_create' => Setting::get('sms_send_on_repair_create', '1'),
             'sms_send_on_repair_ready' => Setting::get('sms_send_on_repair_ready', '1'),

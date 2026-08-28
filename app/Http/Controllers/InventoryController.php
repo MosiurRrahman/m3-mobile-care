@@ -163,7 +163,7 @@ class InventoryController extends Controller
             'alert_quantity' => 'required|integer|min:0',
 
             // Multiple images upload
-            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:10240',
+            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:10240',
 
             // Variable Product variants definition
             'variants' => 'required_if:product_type,variable|nullable|array',
@@ -292,7 +292,7 @@ class InventoryController extends Controller
             'alert_quantity' => 'required|integer|min:0',
 
             // Multiple images upload
-            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:10240',
+            'images.*' => 'nullable|image|mimes:jpeg,jpg,png,gif,webp|max:10240',
 
             // Variable Product variants definition
             'variants' => 'required_if:product_type,variable|nullable|array',

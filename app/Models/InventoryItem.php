@@ -50,14 +50,14 @@ class InventoryItem extends Model
     ];
 
     /**
-     * Get minimum allowed selling price (fallback to sale_price if min_sale_price is not set).
+     * Get minimum allowed selling price (fallback to purchase_price or 0 if min_sale_price is not explicitly set).
      */
     public function getEffectiveMinPriceAttribute(): float
     {
         if ($this->min_sale_price !== null && $this->min_sale_price > 0) {
             return (float) $this->min_sale_price;
         }
-        return (float) ($this->sale_price ?? 0);
+        return (float) ($this->purchase_price ?? 0);
     }
 
     /**
