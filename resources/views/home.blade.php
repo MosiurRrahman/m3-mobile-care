@@ -595,10 +595,8 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ route('track.form') }}">Track Job</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About Us</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact Us</a></li>
-                                
                             </ul>
                         </div>
-                        
                         <!-- Header Action Details Start -->
                         <div class="header-action-details">
                             <ul>
