@@ -97,6 +97,110 @@
             transform: translateY(-1px) !important;
         }
 
+        /* Hero Action Buttons & Book Repair Highlight */
+        .hero-action-buttons-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-book-repair-highlight {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 18px rgba(249, 115, 22, 0.4) !important;
+            border: none !important;
+            font-weight: 700 !important;
+            border-radius: 10px !important;
+            padding: 12px 24px !important;
+            font-size: 15px !important;
+            transition: all 0.25s ease !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-book-repair-highlight:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%) !important;
+            box-shadow: 0 6px 22px rgba(249, 115, 22, 0.5) !important;
+            transform: translateY(-2px) !important;
+            color: #ffffff !important;
+        }
+        .hero-secondary-buttons {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Mobile Sticky Floating Book Repair Button */
+        .mobile-floating-book-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 18px;
+            z-index: 1050;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 13.5px;
+            padding: 10px 18px;
+            border-radius: 50px;
+            box-shadow: 0 8px 24px rgba(249, 115, 22, 0.45);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: 2px solid #ffffff;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .mobile-floating-book-btn:hover,
+        .mobile-floating-book-btn:active {
+            transform: scale(1.05);
+            color: #ffffff !important;
+            box-shadow: 0 10px 28px rgba(249, 115, 22, 0.6);
+        }
+
+        /* Responsive Mobile Layout for Hero Buttons & Placeholders */
+        @media (max-width: 767px) {
+            .hero-action-buttons-wrap {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                gap: 10px;
+            }
+            .btn-book-repair-highlight {
+                width: 100% !important;
+                padding: 13px 20px !important;
+                font-size: 16px !important;
+                justify-content: center;
+                box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45) !important;
+            }
+            .hero-secondary-buttons {
+                display: flex;
+                width: 100%;
+                gap: 10px;
+            }
+            .hero-secondary-buttons a {
+                flex: 1;
+                justify-content: center;
+                padding: 10px 12px !important;
+                font-size: 13px !important;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .clean-search-box {
+                padding: 4px 6px 4px 12px !important;
+            }
+            .clean-search-box input {
+                font-size: 13px !important;
+            }
+            .clean-search-box button {
+                padding: 7px 12px !important;
+                font-size: 12.5px !important;
+            }
+        }
+
         /* Logo Sizing */
         .navbar-brand img {
             max-width: 240px !important;
@@ -224,6 +328,10 @@
             color: var(--brand-dark) !important;
             outline: none !important;
             box-shadow: none !important;
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            text-overflow: ellipsis;
         }
 
         /* Clean Cards */
@@ -372,7 +480,7 @@
                     <div class="header-search-form-box">
                         <form class="header-search-form" id="headerForm" action="{{ route('products') }}" method="GET">
                             <div class="form-group">
-                                <input type="text" name="search" class="form-control" placeholder="Search products, repair services, accessories..." value="{{ request('search') }}" required>
+                                <input type="text" name="search" class="form-control" placeholder="Search products, repairs..." value="{{ request('search') }}" required>
                                 <button type="submit" class="header-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
                             </div>
                         </form>
@@ -487,6 +595,12 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ route('track.form') }}">Track Job</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About Us</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact Us</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold" href="{{ route('book.form') }}" style="color: #f97316 !important;">
+                                        <i class="fa-solid fa-calendar-check text-warning me-1"></i> Book Repair
+                                        <span class="badge bg-warning text-dark rounded-pill ms-1 px-2 py-0.5" style="font-size: 10px;">ONLINE</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         
@@ -532,21 +646,28 @@
                     <div class="clean-search-box">
                         <form action="{{ route('track.search') }}" method="POST" class="d-flex align-items-center justify-content-between w-100">
                             @csrf
-                            <input type="text" name="ticket_id" placeholder="Enter 6-digit Ticket ID / Mobile No..." required>
+                            <input type="text" name="ticket_id" placeholder="Ticket ID / Mobile No..." required>
                             <button type="submit" class="btn-default py-2 px-3 text-nowrap" style="font-size: 13.5px;">
                                 Track ERT <i class="fa-solid fa-arrow-right ms-1"></i>
                             </button>
                         </form>
                     </div>
 
-                    <!-- Clean Buttons -->
-                    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                        <a href="{{ route('products') }}" class="btn-default">
-                            <i class="fa-solid fa-bag-shopping"></i> Explore Shop Store
+                    <!-- Clean Action Buttons with Book Repair Highlighted -->
+                    <div class="hero-action-buttons-wrap mb-4">
+                        <a href="{{ route('book.form') }}" class="btn-book-repair-highlight">
+                            <i class="fa-solid fa-calendar-check text-warning fs-5"></i>
+                            <span>Book Repair</span>
+                            <span class="badge bg-white text-dark ms-1 px-2 py-0.5 rounded-pill fw-bold" style="font-size: 11px;">Fast Service</span>
                         </a>
-                        <a href="https://wa.me/8801353106967" target="_blank" class="btn-outline-minimal">
-                            <i class="fa-brands fa-whatsapp text-success fs-5"></i> WhatsApp Consultation
-                        </a>
+                        <div class="hero-secondary-buttons">
+                            <a href="{{ route('products') }}" class="btn-outline-minimal">
+                                <i class="fa-solid fa-bag-shopping"></i> Explore Shop
+                            </a>
+                            <a href="https://wa.me/8801353106967" target="_blank" class="btn-outline-minimal">
+                                <i class="fa-brands fa-whatsapp text-success fs-5"></i> WhatsApp
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Trust Stats Row -->
@@ -1022,7 +1143,32 @@
                     },
                 });
             }
+
+            // Dynamically adjust placeholder texts on responsive screens to prevent overflow
+            function updateResponsivePlaceholders() {
+                const searchInput = document.querySelector('.header-search-form input[name="search"]');
+                const trackInput = document.querySelector('.clean-search-box input[name="ticket_id"]');
+                
+                if (window.innerWidth <= 480) {
+                    if (searchInput) searchInput.placeholder = "Search products...";
+                    if (trackInput) trackInput.placeholder = "Ticket ID / Mobile...";
+                } else if (window.innerWidth <= 768) {
+                    if (searchInput) searchInput.placeholder = "Search products, repairs...";
+                    if (trackInput) trackInput.placeholder = "Ticket ID / Mobile No...";
+                } else {
+                    if (searchInput) searchInput.placeholder = "Search products, repairs...";
+                    if (trackInput) trackInput.placeholder = "Ticket ID / Mobile No...";
+                }
+            }
+            updateResponsivePlaceholders();
+            window.addEventListener('resize', updateResponsivePlaceholders);
         });
     </script>
+
+    <!-- Mobile Floating Sticky Book Repair Button (Visible on mobile/tablet screens) -->
+    <a href="{{ route('book.form') }}" class="mobile-floating-book-btn d-lg-none" title="Book Repair Online">
+        <i class="fa-solid fa-calendar-check text-warning"></i>
+        <span>Book Repair</span>
+    </a>
 </body>
 </html>

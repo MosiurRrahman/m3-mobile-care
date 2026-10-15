@@ -77,6 +77,10 @@ class RepairController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->canCreateJobCard()) {
+            return redirect()->route('admin.repairs.index')->with('error', 'You do not have permission to create job cards.');
+        }
+
         $customers = Customer::orderBy('name', 'asc')->get();
         $technicians = User::where('role', 'technician')->orderBy('name', 'asc')->get();
         $services = Service::all();
@@ -89,6 +93,10 @@ class RepairController extends Controller
      */
     public function store(Request $request)
     {
+        if (!auth()->user()->canCreateJobCard()) {
+            return redirect()->route('admin.repairs.index')->with('error', 'You do not have permission to create job cards.');
+        }
+
         $request->validate([
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:20',
@@ -98,7 +106,7 @@ class RepairController extends Controller
             'serial_imei' => 'nullable|string|max:100',
             'issue_description' => 'required|string',
             'password_pattern' => 'nullable|string|max:255',
-            'repair_charge' => 'required|numeric|min:0',
+            'repair_charge' => 'nullable|numeric|min:0',
             'estimated_cost' => 'nullable|numeric|min:0',
             'advance_payment' => 'nullable|numeric|min:0',
             'advance_payment_method' => 'nullable|string|in:Cash,bKash,Nagad,Rocket',
@@ -232,7 +240,7 @@ class RepairController extends Controller
                     'paid_amount' => $advancePayment,
                     'due_amount' => 0.00,
                     'status' => $status,
-                    'assigned_technician_id' => $request->input('assigned_technician_id'),
+                    'assigned_technician_id' => $request->input('assigned_technician_id') ?: (auth()->user()->isTechnician() ? auth()->id() : null),
                     'expected_delivery_date' => $request->input('expected_delivery_date'),
                     'technician_notes' => $request->input('technician_notes'),
                     'branch' => auth()->user()->branch,
@@ -348,7 +356,7 @@ class RepairController extends Controller
                 'serial_imei' => 'nullable|string|max:100',
                 'issue_description' => 'required|string',
                 'password_pattern' => 'nullable|string|max:255',
-                'repair_charge' => 'required|numeric|min:0',
+                'repair_charge' => 'nullable|numeric|min:0',
                 'estimated_cost' => 'nullable|numeric|min:0',
                 'advance_payment' => 'nullable|numeric|min:0',
                 'advance_payment_method' => 'nullable|string|in:Cash,bKash,Nagad,Rocket',

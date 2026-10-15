@@ -124,7 +124,7 @@
                             <i class="ti tabler-circle-check fs-2 text-success me-2.5"></i>
                             <div>
                                 <strong class="d-block text-dark fw-bold">বার্তা সফলভাবে পাঠানো হয়েছে!</strong>
-                                <span id="ajaxAlertMessage" class="text-secondary small">আপনার বার্তাটি সংরক্ষিত হয়েছে এবং হোয়াটসঅ্যাপে পাঠানো হচ্ছে...</span>
+                                <span id="ajaxAlertMessage" class="text-secondary small">আপনাকে সরাসরি হোয়াটসঅ্যাপে রিডাইরেক্ট করা হচ্ছে...</span>
                             </div>
                         </div>
                         <a id="ajaxAlertWaBtn" href="#" target="_blank" class="btn btn-success btn-sm px-3 py-2 fw-bold text-white shadow-xs text-nowrap">
@@ -216,7 +216,7 @@
 
                 // Show success in UI
                 alertBox.classList.remove('d-none');
-                alertMessage.textContent = 'আপনার বার্তাটি অ্যাডমিন প্যানেলে সংরক্ষিত হয়েছে। হোয়াটসঅ্যাপে সেন্ড করুন...';
+                alertMessage.textContent = 'আপনার বার্তা প্রস্তুত হয়েছে। হোয়াটসঅ্যাপে সেন্ড করুন...';
                 alertWaBtn.href = targetWaUrl;
 
                 // Reset form fields

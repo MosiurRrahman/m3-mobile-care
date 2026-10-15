@@ -7,10 +7,10 @@ use App\Models\Service;
 use App\Models\Customer;
 use App\Models\InventoryItem;
 use App\Models\Setting;
-use App\Models\ContactMessage;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\Services\SmsService;
 
 class HomeController extends Controller
@@ -88,7 +88,32 @@ class HomeController extends Controller
     }
 
     /**
-     * Handle online repair booking submission.
+     * AJAX endpoint to lookup existing customer by phone number.
+     */
+    public function customerLookupAjax(Request $request)
+    {
+        $phone = trim($request->input('phone', ''));
+        if (strlen($phone) < 6) {
+            return response()->json(['found' => false]);
+        }
+        $cleanPhone = preg_replace('/[^\d+]/', '', $phone);
+        $customer = Customer::where('phone', $cleanPhone)
+            ->orWhere('phone', $phone)
+            ->first();
+
+        if ($customer) {
+            return response()->json([
+                'found' => true,
+                'name' => $customer->name,
+                'email' => $customer->email,
+            ]);
+        }
+
+        return response()->json(['found' => false]);
+    }
+
+    /**
+     * Handle online repair booking submission with multiple devices support.
      */
     public function book(Request $request)
     {
@@ -96,65 +121,145 @@ class HomeController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'customer_email' => 'nullable|email|max:255',
-            'device_brand' => 'required|string|max:100',
-            'device_model' => 'required|string|max:100',
+            // Multiple devices array support
+            'devices' => 'nullable|array|min:1',
+            'devices.*.brand' => 'required_with:devices|string|max:100',
+            'devices.*.model' => 'required_with:devices|string|max:100',
+            'devices.*.serial_imei' => 'nullable|string|max:100',
+            'devices.*.issue_description' => 'required_with:devices|string',
+            'devices.*.estimated_cost' => 'nullable|numeric|min:0',
+            'devices.*.service_id' => 'nullable',
+            // Fallback for single legacy device
+            'device_brand' => 'required_without:devices|string|max:100',
+            'device_model' => 'required_without:devices|string|max:100',
             'serial_imei' => 'nullable|string|max:100',
-            'issue_description' => 'required|string',
+            'issue_description' => 'required_without:devices|string',
             'estimated_cost' => 'nullable|numeric|min:0',
         ]);
 
-        // Generate unique Ticket ID
-        do {
-            $ticketId = 'M3-' . date('Ym') . '-' . strtoupper(Str::random(4));
-        } while (Repair::where('ticket_id', $ticketId)->exists());
-
-        // Calculate estimated cost: if a service was specified, we can auto-fill or use a default
-        $estimatedCost = $request->input('estimated_cost', 0);
-        if (!$estimatedCost) {
-            // Check if service name is standard and get price from DB
-            $matchedService = Service::where('name', 'like', '%' . $request->input('device_model') . '%')->first();
-            $estimatedCost = $matchedService ? $matchedService->price : 0;
+        $rawDevices = $request->input('devices');
+        if (empty($rawDevices) || !is_array($rawDevices)) {
+            $rawDevices = [
+                [
+                    'brand' => $request->input('device_brand'),
+                    'model' => $request->input('device_model'),
+                    'serial_imei' => $request->input('serial_imei'),
+                    'issue_description' => $request->input('issue_description'),
+                    'estimated_cost' => $request->input('estimated_cost', 0),
+                    'service_id' => $request->input('service_type'),
+                ]
+            ];
         }
 
+        // Clean customer phone
+        $rawPhone = trim($request->input('customer_phone'));
+        $cleanPhone = preg_replace('/[^\d+]/', '', $rawPhone);
+
         // Find or create customer
-        $customer = Customer::firstOrCreate(
-            ['phone' => trim($request->input('customer_phone'))],
-            [
+        $customer = Customer::where('phone', $cleanPhone)
+            ->orWhere('phone', $rawPhone)
+            ->first();
+
+        if (!$customer) {
+            $customer = Customer::create([
                 'name' => trim($request->input('customer_name')),
-                'email' => trim($request->input('customer_email')),
-            ]
-        );
+                'phone' => $cleanPhone ?: $rawPhone,
+                'email' => trim($request->input('customer_email')) ?: null,
+            ]);
+        } else {
+            $updates = [];
+            if ($request->filled('customer_name') && (empty($customer->name) || $customer->name === 'Walk-in Customer')) {
+                $updates['name'] = trim($request->input('customer_name'));
+            }
+            if ($request->filled('customer_email') && empty($customer->email)) {
+                $updates['email'] = trim($request->input('customer_email'));
+            }
+            if (!empty($updates)) {
+                $customer->update($updates);
+            }
+        }
 
-        $repair = Repair::create([
-            'ticket_id' => $ticketId,
-            'customer_id' => $customer->id,
-            'device_brand' => $request->input('device_brand'),
-            'device_model' => $request->input('device_model'),
-            'serial_imei' => $request->input('serial_imei'),
-            'issue_description' => $request->input('issue_description'),
-            'estimated_cost' => $estimatedCost,
-            'status' => 'pending',
-        ]);
+        $createdRepairs = [];
+        $ticketIds = [];
 
-        // Dispatch tracking SMS notification
+        DB::transaction(function () use ($rawDevices, $customer, &$createdRepairs, &$ticketIds) {
+            foreach ($rawDevices as $dev) {
+                // Generate unique Ticket ID
+                do {
+                    $ticketId = 'M3-' . date('Ym') . '-' . strtoupper(Str::random(4));
+                } while (Repair::where('ticket_id', $ticketId)->exists());
+
+                $estCost = floatval($dev['estimated_cost'] ?? 0);
+                if (!$estCost && !empty($dev['service_id'])) {
+                    $srv = Service::find($dev['service_id']);
+                    if ($srv) {
+                        $estCost = $srv->price;
+                    }
+                }
+                if (!$estCost && !empty($dev['model'])) {
+                    $matchedService = Service::where('name', 'like', '%' . $dev['model'] . '%')->first();
+                    $estCost = $matchedService ? $matchedService->price : 0;
+                }
+
+                $repair = Repair::create([
+                    'ticket_id' => $ticketId,
+                    'customer_id' => $customer->id,
+                    'device_brand' => trim($dev['brand'] ?? 'Other'),
+                    'device_model' => trim($dev['model'] ?? 'Unknown Model'),
+                    'serial_imei' => !empty($dev['serial_imei']) ? trim($dev['serial_imei']) : null,
+                    'issue_description' => trim($dev['issue_description'] ?? 'Repair appointment'),
+                    'estimated_cost' => $estCost,
+                    'status' => 'pending',
+                ]);
+
+                $createdRepairs[] = $repair;
+                $ticketIds[] = $repair->ticket_id;
+            }
+        });
+
+        // Dispatch tracking SMS notification for each repair
         try {
-            $repair->load('customer');
-            SmsService::sendRepairCreatedSms($repair);
+            foreach ($createdRepairs as $repair) {
+                $repair->load('customer');
+                SmsService::sendRepairCreatedSms($repair);
+            }
         } catch (\Throwable $smsEx) {
             // Suppress SMS exceptions
         }
 
-        return redirect()->route('book.success', ['ticket_id' => $repair->ticket_id])
-            ->with('success', 'Repair request booked successfully and Tracking SMS sent!');
+        $count = count($ticketIds);
+        $primaryTicket = $ticketIds[0];
+        $msg = $count > 1 
+            ? "{$count}টি মোবাইল সফলভাবে বুকিং সম্পন্ন হয়েছে! প্রতিটির জন্য ট্র্যাকিং কোড তৈরি হয়েছে।"
+            : 'Repair request booked successfully and Tracking SMS sent!';
+
+        return redirect()->route('book.success', ['ticket_id' => $primaryTicket, 'tickets' => implode(',', $ticketIds)])
+            ->with('all_ticket_ids', $ticketIds)
+            ->with('success', $msg);
     }
 
     /**
      * Show booking success page.
      */
-    public function bookingSuccess($ticket_id)
+    public function bookingSuccess(Request $request, $ticket_id)
     {
-        $repair = Repair::where('ticket_id', $ticket_id)->firstOrFail();
-        return view('booking-success', compact('repair'));
+        $allIds = session('all_ticket_ids');
+        if (empty($allIds) && $request->filled('tickets')) {
+            $allIds = array_filter(explode(',', $request->query('tickets')));
+        }
+        if (empty($allIds)) {
+            $allIds = [$ticket_id];
+        }
+
+        $repairs = Repair::with('customer')->whereIn('ticket_id', $allIds)->get();
+        if ($repairs->isEmpty()) {
+            $repair = Repair::where('ticket_id', $ticket_id)->firstOrFail();
+            $repairs = collect([$repair]);
+        }
+
+        $repair = $repairs->first();
+
+        return view('booking-success', compact('repair', 'repairs'));
     }
 
     /**
@@ -200,15 +305,7 @@ class HomeController extends Controller
         $phone = trim($request->input('phone'));
         $message = trim($request->input('message'));
 
-        // 1. Save to Admin database (ContactMessage)
-        ContactMessage::create([
-            'name' => $name,
-            'phone' => $phone,
-            'message' => $message,
-            'status' => 'unread',
-        ]);
-
-        // 2. Build WhatsApp direct URL for shop owner
+        // Build WhatsApp direct URL for shop owner
         $shopWa = Setting::get('whatsapp', '+8801353106967');
         $cleanWa = preg_replace('/[^0-9]/', '', $shopWa);
         if (str_starts_with($cleanWa, '01')) {
@@ -221,13 +318,13 @@ class HomeController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'ধন্যবাদ! আপনার বার্তাটি আমাদের সিস্টেমে সংরক্ষিত হয়েছে এবং হোয়াটসঅ্যাপে পাঠানো হচ্ছে...',
+                'message' => 'ধন্যবাদ! আপনাকে হোয়াটসঅ্যাপে পাঠানো হচ্ছে...',
                 'whatsapp_url' => $waUrl,
             ]);
         }
 
         return redirect()->back()
-            ->with('success', 'ধন্যবাদ! আপনার বার্তাটি আমাদের সিস্টেমে সংরক্ষিত হয়েছে এবং হোয়াটসঅ্যাপে পাঠানো হচ্ছে...')
+            ->with('success', 'ধন্যবাদ! আপনাকে হোয়াটসঅ্যাপে পাঠানো হচ্ছে...')
             ->with('whatsapp_url', $waUrl);
     }
 

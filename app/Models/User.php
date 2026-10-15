@@ -97,13 +97,27 @@ class User extends Authenticatable
         }
 
         if ($this->permissions && is_array($this->permissions)) {
-            return !empty($this->permissions[$feature]);
+            if ($feature === 'repairs') {
+                return !empty($this->permissions['repairs']) || !empty($this->permissions['repair_create']);
+            }
+
+            if (array_key_exists($feature, $this->permissions)) {
+                return !empty($this->permissions[$feature]);
+            }
+
+            // Fallback for repair_create if not explicitly defined in permissions
+            if ($feature === 'repair_create') {
+                return !empty($this->permissions['repairs']);
+            }
+
+            return false;
         }
 
         $defaults = [
             'admin' => [
                 'pos' => true,
                 'repairs' => true,
+                'repair_create' => true,
                 'inventory' => true,
                 'purchases' => true,
                 'expenses' => true,
@@ -115,10 +129,12 @@ class User extends Authenticatable
             ],
             'technician' => [
                 'repairs' => true,
+                'repair_create' => true,
                 'documents' => true,
             ],
             'salesman' => [
                 'pos' => true,
+                'repair_create' => false,
                 'inventory' => true,
                 'cash' => true,
                 'documents' => true,
@@ -127,5 +143,13 @@ class User extends Authenticatable
         ];
 
         return !empty($defaults[$this->role][$feature]);
+    }
+
+    /**
+     * Check if user can create a repair job card.
+     */
+    public function canCreateJobCard(): bool
+    {
+        return $this->hasPermissionTo('repair_create');
     }
 }

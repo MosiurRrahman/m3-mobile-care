@@ -20,7 +20,6 @@ use App\Http\Controllers\CashController;
 use App\Http\Controllers\PartnerLedgerController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\SpecialOrderController;
 
 // Public Routes
@@ -38,6 +37,7 @@ Route::get('/track', [HomeController::class, 'trackView'])->name('track.form');
 Route::get('/ert', [HomeController::class, 'trackView'])->name('ert');
 Route::post('/track', [HomeController::class, 'track'])->name('track.search');
 Route::get('/track-ajax', [HomeController::class, 'trackAjax'])->name('track.ajax');
+Route::get('/customer-lookup-ajax', [HomeController::class, 'customerLookupAjax'])->name('customer.lookup.ajax');
 Route::get('/book', [HomeController::class, 'showBookingForm'])->name('book.form');
 Route::post('/book', [HomeController::class, 'book'])->name('book.store');
 Route::get('/booking-success/{ticket_id}', [HomeController::class, 'bookingSuccess'])->name('book.success');
@@ -181,14 +181,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/admin/cash/inflow', [CashController::class, 'storeInflow'])->name('admin.cash.inflow');
     });
 
-    // Customer Inquiries & Messages
-    Route::middleware(['role:super_admin,admin'])->group(function () {
-        Route::get('/admin/contact-messages', [ContactMessageController::class, 'index'])->name('admin.contact-messages.index');
-        Route::post('/admin/contact-messages/{id}/read', [ContactMessageController::class, 'markAsRead'])->name('admin.contact-messages.read');
-        Route::post('/admin/contact-messages/mark-all-read', [ContactMessageController::class, 'markAllAsRead'])->name('admin.contact-messages.mark-all-read');
-        Route::post('/admin/contact-messages/{id}/send-sms', [ContactMessageController::class, 'sendReplySms'])->name('admin.contact-messages.send-sms');
-        Route::delete('/admin/contact-messages/{id}', [ContactMessageController::class, 'destroy'])->name('admin.contact-messages.destroy');
-    });
+
 
     // Super-Admin Only Operations (Staff Accounts, Settings)
     Route::middleware(['role:super_admin'])->group(function () {

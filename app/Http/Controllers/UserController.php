@@ -38,9 +38,12 @@ class UserController extends Controller
         ]);
 
         $permissions = [];
-        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
+        $allowedPermissions = ['pos', 'repairs', 'repair_create', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
         foreach ($allowedPermissions as $perm) {
             $permissions[$perm] = $request->has("permissions.{$perm}");
+        }
+        if (!empty($permissions['repair_create'])) {
+            $permissions['repairs'] = true;
         }
 
         $avatarPath = null;
@@ -85,9 +88,12 @@ class UserController extends Controller
         ]);
 
         $permissions = [];
-        $allowedPermissions = ['pos', 'repairs', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
+        $allowedPermissions = ['pos', 'repairs', 'repair_create', 'inventory', 'purchases', 'expenses', 'reports', 'settings', 'social_media', 'cash', 'documents', 'special_orders'];
         foreach ($allowedPermissions as $perm) {
             $permissions[$perm] = $request->has("permissions.{$perm}");
+        }
+        if (!empty($permissions['repair_create'])) {
+            $permissions['repairs'] = true;
         }
 
         $user->name = $request->input('name');

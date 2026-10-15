@@ -6,7 +6,7 @@
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
         <h4 class="fw-bold mb-0">Repair Job Cards</h4>
-        @if(auth()->user()->isSuperAdmin())
+        @if(auth()->user()->canCreateJobCard())
         <a href="{{ route('admin.repairs.create') }}" class="btn btn-primary"><i class="ti tabler-plus me-1"></i>Create Job Card</a>
         @endif
     </div>

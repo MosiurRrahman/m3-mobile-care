@@ -225,6 +225,12 @@
                             </div>
                             <div class="col-6 mb-2">
                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="permissions[repair_create]" id="add_perm_repair_create" value="1" checked>
+                                    <label class="form-check-label fw-semibold" for="add_perm_repair_create">Create Job Cards</label>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="permissions[inventory]" id="add_perm_inventory" value="1" checked>
                                     <label class="form-check-label fw-semibold" for="add_perm_inventory">Inventory Management</label>
                                 </div>
@@ -364,6 +370,12 @@
                                 <div class="form-check">
                                     <input class="form-check-input edit-perm-check" type="checkbox" name="permissions[repairs]" data-perm="repairs" id="edit_perm_repairs" value="1">
                                     <label class="form-check-label fw-semibold" for="edit_perm_repairs">Job Cards (Repairs)</label>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input edit-perm-check" type="checkbox" name="permissions[repair_create]" data-perm="repair_create" id="edit_perm_repair_create" value="1">
+                                    <label class="form-check-label fw-semibold" for="edit_perm_repair_create">Create Job Cards</label>
                                 </div>
                             </div>
                             <div class="col-6 mb-2">
@@ -512,12 +524,40 @@
                 const permissions = JSON.parse(this.getAttribute('data-permissions') || '{}');
                 document.querySelectorAll('.edit-perm-check').forEach(chk => {
                     const perm = chk.getAttribute('data-perm');
-                    chk.checked = !!permissions[perm];
+                    if (perm === 'repair_create' && permissions['repair_create'] === undefined) {
+                        chk.checked = !!permissions['repairs'];
+                    } else {
+                        chk.checked = !!permissions[perm];
+                    }
                 });
 
                 toggleTechFields(role, techFieldsEdit);
             });
         });
+
+        // Link repair_create and repairs checkboxes
+        const addPermRepairs = document.getElementById('add_perm_repairs');
+        const addPermRepairCreate = document.getElementById('add_perm_repair_create');
+        if (addPermRepairCreate && addPermRepairs) {
+            addPermRepairCreate.addEventListener('change', function() {
+                if (this.checked) addPermRepairs.checked = true;
+            });
+            addPermRepairs.addEventListener('change', function() {
+                if (!this.checked) addPermRepairCreate.checked = false;
+            });
+        }
+
+        const editPermRepairs = document.getElementById('edit_perm_repairs');
+        const editPermRepairCreate = document.getElementById('edit_perm_repair_create');
+        if (editPermRepairCreate && editPermRepairs) {
+            editPermRepairCreate.addEventListener('change', function() {
+                if (this.checked) editPermRepairs.checked = true;
+            });
+            editPermRepairs.addEventListener('change', function() {
+                if (!this.checked) editPermRepairCreate.checked = false;
+            });
+        }
+
         const editIsActiveInput = document.getElementById('edit_is_active');
         const editIsActiveLabel = document.getElementById('edit_is_active_label');
         if (editIsActiveInput && editIsActiveLabel) {

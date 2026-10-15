@@ -3491,6 +3491,11 @@
     "src": "resources/assets/vendor/libs/hammer/hammer.js",
     "isEntry": true
   },
+  "resources/assets/vendor/libs/highlight/highlight-github.css": {
+    "file": "assets/highlight-github-BfC0goYb.css",
+    "src": "resources/assets/vendor/libs/highlight/highlight-github.scss",
+    "isEntry": true
+  },
   "resources/assets/vendor/libs/highlight/highlight-github.scss": {
     "file": "assets/highlight-github-BfC0goYb.css",
     "src": "resources/assets/vendor/libs/highlight/highlight-github.scss",

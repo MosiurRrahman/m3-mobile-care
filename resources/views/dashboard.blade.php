@@ -13,9 +13,11 @@
                         <h2 class="text-white fw-bold mb-2">Welcome Back, {{ auth()->user()->name }}!</h2>
                         <p class="mb-0 text-white opacity-85">Here's a summary of M3 Mobile Care repairs and revenue. You can manage tickets, track statuses, and update services catalog.</p>
                     </div>
+                    @if(auth()->user()->canCreateJobCard())
                     <div class="col-md-4 text-md-end">
                         <a href="{{ route('admin.repairs.create') }}" class="btn btn-white bg-white text-primary fw-bold px-4 py-2 shadow-sm"><i class="ti tabler-plus me-1"></i>New Repair Ticket</a>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
