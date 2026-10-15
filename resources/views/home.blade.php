@@ -595,12 +595,7 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ route('track.form') }}">Track Job</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About Us</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact Us</a></li>
-                                <li class="nav-item">
-                                    <a class="nav-link fw-bold" href="{{ route('book.form') }}" style="color: #f97316 !important;">
-                                        <i class="fa-solid fa-calendar-check text-warning me-1"></i> Book Repair
-                                        <span class="badge bg-warning text-dark rounded-pill ms-1 px-2 py-0.5" style="font-size: 10px;">ONLINE</span>
-                                    </a>
-                                </li>
+                                
                             </ul>
                         </div>
                         
