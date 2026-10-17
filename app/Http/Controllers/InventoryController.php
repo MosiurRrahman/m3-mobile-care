@@ -442,7 +442,7 @@ class InventoryController extends Controller
         $shopSettings = [
             'name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
-            'phone' => Setting::get('phone', '+8801353106967'),
+            'phone' => Setting::get('phone', '+8801750121196'),
             'address' => Setting::get('address', 'রাণীশংকৈল, ঠাকুরগাঁও'),
         ];
 
@@ -519,7 +519,7 @@ class InventoryController extends Controller
             'name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
-            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'phone' => Setting::get('phone', '+8801750121196 / +8801353106966'),
             'logo' => asset('assets/img/branding/logo.png'),
         ];
 

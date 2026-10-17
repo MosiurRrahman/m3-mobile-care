@@ -85,7 +85,7 @@
                     <div class="btn btn-success rounded-circle p-3 me-3 text-white"><i class="ti tabler-phone-call fs-3"></i></div>
                     <div>
                         <h6 class="fw-bold mb-1">হটলাইন কল:</h6>
-                        <p class="text-secondary fs-7 mb-0">{{ $shopSettings['phone'] ?? '+8801353106967 / +8801353106966' }}</p>
+                        <p class="text-secondary fs-7 mb-0">{{ $shopSettings['phone'] ?? '+8801750121196 / +8801353106966' }}</p>
                     </div>
                 </div>
 
@@ -94,10 +94,10 @@
                     <div>
                         <h6 class="fw-bold mb-1">হোয়াটসঅ্যাপ:</h6>
                         @php
-                            $waNum = preg_replace('/[^0-9]/', '', $shopSettings['whatsapp'] ?? '8801353106967');
+                            $waNum = preg_replace('/[^0-9]/', '', $shopSettings['whatsapp'] ?? '8801750121196');
                         @endphp
                         <p class="text-secondary fs-7 mb-0">
-                            <a href="https://wa.me/{{ $waNum }}" target="_blank" class="text-decoration-none text-info fw-bold">{{ $shopSettings['whatsapp'] ?? '+8801353106967' }}</a>
+                            <a href="https://wa.me/{{ $waNum }}" target="_blank" class="text-decoration-none text-info fw-bold">{{ $shopSettings['whatsapp'] ?? '+8801750121196' }}</a>
                         </p>
                     </div>
                 </div>
@@ -189,11 +189,11 @@
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>সংরক্ষণ ও হোয়াটসঅ্যাপে রিডাইরেক্ট হচ্ছে...';
 
             // Build direct WhatsApp link
-            let shopWa = "{{ preg_replace('/[^0-9]/', '', $shopSettings['whatsapp'] ?? '8801353106967') }}";
+            let shopWa = "{{ preg_replace('/[^0-9]/', '', $shopSettings['whatsapp'] ?? '8801750121196') }}";
             if (shopWa.startsWith('01')) {
                 shopWa = '88' + shopWa;
             } else if (!shopWa.startsWith('880')) {
-                shopWa = '8801353106967';
+                shopWa = '8801750121196';
             }
 
             const waText = "নমস্কার M3 Mobile Care,\n\n👤 নাম: " + name + "\n📞 মোবাইল: " + phone + "\n💬 বার্তা: " + message;

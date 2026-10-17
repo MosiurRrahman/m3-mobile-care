@@ -457,9 +457,9 @@
                 <span><i class="fa-regular fa-clock text-info me-1"></i> প্রতিদিন সকাল ৯:০০ - রাত ৯:৩০</span>
             </div>
             <div class="d-flex align-items-center gap-3" style="font-size: 13px;">
-                <a href="tel:+8801353106967" class="text-white text-decoration-none"><i class="fa-solid fa-phone text-success me-1"></i> +8801353106967</a>
+                <a href="tel:+8801750121196" class="text-white text-decoration-none"><i class="fa-solid fa-phone text-success me-1"></i> +8801750121196</a>
                 <span class="opacity-25">|</span>
-                <a href="https://wa.me/8801353106967" target="_blank" class="text-white text-decoration-none"><i class="fa-brands fa-whatsapp text-success me-1"></i> WhatsApp</a>
+                <a href="https://wa.me/8801750121196" target="_blank" class="text-white text-decoration-none"><i class="fa-brands fa-whatsapp text-success me-1"></i> WhatsApp</a>
             </div>
         </div>
     </div>
@@ -491,7 +491,7 @@
                     <div class="header-action-details mobile-hide">
                         <ul>
                             <li><a href="{{ route('track.form') }}" title="Track Job"><i class="fa-solid fa-screwdriver-wrench text-dark me-1"></i> Track Job</a></li>
-                            <li><a href="https://wa.me/8801353106967" target="_blank" title="WhatsApp Order"><i class="fa-brands fa-whatsapp text-success fs-5 me-1"></i> WhatsApp</a></li>
+                            <li><a href="https://wa.me/8801750121196" target="_blank" title="WhatsApp Order"><i class="fa-brands fa-whatsapp text-success fs-5 me-1"></i> WhatsApp</a></li>
                         </ul>
                     </div>
                     <!-- Header Action Details End -->
@@ -657,7 +657,7 @@
                             <a href="{{ route('products') }}" class="btn-outline-minimal">
                                 <i class="fa-solid fa-bag-shopping"></i> Explore Shop
                             </a>
-                            <a href="https://wa.me/8801353106967" target="_blank" class="btn-outline-minimal">
+                            <a href="https://wa.me/8801750121196" target="_blank" class="btn-outline-minimal">
                                 <i class="fa-brands fa-whatsapp text-success fs-5"></i> WhatsApp
                             </a>
                         </div>
@@ -809,7 +809,7 @@
                                     <h5 class="fw-bold mb-2 text-truncate" style="font-size: 16px;"><a href="{{ route('product.single', $item->id) }}" class="text-dark text-decoration-none">{{ $item->name }}</a></h5>
                                     <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
                                         <h4 class="fw-bold mb-0 text-dark" style="font-size: 18px;">৳{{ number_format($item->sale_price, 2) }}</h4>
-                                        <a href="https://wa.me/8801353106967?text={{ urlencode('Hi M3 Mobile Care, I want to buy: ' . $item->name . ' (Price: ৳' . $item->sale_price . ')') }}" target="_blank" class="btn btn-sm btn-dark rounded-2 px-3 py-1.5 fw-semibold" title="Order on WhatsApp">
+                                        <a href="https://wa.me/8801750121196?text={{ urlencode('Hi M3 Mobile Care, I want to buy: ' . $item->name . ' (Price: ৳' . $item->sale_price . ')') }}" target="_blank" class="btn btn-sm btn-dark rounded-2 px-3 py-1.5 fw-semibold" title="Order on WhatsApp">
                                             <i class="fa-brands fa-whatsapp text-success me-1"></i> Buy
                                         </a>
                                     </div>
@@ -990,7 +990,7 @@
                                 <i class="fa-solid fa-phone text-success fs-5 mt-1"></i>
                                 <div>
                                     <div class="text-white fw-bold mb-1" style="font-size: 14.5px;">হটলাইন ও হোয়াটসঅ্যাপ</div>
-                                    <p class="text-white-50 mb-0" style="font-size: 14px;">+8801353106967 / +8801353106966</p>
+                                    <p class="text-white-50 mb-0" style="font-size: 14px;">+8801750121196 / +8801353106966</p>
                                 </div>
                             </div>
 
@@ -1004,7 +1004,7 @@
                         </div>
 
                         <div class="pt-3 border-top border-secondary">
-                            <a href="https://wa.me/8801353106967" target="_blank" class="btn btn-outline-light w-100 py-2.5 rounded-2 fw-semibold d-flex align-items-center justify-content-center gap-2" style="font-size: 14.5px;">
+                            <a href="https://wa.me/8801750121196" target="_blank" class="btn btn-outline-light w-100 py-2.5 rounded-2 fw-semibold d-flex align-items-center justify-content-center gap-2" style="font-size: 14.5px;">
                                 <i class="fa-brands fa-whatsapp text-success fs-5"></i> সরাসরি হোয়াটসঅ্যাপে চ্যাট করুন
                             </a>
                         </div>
@@ -1017,7 +1017,7 @@
     <!-- ============================================================= -->
     <!-- 06. CLEAN FOOTER                                              -->
     <!-- ============================================================= -->
-    <footer class="main-footer" style="background-color: #0b0f19;">
+    <footer class="main-footer" style="background-color: #0b0f19; padding-top:20px;">
         <div class="container">
             <div class="row">
                 <div class="col-xl-4">
@@ -1030,9 +1030,9 @@
                         </div>
                         <div class="footer-social-links">
                             <ul>
-                                <li><a href="https://wa.me/8801353106967" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></li>
-                                <li><a href="https://facebook.com" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
-                                <li><a href="tel:+8801353106967" title="Call Us"><i class="fa-solid fa-phone"></i></a></li>
+                                <li><a href="https://wa.me/8801750121196" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></li>
+                                <li><a href="https://www.facebook.com/share/1bNz2yTGod/" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                <li><a href="tel:+8801750121196" title="Call Us"><i class="fa-solid fa-phone"></i></a></li>
                             </ul>
                         </div>
                     </div>
@@ -1067,7 +1067,7 @@
                         <div class="footer-links footer-newsletter-form">
                             <h2>Location &amp; Hotline</h2>
                             <p class="text-white mb-2"><i class="fa-solid fa-location-dot text-warning me-2"></i> (বিগ বাজার) আব্দুল গফফার মার্কেট, রাণীশংকৈল, ঠাকুরগাঁও</p>
-                            <p class="text-white mb-2"><i class="fa-solid fa-phone text-success me-2"></i> +8801353106967 / +8801353106966</p>
+                            <p class="text-white mb-2"><i class="fa-solid fa-phone text-success me-2"></i> +8801750121196 / +8801353106966</p>
                             <p style="color: #94a3b8; font-size: 14px;">খোলা: প্রতিদিন সকাল ৯:০০ টা - রাত ৯:৩০ টা</p>
                         </div>
                     </div>

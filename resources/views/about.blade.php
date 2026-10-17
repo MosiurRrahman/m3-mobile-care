@@ -136,7 +136,7 @@
                             </div>
                             <div class="d-flex align-items-center">
                                 <i class="ti tabler-phone-call text-success me-2 fs-5"></i>
-                                <span><strong>হটলাইন:</strong> +8801353106967 / +8801353106966</span>
+                                <span><strong>হটলাইন:</strong> +8801750121196 / +8801353106966</span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <i class="ti tabler-clock text-info me-2 fs-5"></i>
@@ -282,10 +282,10 @@
                     আপনার ফোনের যেকোনো সমস্যা বা জিজ্ঞাসায় সরাসরি ফোন দিন অথবা আমাদের আউটলেটে চলে আসুন।
                 </p>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="tel:+8801353106967" class="btn btn-warning fw-bold px-4 py-3 rounded-3">
-                        <i class="ti tabler-phone-call me-1.5"></i> কল দিন: +8801353106967
+                    <a href="tel:+8801750121196" class="btn btn-warning fw-bold px-4 py-3 rounded-3">
+                        <i class="ti tabler-phone-call me-1.5"></i> কল দিন: +8801750121196
                     </a>
-                    <a href="https://wa.me/8801353106967" target="_blank" class="btn btn-success fw-bold px-4 py-3 rounded-3">
+                    <a href="https://wa.me/8801750121196" target="_blank" class="btn btn-success fw-bold px-4 py-3 rounded-3">
                         <i class="ti tabler-brand-whatsapp me-1.5"></i> WhatsApp মেসেজ
                     </a>
                     <a href="{{ route('contact') }}" class="btn btn-outline-light px-4 py-3 rounded-3 fw-semibold">

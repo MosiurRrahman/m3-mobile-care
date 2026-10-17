@@ -250,7 +250,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
         $trackUrl = url('/track?ticket_id=' . $repair->ticket_id);
 
         $defaultTemplate = "প্রিয় {customer_name}, আপনার {device} সার্ভিসের জন্য গ্রহণ করা হয়েছে। টিকিট আইডি: {ticket_id}। কাজের অগ্রগতি দেখুন: {track_url} - {shop_name}";
@@ -286,7 +286,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
         $totalBill = $repair->actual_cost ?? $repair->estimated_cost;
         $dueAmount = max(0, floatval($totalBill) - floatval($repair->paid_amount));
 
@@ -323,7 +323,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
         $totalBill = $repair->actual_cost ?? $repair->estimated_cost;
         $paidAmount = $repair->paid_amount;
         $dueAmount = $repair->due_amount;
@@ -363,7 +363,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
 
         $defaultTemplate = "প্রিয় {customer_name}, {shop_name}-এ কেনাকাটার জন্য ধন্যবাদ! ইনভয়েস: {invoice_no}, মোট বিল: {total_bill} টাকা, পরিশোধ: {paid_amount} টাকা, বকেয়া: {due_amount} টাকা।";
         $template = Setting::get('sms_template_pos_sale', $defaultTemplate);
@@ -396,7 +396,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
 
         $defaultTemplate = "প্রিয় {customer_name}, বকেয়া বাবদ {paid_amount} টাকা গ্রহণ করা হয়েছে ({reference_no})। অবশিষ্ট বকেয়া: {due_amount} টাকা। ধন্যবাদ! - {shop_name}";
         $template = Setting::get('sms_template_due_payment', $defaultTemplate);
@@ -428,7 +428,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
 
         $defaultTemplate = "প্রিয় {customer_name}, আপনার {device} (টিকিট: {ticket_id})-এর প্রয়োজনীয় পার্টস   আমাদের দোকানে এসে পৌঁছেছে। খুব শীঘ্রই সার্ভিস সম্পন্ন করা হবে। - {shop_name}";
         $template = Setting::get('sms_template_repair_parts_arrived', $defaultTemplate);
@@ -455,7 +455,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
 
         $deliveryDate = $order->expected_delivery_date ? $order->expected_delivery_date->format('d M, Y') : 'শীঘ্রই';
 
@@ -487,7 +487,7 @@ class SmsService
         }
 
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
-        $shopPhone = Setting::get('phone', '+8801353106967');
+        $shopPhone = Setting::get('phone', '+8801750121196');
 
         $defaultTemplate = "প্রিয় {customer_name}, আপনার অর্ডারকৃত '{item_name}' (অর্ডার: {order_number}) ঢাকা থেকে দোকানে পৌঁছেছে। অনুগ্রহ করে দোকানে এসে রিসিভ করুন। অবশিষ্ট বকেয়া: {due_amount} টাকা। - {shop_name}";
         $template = Setting::get('sms_template_special_order_arrived', $defaultTemplate);

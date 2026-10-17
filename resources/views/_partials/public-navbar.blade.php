@@ -7,9 +7,9 @@
             <span><i class="ti tabler-clock text-info me-1"></i> Open Daily: 9:00 AM - 9:30 PM</span>
         </div>
         <div class="d-flex align-items-center gap-3">
-            <a href="tel:+8801353106967" class="text-white text-decoration-none hover-text-warning"><i class="ti tabler-phone-call text-success me-1"></i> +8801353106967</a>
+            <a href="tel:+8801750121196" class="text-white text-decoration-none hover-text-warning"><i class="ti tabler-phone-call text-success me-1"></i> +8801750121196</a>
             <span class="opacity-25">|</span>
-            <a href="https://wa.me/8801353106967" target="_blank" class="text-white text-decoration-none hover-text-success"><i class="ti tabler-brand-whatsapp text-success me-1"></i> WhatsApp</a>
+            <a href="https://wa.me/8801750121196" target="_blank" class="text-white text-decoration-none hover-text-success"><i class="ti tabler-brand-whatsapp text-success me-1"></i> WhatsApp</a>
         </div>
     </div>
 </div>

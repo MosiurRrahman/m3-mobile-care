@@ -7,7 +7,7 @@ return [
   "templateSuffix" => "Trusted Mobile Repair & Accessories Shop",
   "templateVersion" => "1.0.0",
   "templateFree" => false,
-  "templateDescription" => "M3 Mobile Care - Trusted Mobile Repair & Accessories Shop at (বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও. Website: www.m3mobilecares.com, Email: support@m3mobilecares.com, Mobile: +8801353106967 / +8801353106966.",
+  "templateDescription" => "M3 Mobile Care - Trusted Mobile Repair & Accessories Shop at (বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও. Website: www.m3mobilecares.com, Email: support@m3mobilecares.com, Mobile: +8801750121196 / +8801353106966.",
   "templateKeyword" => "M3 Mobile Care, Mobile Repair Ranisankail, Phone Accessories Thakurgaon, Display Replacement, Battery Replacement, Ranisankail Mobile Shop, Abdul Goffar Market Mobile Care",
   "licenseUrl" => "",
   "livePreview" => "https://www.m3mobilecares.com",

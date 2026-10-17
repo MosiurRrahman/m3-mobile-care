@@ -859,9 +859,9 @@
                         <!-- Footer Socials Links Start -->
                         <div class="footer-social-links">
                             <ul>
-                                <li><a href="https://wa.me/8801353106967" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></li>
-                                <li><a href="https://facebook.com" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
-                                <li><a href="tel:+8801353106967" title="Call Us"><i class="fa-solid fa-phone"></i></a></li>
+                                <li><a href="https://wa.me/8801750121196" target="_blank" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a></li>
+                                <li><a href="https://www.facebook.com/share/1bNz2yTGod/" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                <li><a href="tel:+8801750121196" title="Call Us"><i class="fa-solid fa-phone"></i></a></li>
                             </ul>
                         </div>
                         <!-- Footer Socials Links End -->
@@ -904,7 +904,7 @@
                         <div class="footer-links footer-newsletter-form">
                             <h2>Location & Hotline</h2>
                             <p class="text-white mb-2"><i class="fa-solid fa-location-dot text-warning me-2"></i> (বিগ বাজার) আব্দুল গফফার মার্কেট, রাণীশংকৈল, ঠাকুরগাঁও</p>
-                            <p class="text-white mb-2"><i class="fa-solid fa-phone text-success me-2"></i> +8801353106967 / +8801353106966</p>
+                            <p class="text-white mb-2"><i class="fa-solid fa-phone text-success me-2"></i> +8801750121196 / +8801353106966</p>
                             <p style="color: #94a3b8; font-size: 14px;">খোলা: প্রতিদিন সকাল ৯:০০ টা - রাত ৯:৩০ টা</p>
                         </div>
                         <!-- Footer Links End -->

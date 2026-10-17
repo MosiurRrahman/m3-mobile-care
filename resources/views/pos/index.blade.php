@@ -328,7 +328,7 @@
                     <div class="text-center mb-3">
                         <h5 class="fw-bold text-dark mb-0.5">{{ App\Models\Setting::get('shop_name', 'M3 Mobile Care') }}</h5>
                         <div class="text-muted" style="font-size: 0.75rem;">{{ App\Models\Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও') }}</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Mobile: {{ App\Models\Setting::get('phone', '+8801353106967 / +8801353106966') }} | Email: {{ App\Models\Setting::get('email', 'support@m3mobilecares.com') }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Mobile: {{ App\Models\Setting::get('phone', '+8801750121196 / +8801353106966') }} | Email: {{ App\Models\Setting::get('email', 'support@m3mobilecares.com') }}</div>
                         <hr class="border-dark my-2.5">
                     </div>
 

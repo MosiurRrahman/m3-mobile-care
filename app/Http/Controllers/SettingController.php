@@ -18,8 +18,8 @@ class SettingController extends Controller
         $settings = [
             'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
-            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
-            'whatsapp' => Setting::get('whatsapp', '+8801353106967'),
+            'phone' => Setting::get('phone', '+8801750121196 / +8801353106966'),
+            'whatsapp' => Setting::get('whatsapp', '+8801750121196'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
             'logo' => Setting::get('logo'),

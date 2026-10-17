@@ -176,7 +176,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('ডিসপ্লে চেঞ্জ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('ডিসপ্লে চেঞ্জ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -208,7 +208,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('ব্যাটারি চেঞ্জ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('ব্যাটারি চেঞ্জ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -240,7 +240,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('মাদারবোর্ড রিপেয়ার সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('মাদারবোর্ড রিপেয়ার সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -272,7 +272,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('ওয়াটার ড্যামেজ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('ওয়াটার ড্যামেজ সার্ভিস সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -304,7 +304,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('সফটওয়্যার আনলকিং সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('সফটওয়্যার আনলকিং সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -336,7 +336,7 @@
                             </ul>
 
                             <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-                                <a href="https://wa.me/8801353106967?text={{ urlencode('ক্যামেরা ও স্পিকার ফিক্স সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                <a href="https://wa.me/8801750121196?text={{ urlencode('ক্যামেরা ও স্পিকার ফিক্স সম্পর্কে জানতে চাই') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3">
                                     <i class="ti tabler-brand-whatsapp me-1"></i> তথ্য নিন
                                 </a>
                                 <a href="{{ route('book.form') }}" class="btn btn-ux-primary">বুকিং দিন</a>
@@ -358,8 +358,8 @@
                     আমাদের সার্ভিস সেন্টারে সরাসরি চলে আসুন অথবা কল দিয়ে বিনামূল্যে আমাদের বিশেষজ্ঞ চিপ-লেভেল টেকনিশিয়ানের পরামর্শ নিন।
                 </p>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="tel:+8801353106967" class="btn btn-warning fw-bold px-4 py-3 rounded-3">
-                        <i class="ti tabler-phone-call me-1.5"></i> কল দিন: +8801353106967
+                    <a href="tel:+8801750121196" class="btn btn-warning fw-bold px-4 py-3 rounded-3">
+                        <i class="ti tabler-phone-call me-1.5"></i> কল দিন: +8801750121196
                     </a>
                     <a href="{{ route('book.form') }}" class="btn btn-orange text-white fw-bold px-4 py-3 rounded-3" style="background-color: #f97316;">
                         <i class="ti tabler-calendar-plus me-1.5"></i> অনলাইন বুকিং দিন

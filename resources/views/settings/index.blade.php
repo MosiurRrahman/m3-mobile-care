@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label fw-semibold" for="whatsapp">WhatsApp Hotline Number</label>
-                                    <input type="text" name="whatsapp" id="whatsapp" class="form-control" value="{{ old('whatsapp', $settings['whatsapp'] ?? '+8801353106967') }}" placeholder="+8801353106967">
+                                    <input type="text" name="whatsapp" id="whatsapp" class="form-control" value="{{ old('whatsapp', $settings['whatsapp'] ?? '+8801750121196') }}" placeholder="+8801750121196">
                                 </div>
                                 <div class="col-sm-6 mb-3">
                                     <label class="form-label fw-semibold" for="email">Support Email Address</label>

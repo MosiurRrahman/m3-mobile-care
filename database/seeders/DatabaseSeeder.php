@@ -534,7 +534,7 @@ class DatabaseSeeder extends Seeder
         // 9. Seed Default Settings
         \App\Models\Setting::set('shop_name', 'M3 Mobile Care');
         \App\Models\Setting::set('shop_slogan', 'Trusted Mobile Repair & Accessories Shop');
-        \App\Models\Setting::set('phone', '+8801353106967 / +8801353106966');
+        \App\Models\Setting::set('phone', '+8801750121196 / +8801353106966');
         \App\Models\Setting::set('email', 'support@m3mobilecares.com');
         \App\Models\Setting::set('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও');
         \App\Models\Setting::set('receipt_footer', "TERMS & CONDITIONS:\n1. 30 Days warranty on replaced spare parts (Except liquid/physical damage).\n2. No warranty on software flash or touch calibration adjustment.\n3. Please collect device within 30 days of repair completion.\n4. Show repair slip for pickup.");

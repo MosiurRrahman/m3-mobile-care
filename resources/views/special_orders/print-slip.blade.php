@@ -133,7 +133,7 @@
         <div class="header">
             <h1 class="shop-name">{{ \App\Models\Setting::get('shop_name', 'M3 Mobile Care') }}</h1>
             <p class="shop-tagline">Special Product Pre-Order & Sourcing Slip</p>
-            <p class="shop-contact">Phone: {{ \App\Models\Setting::get('phone', '+8801353106967') }} | Address: {{ \App\Models\Setting::get('address', 'Dhaka, Bangladesh') }}</p>
+            <p class="shop-contact">Phone: {{ \App\Models\Setting::get('phone', '+8801750121196') }} | Address: {{ \App\Models\Setting::get('address', 'Dhaka, Bangladesh') }}</p>
         </div>
 
         <div class="title">CUSTOMER ORDER SLIP</div>

@@ -200,7 +200,7 @@ class DocumentController extends Controller
             'name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
-            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'phone' => Setting::get('phone', '+8801750121196 / +8801353106966'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'logo' => $logoUrl,
             'trade_license' => Setting::get('trade_license', 'TRAD/DNCC/012345/2026'),

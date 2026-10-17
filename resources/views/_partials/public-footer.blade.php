@@ -13,8 +13,8 @@
                 </p>
                 <div class="d-flex gap-2">
                     <a href="https://www.facebook.com/m3mobilecare" target="_blank" class="btn btn-sm btn-dark rounded-circle p-2 text-primary bg-slate-800 border-0" aria-label="Facebook"><i class="ti tabler-brand-facebook fs-5"></i></a>
-                    <a href="https://wa.me/8801353106967" target="_blank" class="btn btn-sm btn-dark rounded-circle p-2 text-success bg-slate-800 border-0" aria-label="WhatsApp"><i class="ti tabler-brand-whatsapp fs-5"></i></a>
-                    <a href="tel:+8801353106967" class="btn btn-sm btn-dark rounded-circle p-2 text-info bg-slate-800 border-0" aria-label="Call"><i class="ti tabler-phone-call fs-5"></i></a>
+                    <a href="https://wa.me/8801750121196" target="_blank" class="btn btn-sm btn-dark rounded-circle p-2 text-success bg-slate-800 border-0" aria-label="WhatsApp"><i class="ti tabler-brand-whatsapp fs-5"></i></a>
+                    <a href="tel:+8801750121196" class="btn btn-sm btn-dark rounded-circle p-2 text-info bg-slate-800 border-0" aria-label="Call"><i class="ti tabler-phone-call fs-5"></i></a>
                 </div>
             </div>
 
@@ -53,7 +53,7 @@
                     </li>
                     <li class="d-flex align-items-center">
                         <i class="ti tabler-phone-call text-success me-2 fs-5"></i>
-                        <a href="tel:+8801353106967" class="text-slate-400 text-decoration-none">+8801353106967 / +8801353106966</a>
+                        <a href="tel:+8801750121196" class="text-slate-400 text-decoration-none">+8801750121196 / +8801353106966</a>
                     </li>
                     <li class="d-flex align-items-center">
                         <i class="ti tabler-mail text-info me-2 fs-5"></i>
@@ -75,7 +75,7 @@
 </footer>
 
 <!-- Floating WhatsApp Action Button -->
-<a href="https://wa.me/8801353106967" target="_blank" class="floating-whatsapp-btn shadow-lg" aria-label="Contact us on WhatsApp">
+<a href="https://wa.me/8801750121196" target="_blank" class="floating-whatsapp-btn shadow-lg" aria-label="Contact us on WhatsApp">
     <i class="ti tabler-brand-whatsapp fs-2"></i>
     <span class="tooltip-text">কথা বলুন WhatsApp-এ</span>
 </a>

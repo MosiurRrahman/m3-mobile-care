@@ -55,7 +55,7 @@ class HomeController extends Controller
         $shopSettings = [
             'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
-            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
+            'phone' => Setting::get('phone', '+8801750121196 / +8801353106966'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
             'logo' => Setting::get('logo'),
@@ -306,7 +306,7 @@ class HomeController extends Controller
         $message = trim($request->input('message'));
 
         // Build WhatsApp direct URL for shop owner
-        $shopWa = Setting::get('whatsapp', '+8801353106967');
+        $shopWa = Setting::get('whatsapp', '+8801750121196');
         $cleanWa = preg_replace('/[^0-9]/', '', $shopWa);
         if (str_starts_with($cleanWa, '01')) {
             $cleanWa = '88' . $cleanWa;
@@ -438,8 +438,8 @@ class HomeController extends Controller
         return [
             'shop_name' => Setting::get('shop_name', 'M3 Mobile Care'),
             'shop_slogan' => Setting::get('shop_slogan', 'Trusted Mobile Repair & Accessories Shop'),
-            'phone' => Setting::get('phone', '+8801353106967 / +8801353106966'),
-            'whatsapp' => Setting::get('whatsapp', '+8801353106967'),
+            'phone' => Setting::get('phone', '+8801750121196 / +8801353106966'),
+            'whatsapp' => Setting::get('whatsapp', '+8801750121196'),
             'email' => Setting::get('email', 'support@m3mobilecares.com'),
             'address' => Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও'),
             'logo' => Setting::get('logo'),

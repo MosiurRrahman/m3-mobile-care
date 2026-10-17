@@ -25,7 +25,7 @@
                     {{ App\Models\Setting::get('address', '(বিগ বাজার) আব্দুল গফফার মার্কেট রাণীশংকৈল, ঠাকুরগাঁও') }}
                 </div>
                 <div class="text-muted small" style="font-size: 0.75rem;">
-                    Mobile: {{ App\Models\Setting::get('phone', '+8801353106967 / +8801353106966') }}
+                    Mobile: {{ App\Models\Setting::get('phone', '+8801750121196 / +8801353106966') }}
                     @if(App\Models\Setting::get('email'))
                         | Email: {{ App\Models\Setting::get('email') }}
                     @endif
