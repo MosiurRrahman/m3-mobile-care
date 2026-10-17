@@ -775,21 +775,21 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="qs_status">Repair Job Status <span class="text-danger">*</span></label>
                         <select name="status" id="qs_status" class="form-select" required>
-                            <option value="pending" {{ $repair->status == 'pending' ? 'selected' : '' }}>১. অপেক্ষমান (Pending confirmation)</option>
-                            <option value="diagnosing" {{ $repair->status == 'diagnosing' ? 'selected' : '' }}>২. ডায়াগনসিস চলছে (Diagnosing)</option>
-                            <option value="waiting_for_approval" {{ $repair->status == 'waiting_for_approval' ? 'selected' : '' }}>২.১ গ্রাহক অনুমোদনের অপেক্ষা (Waiting Approval)</option>
-                            <option value="waiting_for_parts" {{ $repair->status == 'waiting_for_parts' ? 'selected' : '' }}>২.২ পার্টস আসার অপেক্ষায় (Waiting for Parts - Dhaka)</option>
-                            <option value="repairing" {{ $repair->status == 'repairing' ? 'selected' : '' }}>৩. কাজ চলছে (Repairing)</option>
-                            <option value="quality_check" {{ $repair->status == 'quality_check' ? 'selected' : '' }}>৩.১ কোয়ালিটি চেক (Quality Check)</option>
-                            <option value="completed" {{ $repair->status == 'completed' ? 'selected' : '' }}>৪. সম্পূর্ণ তৈরি (Completed / Ready for Pickup)</option>
-                            <option value="delivered" {{ $repair->status == 'delivered' ? 'selected' : '' }}>৫. ডেলিভারি সম্পন্ন (Delivered)</option>
-                            <option value="cancelled" {{ $repair->status == 'cancelled' ? 'selected' : '' }}>বাতিল (Cancelled)</option>
+                            <option value="pending" {{ $repair->status == 'pending' ? 'selected' : '' }}> Pending confirmation</option>
+                            <option value="diagnosing" {{ $repair->status == 'diagnosing' ? 'selected' : '' }}>Diagnosing</option>
+                            <option value="waiting_for_approval" {{ $repair->status == 'waiting_for_approval' ? 'selected' : '' }}>Waiting Approval</option>
+                            <option value="waiting_for_parts" {{ $repair->status == 'waiting_for_parts' ? 'selected' : '' }}>Waiting for Parts - Dhaka</option>
+                            <option value="repairing" {{ $repair->status == 'repairing' ? 'selected' : '' }}>Repairing</option>
+                            <option value="quality_check" {{ $repair->status == 'quality_check' ? 'selected' : '' }}>Quality Check</option>
+                            <option value="completed" {{ $repair->status == 'completed' ? 'selected' : '' }}>Completed / Ready for Pickup</option>
+                            <option value="delivered" {{ $repair->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                            <option value="cancelled" {{ $repair->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="qs_technician_notes">
                             Live Description / Technician Note
-                            <small class="text-muted d-block fw-normal">(এই ডেসক্রিপশনটি কাস্টমার ERT লাইভ ট্র্যাকিং পেজে দেখতে পাবেন)</small>
+                            <small class="text-muted d-block fw-normal"></small>
                         </label>
                         <textarea name="technician_notes" id="qs_technician_notes" class="form-control" rows="4" placeholder="যেমন: নতুন অরিজিনাল ডিসপ্লে লাগানো হচ্ছে / মাদারবোর্ড আইসি ডায়াগনসিস সম্পন্ন...">{{ $repair->technician_notes }}</textarea>
                     </div>
@@ -822,7 +822,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="modal_customer_phone">Customer Mobile Number</label>
-                        <input type="text" name="customer_phone" id="modal_customer_phone" class="form-control" value="{{ $repair->customer ? $repair->customer->phone : '' }}" placeholder="e.g. 01712345678 (ঐচ্ছিক)">
+                        <input type="text" name="customer_phone" id="modal_customer_phone" class="form-control" value="{{ $repair->customer ? $repair->customer->phone : '' }}" placeholder="e.g. 01750121196">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="modal_customer_address">Address</label>

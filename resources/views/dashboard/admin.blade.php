@@ -343,8 +343,8 @@
     </div>
     @endif
 
-    @if(auth()->user()->isSuperAdmin())
     <!-- Top Technician Leaderboard -->
+    <!-- @if(auth()->user()->isSuperAdmin())
     <div class="col-12">
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-0">
@@ -391,10 +391,10 @@
             </div>
         </div>
     </div>
-    @endif
+    @endif -->
 
-    @if(auth()->user()->isSuperAdmin())
-    <!-- Recent Staff Activities -->
+    <!-- @if(auth()->user()->isSuperAdmin())
+    
     <div class="col-12">
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pb-0">
@@ -519,7 +519,7 @@
             </div>
         </div>
     </div>
-    @endif
+    @endif -->
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

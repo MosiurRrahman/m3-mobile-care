@@ -430,7 +430,7 @@ class SmsService
         $shopName = Setting::get('shop_name', 'M3 Mobile Care');
         $shopPhone = Setting::get('phone', '+8801353106967');
 
-        $defaultTemplate = "প্রিয় {customer_name}, আপনার {device} (টিকিট: {ticket_id})-এর প্রয়োজনীয় পার্টস ঢাকা থেকে আমাদের দোকানে এসে পৌঁছেছে। খুব শীঘ্রই সার্ভিস সম্পন্ন করা হবে। - {shop_name}";
+        $defaultTemplate = "প্রিয় {customer_name}, আপনার {device} (টিকিট: {ticket_id})-এর প্রয়োজনীয় পার্টস   আমাদের দোকানে এসে পৌঁছেছে। খুব শীঘ্রই সার্ভিস সম্পন্ন করা হবে। - {shop_name}";
         $template = Setting::get('sms_template_repair_parts_arrived', $defaultTemplate);
 
         $message = self::formatTemplate($template, [
