@@ -650,18 +650,6 @@ class RepairController extends Controller
                 }
             });
 
-            // Dispatch SMS on status transitions
-            try {
-                $repair->refresh()->load('customer');
-                if ($oldStatus !== 'completed' && $repair->status === 'completed') {
-                    SmsService::sendRepairReadySms($repair);
-                } elseif ($oldStatus !== 'delivered' && $repair->status === 'delivered') {
-                    SmsService::sendRepairDeliveredSms($repair);
-                }
-            } catch (\Throwable $smsEx) {
-                // Suppress SMS exceptions
-            }
-
             return redirect()->route('admin.repairs.show', $repair->id)->with('success', 'Repair ticket updated successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', 'Failed to update repair ticket: ' . $e->getMessage());
