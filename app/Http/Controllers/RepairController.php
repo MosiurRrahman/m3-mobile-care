@@ -267,16 +267,6 @@ class RepairController extends Controller
 
                 // Sync stock deduction
                 self::syncStockDeduction($repair, $status, $usedParts);
-
-                // Dispatch SMS notification for repair tracking if customer phone exists
-                try {
-                    $repair->load('customer');
-                    if ($repair->customer && !empty($repair->customer->phone)) {
-                        SmsService::sendRepairCreatedSms($repair);
-                    }
-                } catch (\Throwable $smsEx) {
-                    // Suppress SMS exceptions so record creation is not blocked
-                }
             });
 
             return redirect()->route('admin.repairs.index')->with('success', 'Job Card ticket created successfully!');

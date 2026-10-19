@@ -112,8 +112,8 @@
                                     <div class="form-text small text-muted"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold" for="customer_name">Full Name<span class="text-danger">*</span></label>
-                                    <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="e.g. Rahim Ali" value="{{ old('customer_name') }}" required>
+                                    <label class="form-label fw-semibold" for="customer_name">Full Name <span class="text-muted">(Optional)</span></label>
+                                    <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="e.g. Rahim Ali" value="{{ old('customer_name') }}">
                                 </div>
                             </div>
                             <div class="row mb-4">
@@ -187,23 +187,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-6 mb-3 mb-md-0">
-                                                <label class="form-label fw-semibold">Select Core Repair Service <span class="text-muted">(Optional)</span></label>
-                                                <select name="devices[{{ $i }}][service_id]" class="form-select device-service">
-                                                    <option value="" data-price="0" {{ empty($dev['service_id']) ? 'selected' : '' }}>Custom / Unlisted Service</option>
-                                                    @foreach($services as $service)
-                                                    <option value="{{ $service->id }}" data-price="{{ $service->price }}" {{ ($dev['service_id'] ?? '') == $service->id ? 'selected' : '' }}>
-                                                        {{ $service->name }} ({{ number_format($service->price, 0) }} BDT)
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label fw-semibold">IMEI or Serial Number <span class="text-muted">(Optional)</span></label>
-                                                <input type="text" name="devices[{{ $i }}][serial_imei]" class="form-control device-imei" placeholder="Enter IMEI to speed up service" value="{{ $dev['serial_imei'] ?? '' }}">
-                                            </div>
-                                        </div>
 
                                         <div class="row mb-3">
                                             <div class="col-12">
@@ -287,21 +270,7 @@
                     <input type="text" name="devices[__INDEX__][model]" class="form-control device-model" placeholder="e.g. iPhone 13 Pro Max, Galaxy S21" required value="">
                 </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <label class="form-label fw-semibold">Select Core Repair Service <span class="text-muted">(Optional)</span></label>
-                    <select name="devices[__INDEX__][service_id]" class="form-select device-service">
-                        <option value="" data-price="0" selected>Custom / Unlisted Service</option>
-                        @foreach($services as $service)
-                        <option value="{{ $service->id }}" data-price="{{ $service->price }}">{{ $service->name }} ({{ number_format($service->price, 0) }} BDT)</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">IMEI or Serial Number <span class="text-muted">(Optional)</span></label>
-                    <input type="text" name="devices[__INDEX__][serial_imei]" class="form-control device-imei" placeholder="Enter IMEI to speed up service">
-                </div>
-            </div>
+
             <div class="row mb-3">
                 <div class="col-12">
                     <label class="form-label fw-semibold">Describe the Issue  <span class="text-danger">*</span></label>

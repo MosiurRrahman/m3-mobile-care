@@ -118,7 +118,7 @@ class HomeController extends Controller
     public function book(Request $request)
     {
         $request->validate([
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'customer_email' => 'nullable|email|max:255',
             // Multiple devices array support
@@ -162,7 +162,7 @@ class HomeController extends Controller
 
         if (!$customer) {
             $customer = Customer::create([
-                'name' => trim($request->input('customer_name')),
+                'name' => trim($request->input('customer_name')) ?: 'Walk-in Customer',
                 'phone' => $cleanPhone ?: $rawPhone,
                 'email' => trim($request->input('customer_email')) ?: null,
             ]);
@@ -217,21 +217,11 @@ class HomeController extends Controller
             }
         });
 
-        // Dispatch tracking SMS notification for each repair
-        try {
-            foreach ($createdRepairs as $repair) {
-                $repair->load('customer');
-                SmsService::sendRepairCreatedSms($repair);
-            }
-        } catch (\Throwable $smsEx) {
-            // Suppress SMS exceptions
-        }
-
         $count = count($ticketIds);
         $primaryTicket = $ticketIds[0];
         $msg = $count > 1 
             ? "{$count}টি মোবাইল সফলভাবে বুকিং সম্পন্ন হয়েছে! প্রতিটির জন্য ট্র্যাকিং কোড তৈরি হয়েছে।"
-            : 'Repair request booked successfully and Tracking SMS sent!';
+            : 'Repair request booked successfully!';
 
         return redirect()->route('book.success', ['ticket_id' => $primaryTicket, 'tickets' => implode(',', $ticketIds)])
             ->with('all_ticket_ids', $ticketIds)
