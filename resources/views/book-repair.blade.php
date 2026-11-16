@@ -96,13 +96,13 @@
 
                             <!-- Section 1: Customer Info -->
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h2 class="h5 fw-bold mb-0 text-primary"><i class="ti tabler-user me-2"></i>1. Customer Information (গ্রাহকের তথ্য)</h2>
+                                <h2 class="h5 fw-bold mb-0 text-primary"><i class="ti tabler-user me-2"></i>1. Customer Info</h2>
                                 <span class="badge bg-light text-muted fw-normal" id="lookup-status-badge"></span>
                             </div>
 
-                            <div class="row mb-4">
+                            <div class="row mb-3">
                                 <div class="col-md-6 mb-3 mb-md-0 position-relative">
-                                    <label class="form-label fw-semibold" for="customer_phone">Phone Number (মোবাইল নম্বর) <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold" for="customer_phone">Phone Number  <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <input type="text" name="customer_phone" id="customer_phone" class="form-control" placeholder="e.g. 01712345678" value="{{ old('customer_phone') }}" required autocomplete="tel">
                                         <span class="input-group-text d-none" id="phone-spinner">
@@ -114,13 +114,6 @@
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold" for="customer_name">Full Name <span class="text-muted">(Optional)</span></label>
                                     <input type="text" name="customer_name" id="customer_name" class="form-control" placeholder="e.g. Rahim Ali" value="{{ old('customer_name') }}">
-                                </div>
-                            </div>
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold" for="customer_email">Email Address <span class="text-muted">(Optional)</span></label>
-                                    <input type="email" name="customer_email" id="customer_email" class="form-control" placeholder="e.g. rahim@example.com" value="{{ old('customer_email') }}">
-                                    <div class="form-text">We'll use this to send repair updates and tracking credentials.</div>
                                 </div>
                             </div>
 
@@ -138,6 +131,39 @@
                             <!-- Devices Container -->
                             <div id="devices-container">
                                 @php
+                                    $brandsList = [
+                                        'Apple' => 'Apple (iPhone/iPad)',
+                                        'Samsung' => 'Samsung',
+                                        'Xiaomi' => 'Xiaomi (Redmi / POCO)',
+                                        'Realme' => 'Realme',
+                                        'Vivo' => 'Vivo (iQOO)',
+                                        'Oppo' => 'Oppo',
+                                        'OnePlus' => 'OnePlus',
+                                        'Google' => 'Google Pixel',
+                                        'Infinix' => 'Infinix',
+                                        'Tecno' => 'Tecno',
+                                        'itel' => 'itel',
+                                        'Honor' => 'Honor',
+                                        'Huawei' => 'Huawei',
+                                        'Motorola' => 'Motorola',
+                                        'Nokia' => 'Nokia',
+                                        'Walton' => 'Walton',
+                                        'Symphony' => 'Symphony',
+                                        'Nothing' => 'Nothing (CMF)',
+                                        'Sony' => 'Sony',
+                                        'Asus' => 'Asus (ROG / Zenfone)',
+                                        'Lenovo' => 'Lenovo',
+                                        'ZTE' => 'ZTE (Nubia / RedMagic)',
+                                        'Benco' => 'Benco',
+                                        'Maximus' => 'Maximus',
+                                        'Lava' => 'Lava',
+                                        'Micromax' => 'Micromax',
+                                        'HTC' => 'HTC',
+                                        'LG' => 'LG',
+                                        'Blackberry' => 'Blackberry',
+                                        'Other' => 'Other Brand',
+                                    ];
+
                                     $oldDevices = old('devices');
                                     if (empty($oldDevices) || !is_array($oldDevices)) {
                                         $oldDevices = [
@@ -167,18 +193,12 @@
                                     <div class="card-body p-3 p-md-4">
                                         <div class="row mb-3">
                                             <div class="col-md-6 mb-3 mb-md-0">
-                                                <label class="form-label fw-semibold">Device Brand<span class="text-danger">*</span></label>
+                                                <label class="form-label fw-semibold">Device Brand <span class="text-danger">*</span></label>
                                                 <select name="devices[{{ $i }}][brand]" class="form-select device-brand" required>
                                                     <option value="" disabled {{ empty($dev['brand']) ? 'selected' : '' }}>Select Brand</option>
-                                                    <option value="Apple" {{ ($dev['brand'] ?? '') == 'Apple' ? 'selected' : '' }}>Apple (iPhone/iPad)</option>
-                                                    <option value="Samsung" {{ ($dev['brand'] ?? '') == 'Samsung' ? 'selected' : '' }}>Samsung</option>
-                                                    <option value="Xiaomi" {{ ($dev['brand'] ?? '') == 'Xiaomi' ? 'selected' : '' }}>Xiaomi / Redmi</option>
-                                                    <option value="Realme" {{ ($dev['brand'] ?? '') == 'Realme' ? 'selected' : '' }}>Realme</option>
-                                                    <option value="Oppo" {{ ($dev['brand'] ?? '') == 'Oppo' ? 'selected' : '' }}>Oppo</option>
-                                                    <option value="Vivo" {{ ($dev['brand'] ?? '') == 'Vivo' ? 'selected' : '' }}>Vivo</option>
-                                                    <option value="OnePlus" {{ ($dev['brand'] ?? '') == 'OnePlus' ? 'selected' : '' }}>OnePlus</option>
-                                                    <option value="Google" {{ ($dev['brand'] ?? '') == 'Google' ? 'selected' : '' }}>Google Pixel</option>
-                                                    <option value="Other" {{ ($dev['brand'] ?? '') == 'Other' ? 'selected' : '' }}>Other Brand</option>
+                                                    @foreach($brandsList as $bKey => $bName)
+                                                        <option value="{{ $bKey }}" {{ ($dev['brand'] ?? '') == $bKey ? 'selected' : '' }}>{{ $bName }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="col-md-6">
@@ -254,15 +274,9 @@
                     <label class="form-label fw-semibold">Device Brand <span class="text-danger">*</span></label>
                     <select name="devices[__INDEX__][brand]" class="form-select device-brand" required>
                         <option value="" disabled selected>Select Brand</option>
-                        <option value="Apple">Apple (iPhone/iPad)</option>
-                        <option value="Samsung">Samsung</option>
-                        <option value="Xiaomi">Xiaomi / Redmi</option>
-                        <option value="Realme">Realme</option>
-                        <option value="Oppo">Oppo</option>
-                        <option value="Vivo">Vivo</option>
-                        <option value="OnePlus">OnePlus</option>
-                        <option value="Google">Google Pixel</option>
-                        <option value="Other">Other Brand</option>
+                        @foreach($brandsList as $bKey => $bName)
+                            <option value="{{ $bKey }}">{{ $bName }}</option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="col-md-6">
@@ -301,7 +315,6 @@
         // Customer auto-lookup by phone
         const phoneInput = document.getElementById('customer_phone');
         const nameInput = document.getElementById('customer_name');
-        const emailInput = document.getElementById('customer_email');
         const phoneSpinner = document.getElementById('phone-spinner');
         const lookupBadge = document.getElementById('lookup-status-badge');
 
@@ -325,9 +338,6 @@
                             if (data.found) {
                                 if (data.name && (!nameInput.value || nameInput.value === 'Walk-in Customer')) {
                                     nameInput.value = data.name;
-                                }
-                                if (data.email && !emailInput.value) {
-                                    emailInput.value = data.email;
                                 }
                                 if (lookupBadge) {
                                     lookupBadge.className = 'badge bg-label-success';

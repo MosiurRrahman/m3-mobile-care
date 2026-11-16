@@ -61,6 +61,19 @@
                     </li>
                     <li><hr class="dropdown-divider my-1"></li>
                     <li>
+                        <form action="{{ route('admin.repairs.send-sms', $repair->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="type" value="technician_reminder">
+                            <button type="submit" class="dropdown-item py-2 {{ !$repair->technician ? 'disabled' : '' }}" {{ !$repair->technician ? 'disabled' : '' }}>
+                                <i class="ti tabler-bell-ringing me-2 text-warning"></i>Send Technician Alert SMS
+                                @if($repair->technician)
+                                    <small class="d-block text-muted ps-4">To: {{ $repair->technician->name }} ({{ $repair->technician->phone ?: 'No Phone' }})</small>
+                                @endif
+                            </button>
+                        </form>
+                    </li>
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
                         <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#customSmsModal">
                             <i class="ti tabler-pencil me-2 text-secondary"></i>Write Custom SMS...
                         </button>
@@ -77,7 +90,7 @@
             <a href="{{ route('admin.repairs.edit', $repair->id) }}" class="btn btn-primary"><i class="ti tabler-edit me-1"></i>Edit Ticket</a>
         </div>
     </div>
-
+ 
     <!-- Session Alerts -->
     @if(session('success'))
         <div class="col-12 mb-3">
@@ -117,17 +130,28 @@
                             <span class="fw-bold text-dark fs-5">Walk-in Customer</span>
                         @endif
                     </div>
+                    @if(!empty($repair->customer?->phone))
                     <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">Phone Number</label>
-                        <span class="fw-bold text-dark fs-5">{{ $repair->customer ? $repair->customer->phone : 'N/A' }}</span>
+                        <span class="fw-bold text-dark fs-5">{{ $repair->customer->phone }}</span>
                     </div>
+                    @endif
+                    @if(!empty($repair->customer?->email))
                     <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">Email Address</label>
-                        <span class="text-dark">{{ $repair->customer?->email ?? 'N/A' }}</span>
+                        <span class="text-dark">{{ $repair->customer->email }}</span>
                     </div>
+                    @endif
                     <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">Expected Delivery Date</label>
-                        <span class="text-dark fw-semibold">{{ $repair->expected_delivery_date ? \Carbon\Carbon::parse($repair->expected_delivery_date)->format('M d, Y') : 'Not Specified' }}</span>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="text-dark fw-semibold">{{ $repair->expected_delivery_date ? \Carbon\Carbon::parse($repair->expected_delivery_date)->format('M d, Y') : 'Not Specified' }}</span>
+                            @if($repair->expected_date_reminder_sent_at)
+                                <span class="badge bg-label-info" title="Reminder SMS dispatched on {{ $repair->expected_date_reminder_sent_at->format('d M, Y h:i A') }}">
+                                    <i class="ti tabler-bell-check me-1"></i>Tech Alerted SMS ({{ $repair->expected_date_reminder_sent_at->format('d M, h:i A') }})
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -138,38 +162,18 @@
                         <label class="small text-muted d-block mb-1">Device Brand & Model</label>
                         <span class="fw-bold text-dark">{{ $repair->device_brand }} {{ $repair->device_model }}</span>
                     </div>
+                    @if(!empty($repair->serial_imei))
                     <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">IMEI or Serial Number</label>
-                        <span class="text-dark">{{ $repair->serial_imei ?? 'N/A' }}</span>
+                        <span class="text-dark">{{ $repair->serial_imei }}</span>
                     </div>
-                    <div class="col-sm-12 mb-3">
-                        <label class="small text-muted d-block mb-1">Pattern Screen Unlock / Passwords</label>
-                        <span class="text-dark fw-semibold p-2 bg-light rounded-3 d-block border-start border-warning border-3 mb-2"><i class="ti tabler-key me-1 text-warning"></i>{{ $repair->password_pattern ?? 'No lock credentials shared.' }}</span>
-
-                        @if($repair->pattern_lock_path)
-                        <div id="read-only-pattern-wrapper" class="card p-2 border mt-2" style="width: fit-content; background: #f8f9fa;">
-                            <div id="pattern-holder" style="width: 140px; height: 140px; position: relative; background: #eef1f6; border-radius: 8px;">
-                                <svg id="pattern-svg" style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"></svg>
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); height: 100%; width: 100%; padding: 8px; box-sizing: border-box;">
-                                    @for($i = 1; $i <= 9; $i++)
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <div class="pattern-dot" data-index="{{ $i }}" style="width: 10px; height: 10px; border-radius: 50%; background: #a1b0cb;"></div>
-                                    </div>
-                                    @endfor
-                                </div>
-                            </div>
-                            <input type="hidden" id="pattern_lock_path" value="{{ $repair->pattern_lock_path }}">
-                        </div>
-                        @endif
-                    </div>
-                    <div class="col-sm-12 mb-3">
+                    @endif
+                    @if($repair->data_loss_consent)
+                    <div class="col-sm-6 mb-3">
                         <label class="small text-muted d-block mb-1">Customer Data Backup Consent</label>
-                        @if($repair->data_loss_consent)
-                            <span class="badge bg-label-success"><i class="ti tabler-circle-check me-1"></i>Consent Verified & Signed</span>
-                        @else
-                            <span class="badge bg-label-warning"><i class="ti tabler-alert-circle me-1"></i>No Consent Logged</span>
-                        @endif
+                        <span class="badge bg-label-success"><i class="ti tabler-circle-check me-1"></i>Consent Verified & Signed</span>
                     </div>
+                    @endif
                     <div class="col-sm-12 mb-3">
                         <label class="small text-muted d-block mb-1">Issue Description</label>
                         <span class="text-dark leading-relaxed d-block p-3 bg-light rounded-3">{{ $repair->issue_description }}</span>
@@ -178,77 +182,23 @@
             </div>
         </div>
 
-        <!-- Checklist & Photos Card -->
+        @if($repair->device_photos && count($repair->device_photos) > 0)
+        <!-- Device Photos Card -->
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-clipboard-check me-2"></i>Device Checklist & Physical Condition</h5>
-
-                @php
-                    $checklist = $repair->device_checklist ?? [];
-                    $labels = [
-                        'scratches' => 'Body Scratches / Dents',
-                        'display_ok' => 'Display Condition',
-                        'touch_ok' => 'Touch Screen',
-                        'camera_ok' => 'Cameras',
-                        'audio_ok' => 'Speakers & Audio',
-                        'buttons_ok' => 'Physical Buttons',
-                    ];
-                    $customChecklist = isset($checklist['custom']) && is_array($checklist['custom']) ? $checklist['custom'] : [];
-                @endphp
-                <div class="row mb-3">
-                    @foreach($labels as $key => $label)
-                        @php
-                            $val = $checklist[$key] ?? null;
-                        @endphp
-                        <div class="col-sm-6 col-md-4 mb-3">
-                            <div class="p-2 border rounded bg-light">
-                                <small class="text-muted d-block fw-semibold" style="font-size:0.75rem;">{{ $label }}</small>
-                                <span class="fw-bold small">
-                                    @if(empty($val))
-                                        <span class="text-muted">Not specified</span>
-                                    @elseif($val === 'yes')
-                                        <span class="text-success"><i class="ti tabler-check me-1"></i>OK / Good</span>
-                                    @elseif($val === 'no')
-                                        <span class="text-danger"><i class="ti tabler-x me-1"></i>Issue / Faulty</span>
-                                    @else
-                                        <span class="text-dark">{{ $val }}</span>
-                                    @endif
-                                </span>
-                            </div>
+                <h5 class="fw-bold text-primary mb-3"><i class="ti tabler-camera me-2"></i>Device Photos (At Check-in)</h5>
+                <div class="row g-2">
+                    @foreach($repair->device_photos as $photo)
+                        <div class="col-sm-4 col-md-3">
+                            <a href="{{ asset('storage/' . $photo) }}" target="_blank" class="d-block border rounded overflow-hidden shadow-xs hover-zoom" style="height: 120px;">
+                                <img src="{{ asset('storage/' . $photo) }}" class="w-100 h-100 object-fit-cover">
+                            </a>
                         </div>
-                    @endforeach
-
-                    @foreach($customChecklist as $cItem)
-                        @if(!empty($cItem['label']))
-                        <div class="col-sm-6 col-md-4 mb-3">
-                            <div class="p-2 border rounded bg-light border-primary border-opacity-25">
-                                <small class="text-primary d-block fw-semibold" style="font-size:0.75rem;"><i class="ti tabler-sparkles me-1"></i>{{ $cItem['label'] }}</small>
-                                <span class="fw-bold text-dark small">{{ $cItem['value'] ?? 'N/A' }}</span>
-                            </div>
-                        </div>
-                        @endif
                     @endforeach
                 </div>
-
-                @if($repair->device_photos && count($repair->device_photos) > 0)
-                    <hr class="my-3 text-muted opacity-25">
-                    <label class="fw-bold mb-3 text-dark d-block">Device Photos (At Check-in)</label>
-                    <div class="row g-2">
-                        @foreach($repair->device_photos as $photo)
-                            <div class="col-sm-4 col-md-3">
-                                <a href="{{ asset('storage/' . $photo) }}" target="_blank" class="d-block border rounded overflow-hidden shadow-xs hover-zoom" style="height: 120px;">
-                                    <img src="{{ asset('storage/' . $photo) }}" class="w-100 h-100 object-fit-cover">
-                                </a>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="p-3 bg-light rounded text-center small text-muted">
-                        <i class="ti tabler-photo-off me-1"></i>No condition photos uploaded at check-in.
-                    </div>
-                @endif
             </div>
         </div>
+        @endif
 
         <!-- Costs Card -->
         <div class="card border-0 shadow-sm mb-4">
@@ -516,46 +466,74 @@
             </div>
         </div>
 
-        <!-- Technician logs -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <h5 class="fw-bold text-primary mb-3"><i class="ti tabler-user-cog me-2"></i>Operation Assignments & Logs</h5>
-                <div class="row mb-3">
-                    <div class="col-sm-6 mb-2 mb-sm-0">
-                        <label class="small text-muted d-block mb-1">Assigned Technician</label>
-                        <span class="badge bg-label-primary px-3 py-2 fs-6">
-                            <i class="ti tabler-user me-1"></i>{{ $repair->technician ? $repair->technician->name : 'Unassigned' }}
-                        </span>
-                    </div>
-                    @if($repair->commission_type && auth()->user()->isSuperAdmin())
-                    <div class="col-sm-6">
-                        <label class="small text-muted d-block mb-1">Technician Commission</label>
-                        <span class="badge bg-label-success px-3 py-2 fs-6">
-                            <i class="ti tabler-chart-pie me-1"></i>
-                            @if($repair->commission_type === 'percentage')
-                                {{ $repair->commission_rate }}% ({{ number_format($repair->commission_amount, 2) }} BDT)
-                            @else
-                                Flat {{ number_format($repair->commission_rate, 2) }} BDT
-                            @endif
-                        </span>
-                    </div>
-                    @endif
-                </div>
-                <div class="mb-0">
-                    <label class="small text-muted d-block mb-1">Technician Log Notes</label>
-                    @if($repair->technician_notes)
-                        <p class="text-muted leading-relaxed mb-0 p-3 bg-light rounded-3 border-start border-primary border-3">{{ $repair->technician_notes }}</p>
-                    @else
-                        <p class="text-muted italic small mb-0">No technical logs written yet by staff.</p>
-                    @endif
+         @if(!empty($repair->status_history) && is_array($repair->status_history))
+        <!-- Detailed History Log Card -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-bottom py-3">
+                <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-history me-2 text-primary"></i>Status & Assignment History Log</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Event / Status</th>
+                                <th>Tech Assigned</th>
+                                <th>Action By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(array_reverse($repair->status_history) as $historyItem)
+                            <tr>
+                                <td class="text-nowrap text-muted">
+                                    <i class="ti tabler-clock me-1"></i>{{ \Carbon\Carbon::parse($historyItem['created_at'] ?? now())->format('d M, Y h:i A') }}
+                                </td>
+                                <td>
+                                    @php
+                                        $type = $historyItem['type'] ?? 'status_change';
+                                        $st = $historyItem['status'] ?? '';
+                                        $label = $historyItem['status_label'] ?? ucfirst(str_replace('_', ' ', $st));
+                                    @endphp
+                                    @if($type === 'assignment')
+                                        <span class="badge bg-label-info"><i class="ti tabler-user-check me-1"></i>Assigned</span>
+                                    @elseif($type === 'unassignment')
+                                        <span class="badge bg-label-secondary"><i class="ti tabler-user-x me-1"></i>Unassigned</span>
+                                    @elseif($type === 'created')
+                                        <span class="badge bg-label-primary"><i class="ti tabler-plus me-1"></i>Created</span>
+                                    @elseif($type === 'sms_alert')
+                                        <span class="badge bg-label-warning"><i class="ti tabler-bell-ringing me-1"></i>Tech SMS Alert</span>
+                                    @else
+                                        <span class="badge bg-label-success">{{ $label }}</span>
+                                    @endif
+
+                                    @if(!empty($historyItem['note']))
+                                        <small class="d-block text-muted mt-1" style="font-size: 0.72rem;">{{ $historyItem['note'] }}</small>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(!empty($historyItem['technician_name']))
+                                        <span class="text-dark fw-semibold"><i class="ti tabler-user me-1 text-primary"></i>{{ $historyItem['technician_name'] }}</span>
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="text-dark">{{ $historyItem['user_name'] ?? 'System' }}</span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
-    <!-- Timeline Status -->
-    <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100">
+    <!-- Timeline Status & Operations Sidebar -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm mb-4">
             <div class="card-body">
                 <h5 class="fw-bold text-primary mb-5"><i class="ti tabler-git-commit me-2"></i>Job Lifecycle Status</h5>
 
@@ -625,6 +603,7 @@
                             $isPassed = $currentIndex >= $index && $status != 'cancelled';
                             $isActive = $currentIndex === $index;
                             $dotColor = $isActive ? '#7367f0' : ($isPassed ? '#28c76f' : '#82868b');
+                            $stepDate = $repair->getStatusDate($stepKey);
                         @endphp
                         <div class="mb-5 position-relative">
                             <div class="position-absolute rounded-circle d-flex align-items-center justify-content-center text-white"
@@ -632,13 +611,80 @@
                                 <i class="ti {{ $step['Icon'] }} fs-6"></i>
                             </div>
                             <div class="ps-2">
-                                <h6 class="fw-bold mb-1 {{ $isActive ? 'text-primary' : ($isPassed ? 'text-success' : 'text-muted') }}">
-                                    {{ $step['Title'] }}
-                                </h6>
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+                                    <h6 class="fw-bold mb-1 {{ $isActive ? 'text-primary' : ($isPassed ? 'text-success' : 'text-muted') }}">
+                                        {{ $step['Title'] }}
+                                    </h6>
+                                    @if($stepDate && ($isPassed || $isActive))
+                                        <span class="badge bg-label-secondary text-muted" style="font-size: 0.72rem;">
+                                            <i class="ti tabler-calendar-time me-1 text-primary"></i>{{ $stepDate->format('d M, Y • h:i A') }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <p class="text-muted mb-0 small">{{ $step['Desc'] }}</p>
                             </div>
                         </div>
                     @endforeach
+                </div>
+            </div>
+        </div>
+
+        <!-- Technician logs -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="fw-bold text-primary mb-3"><i class="ti tabler-user-cog me-2"></i>Operation Assignments & Logs</h5>
+                <div class="row mb-3">
+                    <div class="col-12 mb-2">
+                        <label class="small text-muted d-block mb-1">Assigned Technician</label>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="badge bg-label-primary px-3 py-2 fs-6">
+                                <i class="ti tabler-user me-1"></i>{{ $repair->technician ? $repair->technician->name : 'Unassigned' }}
+                            </span>
+                            @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                            <button type="button" class="btn btn-xs btn-outline-primary" data-bs-toggle="modal" data-bs-target="#quickStatusModal" title="Change Technician">
+                                <i class="ti tabler-edit"></i> Reassign
+                            </button>
+                            @endif
+                        </div>
+                        @if($repair->technician)
+                            <div class="text-muted small mt-2">
+                                <i class="ti tabler-calendar-check text-success me-1"></i>Assigned on: <strong>{{ ($repair->assigned_at ?? $repair->created_at)->format('d M, Y h:i A') }}</strong>
+                            </div>
+                            @if($repair->technician->phone)
+                            <div class="text-muted small mt-1">
+                                <i class="ti tabler-phone text-primary me-1"></i>Phone: <strong>{{ $repair->technician->phone }}</strong>
+                            </div>
+                            @endif
+                            @if($repair->expected_date_reminder_sent_at)
+                            <div class="mt-2">
+                                <span class="badge bg-label-info" title="Automated reminder sent to technician on {{ $repair->expected_date_reminder_sent_at->format('d M, Y h:i A') }}">
+                                    <i class="ti tabler-bell-check me-1"></i>1-Day Alert SMS Sent ({{ $repair->expected_date_reminder_sent_at->format('d M, h:i A') }})
+                                </span>
+                            </div>
+                            @endif
+                        @endif
+                    </div>
+                    @if($repair->commission_type && auth()->user()->isSuperAdmin())
+                    <div class="col-12 mt-2">
+                        <label class="small text-muted d-block mb-1">Technician Commission</label>
+                        <span class="badge bg-label-success px-3 py-2 fs-6">
+                            <i class="ti tabler-chart-pie me-1"></i>
+                            @if($repair->commission_type === 'percentage')
+                                {{ $repair->commission_rate }}% ({{ number_format($repair->commission_amount, 2) }} BDT)
+                            @else
+                                Flat {{ number_format($repair->commission_rate, 2) }} BDT
+                            @endif
+                        </span>
+                    </div>
+                    @endif
+                </div>
+                <div class="mb-0">
+                    <label class="small text-muted d-block mb-1">Technician Log Notes</label>
+                    @if($repair->technician_notes)
+                        <p class="text-muted leading-relaxed mb-0 p-3 bg-light rounded-3 border-start border-primary border-3">{{ $repair->technician_notes }}</p>
+                    @else
+                        <p class="text-muted italic small mb-0">No technical logs written yet by staff.</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -670,64 +716,7 @@
 }
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const patternPathInput = document.getElementById('pattern_lock_path');
-        const patternHolder = document.getElementById('pattern-holder');
-        const patternSvg = document.getElementById('pattern-svg');
 
-        function getDotCenter(dot, container) {
-            const rect = dot.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            return {
-                x: (rect.left + rect.width / 2) - containerRect.left,
-                y: (rect.top + rect.height / 2) - containerRect.top
-            };
-        }
-
-        function drawLines(activePattern) {
-            if (!patternSvg || !patternHolder) return;
-            patternSvg.innerHTML = '';
-            if (activePattern.length === 0) return;
-
-            let pathData = '';
-            activePattern.forEach((dotIndex, idx) => {
-                const dot = document.querySelector(`.pattern-dot[data-index="${dotIndex}"]`);
-                if (dot) {
-                    const center = getDotCenter(dot, patternHolder);
-                    if (idx === 0) {
-                        pathData += `M ${center.x} ${center.y}`;
-                    } else {
-                        pathData += ` L ${center.x} ${center.y}`;
-                    }
-                }
-            });
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('stroke', '#7367f0');
-            path.setAttribute('stroke-width', '4');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            patternSvg.appendChild(path);
-        }
-
-        if (patternPathInput && patternPathInput.value && patternHolder) {
-            const activePattern = patternPathInput.value.split('-').map(Number);
-            activePattern.forEach(dotIndex => {
-                const dot = document.querySelector(`.pattern-dot[data-index="${dotIndex}"]`);
-                if (dot) {
-                    dot.style.background = '#7367f0';
-                    dot.style.transform = 'scale(1.2)';
-                }
-            });
-            setTimeout(function() {
-                drawLines(activePattern);
-            }, 300);
-        }
-    });
-</script>
 
 <!-- Custom SMS Modal -->
 <div class="modal fade" id="customSmsModal" tabindex="-1" aria-hidden="true">
@@ -785,7 +774,29 @@
                             <option value="delivered" {{ $repair->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
                             <option value="cancelled" {{ $repair->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
+                        <div class="text-muted small mt-1">
+                            <i class="ti tabler-clock-edit me-1 text-info"></i>Current status updated: {{ ($repair->status_updated_at ?? $repair->created_at)->format('d M, Y h:i A') }}
+                        </div>
                     </div>
+
+                    @if(auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="qs_assigned_technician_id">Assign Technician</label>
+                        <select name="assigned_technician_id" id="qs_assigned_technician_id" class="form-select">
+                            <option value="">-- Unassigned --</option>
+                            @if(isset($technicians))
+                                @foreach($technicians as $tech)
+                                    <option value="{{ $tech->id }}" {{ $repair->assigned_technician_id == $tech->id ? 'selected' : '' }}>{{ $tech->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        @if($repair->assigned_technician_id)
+                        <div class="text-muted small mt-1">
+                            <i class="ti tabler-calendar-check me-1 text-success"></i>Assigned on: {{ ($repair->assigned_at ?? $repair->created_at)->format('d M, Y h:i A') }}
+                        </div>
+                        @endif
+                    </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label fw-semibold" for="qs_technician_notes">
                             Live Description / Technician Note

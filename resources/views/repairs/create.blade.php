@@ -3,18 +3,6 @@
 @section('title', 'Create Job Card - M3 Mobile Care')
 
 @section('content')
-<!-- Tom Select CSS & JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-
-<style>
-/* Styles to adjust Tom Select control padding and height in repair list rows */
-.ts-wrapper.form-select-sm .ts-control {
-    padding: 4px 8px !important;
-    font-size: 0.85rem !important;
-}
-</style>
-
 <div class="row">
     <div class="col-12 mb-4">
         <h4 class="fw-bold mb-0">Create Repair Job Card</h4>
@@ -71,67 +59,9 @@
                     <!-- SECTION 2: Device Details -->
                     <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-device-mobile me-2"></i>2. Device Information</h5>
                     <div class="row mb-4">
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="device_brand">Brand <span class="text-danger">*</span></label>
-                            <select name="device_brand" id="device_brand" class="form-select" required>
-                                <option value="" disabled selected>Select Brand</option>
-                                <option value="Apple" {{ old('device_brand') == 'Apple' ? 'selected' : '' }}>Apple (iPhone/iPad)</option>
-                                <option value="Samsung" {{ old('device_brand') == 'Samsung' ? 'selected' : '' }}>Samsung</option>
-                                <option value="Xiaomi" {{ old('device_brand') == 'Xiaomi' ? 'selected' : '' }}>Xiaomi / Redmi</option>
-                                <option value="Realme" {{ old('device_brand') == 'Realme' ? 'selected' : '' }}>Realme</option>
-                                <option value="Oppo" {{ old('device_brand') == 'Oppo' ? 'selected' : '' }}>Oppo</option>
-                                <option value="Vivo" {{ old('device_brand') == 'Vivo' ? 'selected' : '' }}>Vivo</option>
-                                <option value="OnePlus" {{ old('device_brand') == 'OnePlus' ? 'selected' : '' }}>OnePlus</option>
-                                <option value="Google" {{ old('device_brand') == 'Google' ? 'selected' : '' }}>Google Pixel</option>
-                                <option value="Other" {{ old('device_brand') == 'Other' ? 'selected' : '' }}>Other Brand</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="device_model">Model Name / Number <span class="text-danger">*</span></label>
-                            <input type="text" name="device_model" id="device_model" class="form-control" value="{{ old('device_model') }}" placeholder="e.g. iPhone 13 Pro Max" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold" for="serial_imei">IMEI / Serial Number</label>
-                            <input type="text" name="serial_imei" id="serial_imei" class="form-control" value="{{ old('serial_imei') }}" placeholder="e.g. 357283920193847">
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="service_id">Catalog Services <span class="text-muted">(Optional price lookup)</span></label>
-                            <select name="service_id" id="service_id" class="form-select">
-                                <option value="">Custom / Unlisted Service</option>
-                                @foreach($services as $service)
-                                <option value="{{ $service->id }}" data-price="{{ $service->price }}">{{ $service->name }} ({{ number_format($service->price, 0) }} BDT)</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold" for="password_pattern">Screen Lock Credentials / Unlocking Pattern</label>
-                            <input type="text" name="password_pattern" id="password_pattern" class="form-control" value="{{ old('password_pattern') }}" placeholder="Pattern code, PIN or Password">
-                            <div class="form-text small">e.g. Pin: 1234. Needed to verify repairs.</div>
-
-                            <div class="d-flex align-items-center gap-2 mt-2">
-                                <button type="button" id="btn-toggle-pattern" class="btn btn-sm btn-outline-primary"><i class="ti tabler-grid me-1"></i>Draw Pattern Lock</button>
-                            </div>
-
-                            <div id="pattern-lock-wrapper" class="mt-2 card p-2 border" style="display: none; width: fit-content; background: #f8f9fa;">
-                                <div id="pattern-holder" style="width: 180px; height: 180px; position: relative; background: #eef1f6; border-radius: 8px; touch-action: none; overflow: hidden;">
-                                    <svg id="pattern-svg" style="width:100%; height:100%; position:absolute; top:0; left:0; pointer-events:none;"></svg>
-                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); height: 100%; width: 100%; padding: 10px; box-sizing: border-box;">
-                                        @for($i = 1; $i <= 9; $i++)
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <div class="pattern-dot" data-index="{{ $i }}" style="width: 14px; height: 14px; border-radius: 50%; background: #a1b0cb; cursor: pointer; z-index: 10; transition: all 0.2s ease;"></div>
-                                        </div>
-                                        @endfor
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-2" style="width: 180px;">
-                                    <span class="small text-muted" id="pattern-path-label">Path: None</span>
-                                    <button type="button" id="btn-clear-pattern" class="btn btn-xs btn-outline-danger py-0 px-1" style="font-size:0.75rem;">Clear</button>
-                                </div>
-                                <input type="hidden" name="pattern_lock_path" id="pattern_lock_path" value="{{ old('pattern_lock_path') }}">
-                            </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold" for="device_model">Brand & Model Name / Number <span class="text-danger">*</span></label>
+                            <input type="text" name="device_model" id="device_model" class="form-control" value="{{ old('device_model') }}" placeholder="e.g. Samsung Galaxy S21 / iPhone 13 Pro Max" required>
                         </div>
                     </div>
 
@@ -144,52 +74,10 @@
 
                     <hr class="my-4 text-muted opacity-25">
 
-                    <!-- SECTION 2.5: Physical Checklist & Photos -->
-                    <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-clipboard-check me-2"></i>2.5 Device Condition Checklist & Photos</h5>
+                    <!-- SECTION 2.5: Device Photos -->
+                    <h5 class="fw-bold text-primary mb-4"><i class="ti tabler-camera me-2"></i>2.5 Device Photos</h5>
                     <div class="row mb-4">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="form-label fw-bold d-block mb-3 text-dark">Pre-Repair Physical Diagnostics</label>
-
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[scratches]" id="chk_scratches" value="yes">
-                                        <label class="form-check-label fw-semibold" for="chk_scratches">Body Scratches / Dents</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[display_ok]" id="chk_display" value="yes" checked>
-                                        <label class="form-check-label fw-semibold" for="chk_display">Display Functional</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[touch_ok]" id="chk_touch" value="yes" checked>
-                                        <label class="form-check-label fw-semibold" for="chk_touch">Touch Screen Working</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[camera_ok]" id="chk_camera" value="yes" checked>
-                                        <label class="form-check-label fw-semibold" for="chk_camera">Cameras Working</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[audio_ok]" id="chk_audio" value="yes" checked>
-                                        <label class="form-check-label fw-semibold" for="chk_audio">Speakers & Audio Working</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="device_checklist[buttons_ok]" id="chk_buttons" value="yes" checked>
-                                        <label class="form-check-label fw-semibold" for="chk_buttons">Physical Buttons OK</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <label class="form-label fw-semibold" for="device_photos">Upload Device Photos <span class="text-muted">(Photos of scratches, cracks, or condition)</span></label>
                             <input type="file" name="device_photos[]" id="device_photos" class="form-control" accept="image/*" multiple>
                             <div class="form-text small">You can upload multiple files. JPG, PNG, GIF format. Max 2MB/file.</div>
@@ -230,24 +118,6 @@
                         </div>
                     </div>
 
-                    @if(auth()->user()->isSuperAdmin())
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="commission_type">Technician Commission Type</label>
-                            <select name="commission_type" id="commission_type" class="form-select">
-                                <option value="">No Commission / Salary-based</option>
-                                <option value="percentage" {{ old('commission_type') == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
-                                <option value="flat" {{ old('commission_type') == 'flat' ? 'selected' : '' }}>Flat Amount (BDT)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold" for="commission_rate">Commission Value</label>
-                            <input type="number" name="commission_rate" id="commission_rate" step="0.01" min="0" class="form-control" value="{{ old('commission_rate') }}" placeholder="0.00">
-                            <div class="form-text small">e.g. 15 for 15% of actual repair charge, or 250 for a flat 250 BDT commission.</div>
-                        </div>
-                    </div>
-                    @endif
-
                     <div class="row mb-4">
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="repair_charge">Repair Charge / Service Fee (BDT)</label>
@@ -256,7 +126,7 @@
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="estimated_cost">Estimated Cost (BDT)</label>
                             <input type="number" name="estimated_cost" id="estimated_cost" step="0.01" min="0" class="form-control bg-light" value="{{ old('estimated_cost') }}" placeholder="0.00" readonly>
-                            <div class="form-text small">Auto-calculated (Service Fee + Parts + Courier)</div>
+                            <div class="form-text small">Auto-calculated (Service Fee + Parts)</div>
                         </div>
                         <div class="col-md-3 mb-3 mb-md-0">
                             <label class="form-label fw-semibold" for="advance_payment">Advance Deposit Paid (BDT)</label>
@@ -274,52 +144,20 @@
                         </div>
                     </div>
 
-                    <div class="row mb-4">
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            <label class="form-label fw-semibold" for="warranty_days">Warranty Period (Days)</label>
-                            <input type="number" name="warranty_days" id="warranty_days" min="0" class="form-control" value="{{ old('warranty_days') }}" placeholder="0">
-                            <div class="form-text small">Number of days parts/labor warranty. Starts upon completion.</div>
-                        </div>
-                        <div class="col-md-8 d-flex align-items-center mt-md-3">
-                            <div class="form-check form-switch card p-2 px-3 border w-100 bg-label-warning border-warning d-flex align-items-center flex-row gap-2">
-                                <input class="form-check-input ms-0" type="checkbox" name="data_loss_consent" id="data_loss_consent" value="1" {{ old('data_loss_consent') ? 'checked' : '' }} required>
-                                <div class="ms-2">
-                                    <label class="form-check-label fw-bold text-warning" for="data_loss_consent">
-                                        Data Loss Consent Verified <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="form-text text-warning small opacity-75 mt-0" style="font-size: 0.75rem;">Customer acknowledges they backed up data and M3 Mobile Care is not liable for data loss during repair.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- USED PARTS SECTION (Create workflow) -->
+                    <!-- SECTION: Installed Spare Parts -->
                     <div class="mb-4 p-3 bg-light rounded border">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div>
-                                <h6 class="fw-bold mb-0 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Outsourced Sourcing</h6>
-                                {{-- <span class="text-muted small">দোকানের স্টক অথবা ঢাকা/লোকাল সাপ্লায়ার থেকে কেনা পার্টস ও কুরিয়ার খরচ</span> --}}
+                        <h6 class="fw-bold mb-3 text-dark"><i class="ti tabler-box me-1 text-primary"></i>Installed Spare Parts & Outsourced Sourcing</h6>
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold" for="used_parts_name">Parts Name <span class="text-muted small fw-normal">(Optional)</span></label>
+                                <input type="text" name="used_parts[0][name]" id="used_parts_name" class="form-control" placeholder="e.g. Display / Battery / Charging Port" value="{{ old('used_parts.0.name') }}">
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-primary fw-bold" id="btn-add-part"><i class="ti tabler-plus me-1"></i>Add Spare Part</button>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered align-middle mb-0">
-                                <thead class="table-light small fw-bold">
-                                    <tr>
-                                        <th style="min-width: 220px;">Part Item / Manual Name</th>
-                                        <th style="width: 170px;">Source </th>
-                                        <th style="width: 170px;">Supplier / Shop Name</th>
-                                        <th style="width: 130px;">Buying Price</th>
-                                        <th style="width: 110px;">Courier</th>
-                                        <th style="width: 80px;">Qty</th>
-                                        <th style="width: 60px;" class="text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="parts-container">
-                                    {{-- Will be populated by JS row builder --}}
-                                </tbody>
-                            </table>
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold" for="used_parts_price">Parts Price / Buying Cost (BDT) <span class="text-muted small fw-normal">(Optional)</span></label>
+                                <input type="number" name="used_parts[0][buying_price]" id="used_parts_price" step="0.01" min="0" class="form-control" placeholder="0.00" value="{{ old('used_parts.0.buying_price') }}">
+                                <input type="hidden" name="used_parts[0][quantity]" value="1">
+                                <input type="hidden" name="used_parts[0][source]" value="other">
+                            </div>
                         </div>
                     </div>
 
@@ -342,20 +180,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const serviceSelect = document.getElementById('service_id');
         const repairChargeInput = document.getElementById('repair_charge');
-
-        if (serviceSelect && repairChargeInput) {
-            serviceSelect.addEventListener('change', function() {
-                const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-                const price = selectedOption.getAttribute('data-price');
-
-                if(price) {
-                    repairChargeInput.value = parseFloat(price);
-                    updateCommissionPreview();
-                }
-            });
-        }
 
         // Customer auto-lookup by mobile number
         const phoneInput = document.getElementById('customer_phone');
@@ -407,374 +232,26 @@
             });
         }
 
-        // Used parts row builder & dynamic commission calculator
-        const partsContainer = document.getElementById('parts-container');
-        const btnAddPart = document.getElementById('btn-add-part');
-        const inventoryItems = @json($inventoryItems);
-        let partIndex = 0;
+        // Auto calculate estimated cost (Service charge + Parts price)
+        const partPriceInput = document.getElementById('used_parts_price');
+        const estimatedCostInput = document.getElementById('estimated_cost');
 
-        function updateCommissionPreview() {
-            const commissionTypeSelect = document.getElementById('commission_type');
-            const commissionRateInput = document.getElementById('commission_rate');
-            const estimatedCostInput = document.getElementById('estimated_cost');
-            const repairChargeInput = document.getElementById('repair_charge');
-
-            const repairCharge = parseFloat(repairChargeInput ? repairChargeInput.value : 0) || 0;
-
-            // Sum up parts cost
-            let totalPartsCost = 0;
-            let totalCourierCost = 0;
-            document.querySelectorAll('.part-row').forEach(row => {
-                const price = parseFloat(row.querySelector('.input-buying-price').value) || 0;
-                const courier = parseFloat(row.querySelector('.input-courier-cost')?.value) || 0;
-                const qty = parseInt(row.querySelector('.input-quantity').value) || 1;
-                totalPartsCost += (price * qty);
-                totalCourierCost += courier;
-            });
-
-            // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
-            const estimatedCost = repairCharge + totalPartsCost + totalCourierCost;
+        function updateEstimatedCost() {
+            const charge = parseFloat(repairChargeInput ? repairChargeInput.value : 0) || 0;
+            const partCost = parseFloat(partPriceInput ? partPriceInput.value : 0) || 0;
+            const total = charge + partCost;
             if (estimatedCostInput) {
-                estimatedCostInput.value = estimatedCost > 0 ? estimatedCost.toFixed(2) : '';
+                estimatedCostInput.value = total > 0 ? total.toFixed(2) : '';
             }
-
-            // Commission base is exactly the Repair Charge (Service Charge)
-            const commissionBase = repairCharge;
-
-            let previewContainer = document.getElementById('commission-preview-container');
-            if (!commissionTypeSelect || !commissionRateInput || (!commissionTypeSelect.value && estimatedCost === 0)) {
-                if (previewContainer) previewContainer.innerHTML = '';
-                return;
-            }
-
-            const commissionType = commissionTypeSelect.value;
-            const commissionRate = parseFloat(commissionRateInput.value) || 0;
-
-            let calculatedCommission = 0;
-
-            if (commissionType === 'flat') {
-                calculatedCommission = commissionRate;
-            } else if (commissionType === 'percentage') {
-                calculatedCommission = commissionBase * (commissionRate / 100);
-            }
-
-            const netProfit = Math.max(0, estimatedCost - (totalPartsCost + totalCourierCost + calculatedCommission));
-
-            // Display results
-            let previewHtml = `
-                <div class="alert alert-info border-0 shadow-sm p-3 mt-3 d-flex flex-column gap-1 small col-12">
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Net Service Fee:</span>
-                        <span class="fw-bold text-dark">${commissionBase.toFixed(2)} BDT</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Total Parts Buying Cost:</span>
-                        <span class="fw-bold text-danger">${totalPartsCost.toFixed(2)} BDT</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-semibold">Total Courier / Transport:</span>
-                        <span class="fw-bold text-warning text-dark">${totalCourierCost.toFixed(2)} BDT</span>
-                    </div>
-                    <hr class="my-1">
-                    <div class="d-flex justify-content-between fs-6">
-                        <span class="text-primary fw-bold">Shop Net Profit:</span>
-                        <span class="fw-bold text-success">${netProfit.toFixed(2)} BDT</span>
-                    </div>
-                </div>
-            `;
-
-            if (!previewContainer) {
-                previewContainer = document.createElement('div');
-                previewContainer.id = 'commission-preview-container';
-                commissionRateInput.closest('.row').appendChild(previewContainer);
-            }
-            previewContainer.innerHTML = previewHtml;
         }
 
-        // Add row
-        if (btnAddPart) {
-            btnAddPart.addEventListener('click', function() {
-                const selectOptions = inventoryItems.map(item => `
-                    <option value="${item.id}" data-name="${item.name}" data-price="${item.purchase_price}">
-                        ${item.name} (Qty: ${item.quantity}, Cost: ${item.purchase_price} BDT)
-                    </option>
-                `).join('');
-
-                const newRow = document.createElement('tr');
-                newRow.className = 'part-row';
-                newRow.innerHTML = `
-                    <td>
-                        <select class="form-select form-select-sm select-part-item mb-1" name="used_parts[${partIndex}][inventory_id]">
-                            <option value="">-- Custom / Sourced Part --</option>
-                            ${selectOptions}
-                        </select>
-                        <input type="text" name="used_parts[${partIndex}][name]" class="form-control form-control-sm input-part-name" placeholder="Enter part name (e.g. Backshell Blue)" required>
-                    </td>
-                    <td>
-                        <select name="used_parts[${partIndex}][source]" class="form-select form-select-sm select-part-source">
-                            <option value="in_house">দোকানের স্টক (Stock)</option>
-                            <option value="dhaka_supplier" selected>ঢাকা সাপ্লায়ার (Dhaka)</option>
-                            <option value="local_shop">লোকাল দোকান (Local)</option>
-                            <option value="other">অন্যান্য (Other)</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" name="used_parts[${partIndex}][supplier_name]" class="form-control form-control-sm" placeholder="e.g. মোতালেব প্লাজা / রাসেল">
-                    </td>
-                    <td>
-                        <input type="number" name="used_parts[${partIndex}][buying_price]" class="form-control form-control-sm input-buying-price text-end" value="" step="0.01" min="0" placeholder="0.00" required>
-                    </td>
-                    <td>
-                        <input type="number" name="used_parts[${partIndex}][courier_cost]" class="form-control form-control-sm input-courier-cost text-end" value="" step="0.01" min="0" placeholder="0.00">
-                    </td>
-                    <td>
-                        <input type="number" name="used_parts[${partIndex}][quantity]" class="form-control form-control-sm input-quantity text-center" value="1" min="1" required>
-                    </td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-icon btn-outline-danger btn-remove-part"><i class="ti tabler-trash"></i></button>
-                    </td>
-                `;
-
-                partsContainer.appendChild(newRow);
-
-                // Initialize Tom Select on the newly created select element
-                const selectEl = newRow.querySelector('.select-part-item');
-                if (selectEl) {
-                    const ts = new TomSelect(selectEl, {
-                        create: false,
-                        placeholder: "Search shop inventory...",
-                        sortField: {
-                            field: "text",
-                            direction: "asc"
-                        }
-                    });
-
-                    ts.on('change', function(value) {
-                        const nameInput = newRow.querySelector('.input-part-name');
-                        const priceInput = newRow.querySelector('.input-buying-price');
-                        const sourceSelect = newRow.querySelector('.select-part-source');
-                        if (value) {
-                            const opt = selectEl.options[selectEl.selectedIndex];
-                            if (opt) {
-                                nameInput.value = opt.getAttribute('data-name') || '';
-                                priceInput.value = opt.getAttribute('data-price') || '0.00';
-                                if (sourceSelect) sourceSelect.value = 'in_house';
-                            }
-                        } else {
-                            if (sourceSelect) sourceSelect.value = 'dhaka_supplier';
-                        }
-                        updateCommissionPreview();
-                    });
-                }
-
-                partIndex++;
-                updateCommissionPreview();
-            });
+        if (repairChargeInput) {
+            repairChargeInput.addEventListener('input', updateEstimatedCost);
         }
-
-        // Listen to changes in the parts table
-        if (partsContainer) {
-            partsContainer.addEventListener('change', function(e) {
-                if (e.target.classList.contains('select-part-item')) {
-                    const selectedOption = e.target.options[e.target.selectedIndex];
-                    const row = e.target.closest('tr');
-                    const nameInput = row.querySelector('.input-part-name');
-                    const priceInput = row.querySelector('.input-buying-price');
-                    const sourceSelect = row.querySelector('.select-part-source');
-
-                    if (selectedOption.value) {
-                        nameInput.value = selectedOption.dataset.name;
-                        priceInput.value = selectedOption.dataset.price;
-                        if (sourceSelect) sourceSelect.value = 'in_house';
-                    } else {
-                        nameInput.value = '';
-                        priceInput.value = '0.00';
-                        if (sourceSelect) sourceSelect.value = 'dhaka_supplier';
-                    }
-                    updateCommissionPreview();
-                }
-
-                if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
-                    updateCommissionPreview();
-                }
-            });
-
-            partsContainer.addEventListener('input', function(e) {
-                if (e.target.classList.contains('input-buying-price') || e.target.classList.contains('input-courier-cost') || e.target.classList.contains('input-quantity')) {
-                    updateCommissionPreview();
-                }
-            });
-
-            partsContainer.addEventListener('click', function(e) {
-                const btnRemove = e.target.closest('.btn-remove-part');
-                if (btnRemove) {
-                    const row = btnRemove.closest('tr');
-                    row.remove();
-                    updateCommissionPreview();
-                }
-            });
+        if (partPriceInput) {
+            partPriceInput.addEventListener('input', updateEstimatedCost);
         }
-
-        // Bind events for live calculation
-        const commTypeEl = document.getElementById('commission_type');
-        const commRateEl = document.getElementById('commission_rate');
-        const estimatedCostEl = document.getElementById('estimated_cost');
-
-        if (commTypeEl) commTypeEl.addEventListener('change', updateCommissionPreview);
-        if (commRateEl) commRateEl.addEventListener('input', updateCommissionPreview);
-        if (estimatedCostEl) estimatedCostEl.addEventListener('input', updateCommissionPreview);
-
-        // Run preview once on load
-        updateCommissionPreview();
-
-        // ==========================================
-        // Visual Pattern Lock Drawing Logic
-        // ==========================================
-        const btnTogglePattern = document.getElementById('btn-toggle-pattern');
-        const patternWrapper = document.getElementById('pattern-lock-wrapper');
-        const patternHolder = document.getElementById('pattern-holder');
-        const patternSvg = document.getElementById('pattern-svg');
-        const patternDots = document.querySelectorAll('.pattern-dot');
-        const patternPathInput = document.getElementById('pattern_lock_path');
-        const patternPathLabel = document.getElementById('pattern-path-label');
-        const btnClearPattern = document.getElementById('btn-clear-pattern');
-        const passwordPatternInput = document.getElementById('password_pattern');
-
-        let isDrawing = false;
-        let activePattern = [];
-
-        if (btnTogglePattern && patternWrapper) {
-            btnTogglePattern.addEventListener('click', function() {
-                if (patternWrapper.style.display === 'none') {
-                    patternWrapper.style.display = 'block';
-                    btnTogglePattern.innerHTML = '<i class="ti tabler-grid me-1"></i>Hide Pattern Drawer';
-                } else {
-                    patternWrapper.style.display = 'none';
-                    btnTogglePattern.innerHTML = '<i class="ti tabler-grid me-1"></i>Draw Pattern Lock';
-                }
-            });
-        }
-
-        function getMouseOrTouchCoords(e, container) {
-            const rect = container.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
-
-        function getDotCenter(dot, container) {
-            const rect = dot.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            return {
-                x: (rect.left + rect.width / 2) - containerRect.left,
-                y: (rect.top + rect.height / 2) - containerRect.top
-            };
-        }
-
-        function drawLines(tempCoords = null) {
-            patternSvg.innerHTML = '';
-            if (activePattern.length === 0) return;
-
-            let pathData = '';
-            activePattern.forEach((dotIndex, idx) => {
-                const dot = document.querySelector(`.pattern-dot[data-index="${dotIndex}"]`);
-                const center = getDotCenter(dot, patternHolder);
-                if (idx === 0) {
-                    pathData += `M ${center.x} ${center.y}`;
-                } else {
-                    pathData += ` L ${center.x} ${center.y}`;
-                }
-            });
-
-            if (tempCoords && activePattern.length > 0) {
-                pathData += ` L ${tempCoords.x} ${tempCoords.y}`;
-            }
-
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', pathData);
-            path.setAttribute('stroke', '#7367f0');
-            path.setAttribute('stroke-width', '4');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke-linecap', 'round');
-            path.setAttribute('stroke-linejoin', 'round');
-            patternSvg.appendChild(path);
-        }
-
-        function clearPattern() {
-            activePattern = [];
-            patternDots.forEach(dot => {
-                dot.style.background = '#a1b0cb';
-                dot.style.transform = 'scale(1)';
-            });
-            patternSvg.innerHTML = '';
-            patternPathInput.value = '';
-            patternPathLabel.textContent = 'Path: None';
-        }
-
-        if (patternHolder) {
-            const startDrawing = (e) => {
-                isDrawing = true;
-                clearPattern();
-                handleMove(e);
-            };
-
-            const handleMove = (e) => {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const coords = getMouseOrTouchCoords(e, patternHolder);
-
-                patternDots.forEach(dot => {
-                    const dotCenter = getDotCenter(dot, patternHolder);
-                    const dist = Math.hypot(coords.x - dotCenter.x, coords.y - dotCenter.y);
-
-                    if (dist < 22) { // Detection radius
-                        const dotIndex = parseInt(dot.getAttribute('data-index'));
-                        if (!activePattern.includes(dotIndex)) {
-                            activePattern.push(dotIndex);
-                            dot.style.background = '#7367f0';
-                            dot.style.transform = 'scale(1.3)';
-                        }
-                    }
-                });
-
-                drawLines(coords);
-            };
-
-            const endDrawing = () => {
-                if (!isDrawing) return;
-                isDrawing = false;
-                drawLines();
-                if (activePattern.length > 0) {
-                    const patternStr = activePattern.join('-');
-                    patternPathInput.value = patternStr;
-                    patternPathLabel.textContent = 'Path: ' + patternStr;
-                    if (passwordPatternInput && !passwordPatternInput.value) {
-                        passwordPatternInput.value = '[Pattern Lock]';
-                    }
-                }
-            };
-
-            patternHolder.addEventListener('mousedown', startDrawing);
-            patternHolder.addEventListener('mousemove', handleMove);
-            window.addEventListener('mouseup', endDrawing);
-
-            patternHolder.addEventListener('touchstart', startDrawing, { passive: false });
-            patternHolder.addEventListener('touchmove', handleMove, { passive: false });
-            window.addEventListener('touchend', endDrawing);
-        }
-
-        if (btnClearPattern) {
-            btnClearPattern.addEventListener('click', function(e) {
-                e.preventDefault();
-                clearPattern();
-                if (passwordPatternInput && passwordPatternInput.value === '[Pattern Lock]') {
-                    passwordPatternInput.value = '';
-                }
-            });
-        }
+        updateEstimatedCost();
     });
 </script>
 @endsection

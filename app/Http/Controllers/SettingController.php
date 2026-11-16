@@ -34,6 +34,7 @@ class SettingController extends Controller
             'sms_send_on_repair_deliver' => Setting::get('sms_send_on_repair_deliver', '1'),
             'sms_send_on_pos_sale' => Setting::get('sms_send_on_pos_sale', '1'),
             'sms_send_on_due_payment' => Setting::get('sms_send_on_due_payment', '1'),
+            'sms_send_to_technician_reminder' => Setting::get('sms_send_to_technician_reminder', '1'),
 
             // SMS Templates (Bangla)
             'sms_template_repair_create' => Setting::get('sms_template_repair_create', "প্রিয় {customer_name}, আপনার {device} সার্ভিসের জন্য গ্রহণ করা হয়েছে। টিকিট আইডি: {ticket_id}। কাজের অগ্রগতি দেখুন: {track_url} - {shop_name}"),
@@ -41,6 +42,7 @@ class SettingController extends Controller
             'sms_template_repair_deliver' => Setting::get('sms_template_repair_deliver', "প্রিয় {customer_name}, আপনার {device} (টিকিট: {ticket_id}) ডেলিভারি করা হয়েছে। পরিশোধ: {paid_amount} টাকা, বকেয়া: {due_amount} টাকা। ওয়ারেন্টি: {warranty_days}। ধন্যবাদ - {shop_name}"),
             'sms_template_pos_sale' => Setting::get('sms_template_pos_sale', "প্রিয় {customer_name}, {shop_name}-এ কেনাকাটার জন্য ধন্যবাদ! ইনভয়েস: {invoice_no}, মোট বিল: {total_bill} টাকা, পরিশোধ: {paid_amount} টাকা, বকেয়া: {due_amount} টাকা।"),
             'sms_template_due_payment' => Setting::get('sms_template_due_payment', "প্রিয় {customer_name}, বকেয়া বাবদ {paid_amount} টাকা গ্রহণ করা হয়েছে ({reference_no})। অবশিষ্ট বকেয়া: {due_amount} টাকা। ধন্যবাদ! - {shop_name}"),
+            'sms_template_technician_reminder' => Setting::get('sms_template_technician_reminder', "প্রিয় {technician_name}, টিকিট #{ticket_id} ({device})-এর ডেলিভারির সম্ভাব্য তারিখ আগামীকাল ({expected_date})। অনুগ্রহ করে দ্রুত ফোনটি রেডি করুন। - {shop_name}"),
         ];
 
         return view('settings.index', compact('settings'));
@@ -67,6 +69,7 @@ class SettingController extends Controller
             'sms_template_repair_deliver' => 'nullable|string',
             'sms_template_pos_sale' => 'nullable|string',
             'sms_template_due_payment' => 'nullable|string',
+            'sms_template_technician_reminder' => 'nullable|string',
         ]);
 
         Setting::set('shop_name', $request->input('shop_name'));
@@ -86,6 +89,7 @@ class SettingController extends Controller
         Setting::set('sms_send_on_repair_deliver', $request->has('sms_send_on_repair_deliver') ? '1' : '0');
         Setting::set('sms_send_on_pos_sale', $request->has('sms_send_on_pos_sale') ? '1' : '0');
         Setting::set('sms_send_on_due_payment', $request->has('sms_send_on_due_payment') ? '1' : '0');
+        Setting::set('sms_send_to_technician_reminder', $request->has('sms_send_to_technician_reminder') ? '1' : '0');
 
         // SMS Templates
         Setting::set('sms_template_repair_create', $request->input('sms_template_repair_create'));
@@ -93,6 +97,7 @@ class SettingController extends Controller
         Setting::set('sms_template_repair_deliver', $request->input('sms_template_repair_deliver'));
         Setting::set('sms_template_pos_sale', $request->input('sms_template_pos_sale'));
         Setting::set('sms_template_due_payment', $request->input('sms_template_due_payment'));
+        Setting::set('sms_template_technician_reminder', $request->input('sms_template_technician_reminder'));
 
         if ($request->hasFile('logo')) {
             $oldLogo = Setting::get('logo');

@@ -224,6 +224,19 @@
                                 <p class="text-muted small mb-0">Sends instant payment confirmation when a customer clears an existing due balance.</p>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded-3 bg-light h-100 border-primary border-opacity-25">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" name="sms_send_to_technician_reminder" id="sms_send_to_technician_reminder" value="1" {{ old('sms_send_to_technician_reminder', $settings['sms_send_to_technician_reminder']) == '1' ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold text-dark d-flex align-items-center gap-1" for="sms_send_to_technician_reminder">
+                                        <span>Technician Delivery Alert</span>
+                                        <span class="badge bg-label-primary fs-tiny"><i class="ti tabler-robot me-1"></i>Automated / 1 Day Before</span>
+                                    </label>
+                                </div>
+                                <p class="text-muted small mb-0">Sends automated SMS to the assigned technician 1 day before the expected date reminding them to get the phone ready.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <hr class="my-4 text-muted opacity-25">
@@ -239,8 +252,10 @@
                         <span class="fw-bold small text-dark d-block mb-1"><i class="ti tabler-tag me-1 text-info"></i>Available Dynamic Tags (Click to copy):</span>
                         <div class="d-flex flex-wrap gap-1">
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{customer_name}')">{customer_name}</code>
+                            <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{technician_name}')">{technician_name}</code>
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{ticket_id}')">{ticket_id}</code>
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{device}')">{device}</code>
+                            <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{expected_date}')">{expected_date}</code>
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{track_url}')">{track_url}</code>
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{total_bill}')">{total_bill}</code>
                             <code class="badge bg-white text-dark border tag-badge" role="button" onclick="copyTag('{paid_amount}')">{paid_amount}</code>
@@ -273,9 +288,17 @@
                             <textarea name="sms_template_pos_sale" id="sms_template_pos_sale" class="form-control small font-monospace" rows="3">{{ old('sms_template_pos_sale', $settings['sms_template_pos_sale']) }}</textarea>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold" for="sms_template_due_payment">5. Due Payment Collected SMS</label>
-                            <textarea name="sms_template_due_payment" id="sms_template_due_payment" class="form-control small font-monospace" rows="2">{{ old('sms_template_due_payment', $settings['sms_template_due_payment']) }}</textarea>
+                            <textarea name="sms_template_due_payment" id="sms_template_due_payment" class="form-control small font-monospace" rows="3">{{ old('sms_template_due_payment', $settings['sms_template_due_payment']) }}</textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary d-flex align-items-center justify-content-between" for="sms_template_technician_reminder">
+                                <span>6. Technician Delivery Alert (1 Day Before)</span>
+                                <span class="badge bg-label-info fs-tiny">Auto Automated</span>
+                            </label>
+                            <textarea name="sms_template_technician_reminder" id="sms_template_technician_reminder" class="form-control small font-monospace" rows="3">{{ old('sms_template_technician_reminder', $settings['sms_template_technician_reminder']) }}</textarea>
                         </div>
                     </div>
                 </div>

@@ -129,7 +129,7 @@
                     <tbody>
                         @forelse($myRecentRepairs as $repair)
                         <tr>
-                            <td><a href="{{ route('admin.repairs.show', $repair->id) }}" class="fw-bold text-decoration-none">{{ $repair->ticket_id }}</a></td>
+                            <td class="text-nowrap"><a href="{{ route('admin.repairs.show', $repair->id) }}" class="fw-bold text-decoration-none text-nowrap">{{ $repair->ticket_id }}</a></td>
                             <td>
                                 <div class="fw-semibold text-dark">{{ $repair->customer ? $repair->customer->name : 'Walk-in' }}</div>
                                 <div class="text-muted small">{{ $repair->customer ? $repair->customer->phone : '' }}</div>

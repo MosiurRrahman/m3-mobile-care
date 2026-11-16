@@ -503,4 +503,49 @@ class SmsService
 
         return self::sendSms($phone, $message, true);
     }
+
+    /**
+     * Trigger: Alert Assigned Technician 1 day before Expected Delivery Date to get phone ready
+     */
+    public static function sendTechnicianExpectedDateReminder(Repair $repair, bool $force = false): array
+    {
+        if (!$force && !Setting::get('sms_send_to_technician_reminder', '1')) {
+            return ['success' => false, 'message' => 'Technician reminder SMS notification is disabled in settings.'];
+        }
+
+        $technician = $repair->technician;
+        if (!$technician) {
+            return ['success' => false, 'message' => 'No technician is assigned to this repair ticket.'];
+        }
+
+        $phone = $technician->phone;
+        if (empty($phone)) {
+            return ['success' => false, 'message' => 'Assigned technician (' . $technician->name . ') does not have a phone number.'];
+        }
+
+        $shopName = Setting::get('shop_name', 'M3 Mobile Care');
+        $shopPhone = Setting::get('phone', '+8801750121196');
+
+        $expectedDate = $repair->expected_delivery_date
+            ? \Carbon\Carbon::parse($repair->expected_delivery_date)->format('d M, Y')
+            : 'আগামীকাল';
+
+        $customerName = self::getCustomerDisplayName($repair->customer);
+
+        $defaultTemplate = "টিকিট #{ticket_id} ({device})-এর ডেলিভারির সম্ভাব্য তারিখ আগামীকাল ({expected_date})। অনুগ্রহ করে দ্রুত ফোনটি রেডি করুন।;
+        $template = Setting::get('sms_template_technician_reminder', $defaultTemplate);
+
+        $message = self::formatTemplate($template, [
+            'technician_name' => $technician->name,
+            'ticket_id' => $repair->ticket_id,
+            'device' => trim($repair->device_brand . ' ' . $repair->device_model),
+            'expected_date' => $expectedDate,
+            'customer_name' => $customerName,
+            'issue_description' => $repair->issue_description ?? '',
+            'shop_name' => $shopName,
+            'shop_phone' => $shopPhone,
+        ]);
+
+        return self::sendSms($phone, $message, $force);
+    }
 }

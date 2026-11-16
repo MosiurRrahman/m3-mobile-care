@@ -52,11 +52,14 @@ class RepairController extends Controller
             }
         }
 
-        // Search by Ticket ID, Customer Name, Customer Phone
+        // Search by Ticket ID, Customer Name, Customer Phone, IMEI, Device Model/Brand
         if ($request->filled('search')) {
             $search = trim($request->input('search'));
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_id', 'like', "%{$search}%")
+                  ->orWhere('serial_imei', 'like', "%{$search}%")
+                  ->orWhere('device_model', 'like', "%{$search}%")
+                  ->orWhere('device_brand', 'like', "%{$search}%")
                   ->orWhereHas('customer', function($cQ) use ($search) {
                       $cQ->where('name', 'like', "%{$search}%")
                          ->orWhere('phone', 'like', "%{$search}%");
@@ -68,6 +71,10 @@ class RepairController extends Controller
         $perPage = in_array($perPage, [10, 25, 50, 100]) ? $perPage : 10;
 
         $repairs = $query->orderBy('created_at', 'desc')->paginate($perPage)->withQueryString();
+
+        if ($request->ajax() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return view('repairs._table', compact('repairs'));
+        }
 
         return view('repairs.index', compact('repairs'));
     }
@@ -97,11 +104,96 @@ class RepairController extends Controller
             return redirect()->route('admin.repairs.index')->with('error', 'You do not have permission to create job cards.');
         }
 
+        if (!$request->filled('device_brand') && $request->filled('device_model')) {
+            $input = trim($request->input('device_model'));
+            $knownBrands = [
+                'Apple' => 'Apple',
+                'iPhone' => 'Apple',
+                'iPad' => 'Apple',
+                'Samsung' => 'Samsung',
+                'Xiaomi' => 'Xiaomi',
+                'Redmi' => 'Redmi',
+                'Realme' => 'Realme',
+                'Oppo' => 'Oppo',
+                'Vivo' => 'Vivo',
+                'OnePlus' => 'OnePlus',
+                'Google Pixel' => 'Google',
+                'Pixel' => 'Google',
+                'Google' => 'Google',
+                'Motorola' => 'Motorola',
+                'Moto' => 'Motorola',
+                'Nokia' => 'Nokia',
+                'Sony' => 'Sony',
+                'Huawei' => 'Huawei',
+                'POCO' => 'POCO',
+                'Honor' => 'Honor',
+                'Tecno' => 'Tecno',
+                'Infinix' => 'Infinix',
+                'itel' => 'itel',
+                'Nothing' => 'Nothing',
+                'HTC' => 'HTC',
+                'LG' => 'LG',
+                'Walton' => 'Walton',
+                'Symphony' => 'Symphony',
+            ];
+
+            $detectedBrand = null;
+            $detectedModel = $input;
+
+            foreach ($knownBrands as $prefix => $canonicalBrand) {
+                if (stripos($input, $prefix) === 0) {
+                    $detectedBrand = $canonicalBrand;
+                    $rest = trim(substr($input, strlen($prefix)));
+                    if (in_array(strtolower($prefix), ['iphone', 'ipad', 'pixel', 'moto'])) {
+                        $detectedModel = $input;
+                    } else {
+                        $detectedModel = $rest !== '' ? $rest : $input;
+                    }
+                    break;
+                }
+            }
+
+            if (!$detectedBrand) {
+                $parts = explode(' ', $input, 2);
+                if (count($parts) > 1 && trim($parts[1]) !== '') {
+                    $detectedBrand = $parts[0];
+                    $detectedModel = trim($parts[1]);
+                } else {
+                    $detectedBrand = $input;
+                    $detectedModel = $input;
+                }
+            }
+
+            $request->merge([
+                'device_brand' => $detectedBrand,
+                'device_model' => $detectedModel,
+            ]);
+        }
+
+        if ($request->has('used_parts') && is_array($request->input('used_parts'))) {
+            $filteredParts = array_filter($request->input('used_parts'), function ($part) {
+                return !empty(trim($part['name'] ?? '')) || (isset($part['buying_price']) && $part['buying_price'] !== '' && $part['buying_price'] !== null);
+            });
+            $cleanedParts = [];
+            foreach ($filteredParts as $part) {
+                $cleanedParts[] = [
+                    'name' => trim($part['name'] ?? '') ?: 'Spare Part',
+                    'buying_price' => floatval($part['buying_price'] ?? 0),
+                    'quantity' => intval($part['quantity'] ?? 1) ?: 1,
+                    'source' => $part['source'] ?? 'other',
+                    'supplier_name' => $part['supplier_name'] ?? null,
+                    'courier_cost' => floatval($part['courier_cost'] ?? 0),
+                    'inventory_id' => $part['inventory_id'] ?? null,
+                ];
+            }
+            $request->merge(['used_parts' => !empty($cleanedParts) ? $cleanedParts : []]);
+        }
+
         $request->validate([
             'customer_name' => 'nullable|string|max:255',
             'customer_phone' => 'nullable|string|max:20',
             'customer_address' => 'nullable|string|max:500',
-            'device_brand' => 'required|string|max:100',
+            'device_brand' => 'nullable|string|max:100',
             'device_model' => 'required|string|max:100',
             'serial_imei' => 'nullable|string|max:100',
             'issue_description' => 'required|string',
@@ -175,7 +267,7 @@ class RepairController extends Controller
                 $advancePayment = floatval($request->input('advance_payment', 0));
 
                 // Calculate parts cost and courier fees to subtract from commission base
-                $usedParts = $request->input('used_parts', []);
+                $usedParts = (array) ($request->input('used_parts') ?? []);
                 $totalPartsCost = 0;
                 $totalCourierCost = 0;
                 if (is_array($usedParts)) {
@@ -240,7 +332,9 @@ class RepairController extends Controller
                     'paid_amount' => $advancePayment,
                     'due_amount' => 0.00,
                     'status' => $status,
-                    'assigned_technician_id' => $request->input('assigned_technician_id') ?: (auth()->user()->isTechnician() ? auth()->id() : null),
+                    'status_updated_at' => now(),
+                    'assigned_technician_id' => $assignedTechId = ($request->input('assigned_technician_id') ?: (auth()->user()->isTechnician() ? auth()->id() : null)),
+                    'assigned_at' => $assignedTechId ? now() : null,
                     'expected_delivery_date' => $request->input('expected_delivery_date'),
                     'technician_notes' => $request->input('technician_notes'),
                     'branch' => auth()->user()->branch,
@@ -287,7 +381,9 @@ class RepairController extends Controller
             abort(403, 'Unauthorized access to this repair job.');
         }
 
-        return view('repairs.show', compact('repair'));
+        $technicians = User::where('role', 'technician')->orderBy('name', 'asc')->get();
+
+        return view('repairs.show', compact('repair', 'technicians'));
     }
 
     /**
@@ -341,7 +437,7 @@ class RepairController extends Controller
                 'customer_name' => 'nullable|string|max:255',
                 'customer_phone' => 'nullable|string|max:20',
                 'customer_address' => 'nullable|string|max:500',
-                'device_brand' => 'required|string|max:100',
+                'device_brand' => 'nullable|string|max:100',
                 'device_model' => 'required|string|max:100',
                 'serial_imei' => 'nullable|string|max:100',
                 'issue_description' => 'required|string',
@@ -431,6 +527,7 @@ class RepairController extends Controller
 
                     $repair->update([
                         'status' => $status,
+                        'status_updated_at' => ($status !== $oldStatus || !$repair->status_updated_at) ? now() : $repair->status_updated_at,
                         'technician_notes' => $request->input('technician_notes'),
                         'actual_cost' => $actualCost,
                         'estimated_cost' => $estimatedCost,
@@ -442,8 +539,8 @@ class RepairController extends Controller
                     $repairCharge = floatval($request->input('repair_charge', 0));
                     $advancePayment = floatval($request->input('advance_payment', 0));
 
-                    // Calculate parts cost and courier
-                    $usedParts = $request->input('used_parts', []);
+                    // Calculate parts cost and courier if provided
+                    $usedParts = $request->has('used_parts') ? $request->input('used_parts', []) : ($repair->used_parts ?? []);
                     $totalPartsCost = 0;
                     $totalCourierCost = 0;
                     if (is_array($usedParts)) {
@@ -453,8 +550,10 @@ class RepairController extends Controller
                         }
                     }
 
-                    // Estimated Cost = Service Fee / Charge + Total Parts Cost + Courier Cost
-                    $estimatedCost = $repairCharge + $totalPartsCost + $totalCourierCost;
+                    // Estimated Cost = provided in request or auto-calculated (Service Fee / Charge + Total Parts Cost + Courier Cost)
+                    $estimatedCost = $request->filled('estimated_cost')
+                        ? floatval($request->input('estimated_cost'))
+                        : ($repairCharge + $totalPartsCost + $totalCourierCost);
 
                     // Use filled() to correctly catch both null AND empty string ""
                     $actualCost = $request->filled('actual_cost') ? floatval($request->input('actual_cost')) : null;
@@ -463,17 +562,20 @@ class RepairController extends Controller
                     }
 
                     // Calculate technician commission based on service fee (total bill excluding parts cost)
-                    $commType = $request->input('commission_type');
-                    $commRate = floatval($request->input('commission_rate', 0));
-                    $commAmount = 0.00;
-                    if ($commType === 'flat') {
-                        $commAmount = $commRate;
-                    } elseif ($commType === 'percentage') {
-                        $baseCost = ($actualCost !== null) ? ($actualCost - $totalPartsCost) : $repairCharge;
-                        if ($baseCost < 0) {
-                            $baseCost = 0;
+                    $commType = $request->has('commission_type') ? $request->input('commission_type') : $repair->commission_type;
+                    $commRate = $request->has('commission_rate') ? floatval($request->input('commission_rate', 0)) : floatval($repair->commission_rate ?? 0);
+                    $commAmount = $repair->commission_amount ?? 0.00;
+                    if ($request->has('commission_type') || $request->has('commission_rate')) {
+                        $commAmount = 0.00;
+                        if ($commType === 'flat') {
+                            $commAmount = $commRate;
+                        } elseif ($commType === 'percentage') {
+                            $baseCost = ($actualCost !== null) ? ($actualCost - $totalPartsCost) : $repairCharge;
+                            if ($baseCost < 0) {
+                                $baseCost = 0;
+                            }
+                            $commAmount = floatval($baseCost) * ($commRate / 100);
                         }
-                        $commAmount = floatval($baseCost) * ($commRate / 100);
                     }
 
                     // Handle device photos upload (merge with existing)
@@ -583,6 +685,12 @@ class RepairController extends Controller
                         }
                     }
 
+                    $newTechId = $request->input('assigned_technician_id') ?: null;
+                    $assignedAt = $repair->assigned_at;
+                    if ($newTechId != $repair->assigned_technician_id) {
+                        $assignedAt = $newTechId ? now() : null;
+                    }
+
                     $repair->update([
                         'customer_id' => $customerId,
                         'device_brand' => $request->input('device_brand'),
@@ -591,7 +699,7 @@ class RepairController extends Controller
                         'issue_description' => $request->input('issue_description'),
                         'password_pattern' => $request->input('password_pattern'),
                         'pattern_lock_path' => $request->input('pattern_lock_path'),
-                        'data_loss_consent' => $request->has('data_loss_consent') ? 1 : 0,
+                        'data_loss_consent' => $request->has('data_loss_consent') ? 1 : ($repair->data_loss_consent ?? 1),
                         'repair_charge' => $repairCharge,
                         'estimated_cost' => $estimatedCost,
                         'advance_payment' => $advancePayment,
@@ -601,10 +709,12 @@ class RepairController extends Controller
                         'cash_received' => $cashReceived,
                         'change_returned' => $request->input('change_returned') !== null ? floatval($request->input('change_returned')) : null,
                         'status' => $status,
-                        'assigned_technician_id' => $request->input('assigned_technician_id'),
+                        'status_updated_at' => ($status !== $oldStatus || !$repair->status_updated_at) ? now() : $repair->status_updated_at,
+                        'assigned_technician_id' => $newTechId,
+                        'assigned_at' => $assignedAt,
                         'expected_delivery_date' => $request->input('expected_delivery_date'),
                         'technician_notes' => $request->input('technician_notes'),
-                        'device_checklist' => $request->input('device_checklist'),
+                        'device_checklist' => $request->has('device_checklist') ? $request->input('device_checklist') : $repair->device_checklist,
                         'device_photos' => $photoPaths,
                         'commission_type' => $commType,
                         'commission_rate' => $commRate,
@@ -711,8 +821,9 @@ class RepairController extends Controller
     /**
      * Sync inventory spare parts stock quantities when repair status/parts list changes.
      */
-    protected static function syncStockDeduction(Repair $repair, string $newStatus, array $newUsedParts): void
+    protected static function syncStockDeduction(Repair $repair, string $newStatus, ?array $newUsedParts = []): void
     {
+        $newUsedParts = $newUsedParts ?? [];
         $workStatuses = ['repairing', 'quality_check', 'completed', 'delivered'];
         $oldUsedParts = $repair->used_parts ?? [];
         $isOldDeducted = (bool) $repair->is_stock_deducted;
@@ -805,17 +916,51 @@ class RepairController extends Controller
     }
 
     /**
-     * Manually trigger SMS to customer for a repair ticket.
+     * Manually trigger SMS to customer or technician for a repair ticket.
      */
     public function sendManualSms(Request $request, $id)
     {
-        $repair = Repair::with('customer')->findOrFail($id);
+        $repair = Repair::with(['customer', 'technician'])->findOrFail($id);
+        $type = $request->input('type', 'tracking'); // tracking, ready, delivered, parts_arrived, custom, technician_reminder
+
+        if ($type === 'technician_reminder') {
+            if (!$repair->technician) {
+                return redirect()->back()->with('error', 'No technician assigned to this repair ticket.');
+            }
+
+            if (empty($repair->technician->phone)) {
+                return redirect()->back()->with('error', 'Assigned technician (' . $repair->technician->name . ') does not have a phone number.');
+            }
+
+            $result = SmsService::sendTechnicianExpectedDateReminder($repair, true);
+
+            if ($result['success']) {
+                $repair->expected_date_reminder_sent_at = now();
+
+                $history = is_array($repair->status_history) ? $repair->status_history : [];
+                $history[] = [
+                    'type' => 'sms_alert',
+                    'status' => $repair->status,
+                    'status_label' => Repair::statusLabels()[$repair->status] ?? ucfirst(str_replace('_', ' ', $repair->status)),
+                    'technician_id' => $repair->assigned_technician_id,
+                    'technician_name' => $repair->technician->name,
+                    'user_id' => auth()->id(),
+                    'user_name' => auth()->check() ? auth()->user()->name : 'Admin',
+                    'note' => 'Technician reminder SMS sent manually by ' . (auth()->check() ? auth()->user()->name : 'Admin') . " ({$repair->technician->phone})",
+                    'created_at' => now()->toDateTimeString(),
+                ];
+                $repair->status_history = $history;
+                $repair->save();
+
+                return redirect()->back()->with('success', 'Reminder SMS sent successfully to technician ' . $repair->technician->name . ' (' . $repair->technician->phone . ')!');
+            }
+
+            return redirect()->back()->with('error', 'Failed to send SMS to technician: ' . $result['message']);
+        }
 
         if (!$repair->customer || empty($repair->customer->phone)) {
             return redirect()->back()->with('error', 'Customer phone number not available.');
         }
-
-        $type = $request->input('type', 'tracking'); // tracking, ready, delivered, parts_arrived, custom
 
         if ($type === 'ready') {
             $result = SmsService::sendRepairReadySms($repair);
@@ -851,10 +996,16 @@ class RepairController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $request->validate([
+        $rules = [
             'status' => 'required|string|in:pending,diagnosing,waiting_for_approval,waiting_for_parts,repairing,quality_check,completed,delivered,cancelled',
             'technician_notes' => 'nullable|string',
-        ]);
+        ];
+
+        if (!auth()->user()->isTechnician()) {
+            $rules['assigned_technician_id'] = 'nullable|exists:users,id';
+        }
+
+        $request->validate($rules);
 
         $oldStatus = $repair->status;
         $status = $request->input('status');
@@ -864,6 +1015,18 @@ class RepairController extends Controller
             'status' => $status,
             'technician_notes' => $notes,
         ];
+
+        if (!auth()->user()->isTechnician() && $request->has('assigned_technician_id')) {
+            $newTechId = $request->input('assigned_technician_id') ?: null;
+            if ($newTechId != $repair->assigned_technician_id) {
+                $updateData['assigned_technician_id'] = $newTechId;
+                $updateData['assigned_at'] = $newTechId ? now() : null;
+            }
+        }
+
+        if ($status !== $oldStatus || !$repair->status_updated_at) {
+            $updateData['status_updated_at'] = now();
+        }
 
         if (in_array($status, ['completed', 'delivered']) && !$repair->completed_at) {
             $updateData['completed_at'] = now();

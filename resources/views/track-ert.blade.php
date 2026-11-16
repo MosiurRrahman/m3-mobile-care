@@ -245,37 +245,37 @@
                                                     ],
                                                     'diagnosing' => [
                                                         'title' => '২. ডায়াগনসিস ও পার্টস চেকিং',
-                                                        'date' => null,
+                                                        'date' => $repair->getStatusDate('diagnosing')?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'টেকনিশিয়ান ডিভাইসটি ল্যাবে পরীক্ষা ও সমস্যা ডায়াগনসিস করছেন।',
                                                     ],
                                                     'waiting_for_approval' => [
                                                         'title' => '২. গ্রাহক অনুমোদনের অপেক্ষা',
-                                                        'date' => null,
+                                                        'date' => $repair->getStatusDate('waiting_for_approval')?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'আনুমানিক খরচ নির্ধারণ করে গ্রাহকের অনুমোদনের অপেক্ষায় রাখা হয়েছে।',
                                                     ],
                                                     'repairing' => [
                                                         'title' => '৩. রিপেয়ার কাজ চলছে',
-                                                        'date' => null,
+                                                        'date' => $repair->getStatusDate('repairing')?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: ($partsUsed ? 'পার্টস প্রতিস্থাপন: ' . $partsUsed : 'ল্যাবে অভিজ্ঞ টেকনিশিয়ান দ্বারা রিপেয়ার কাজ চলছে।'),
                                                     ],
                                                     'quality_check' => [
                                                         'title' => '৩. কোয়ালিটি টেস্ট',
-                                                        'date' => null,
+                                                        'date' => $repair->getStatusDate('quality_check')?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'রিপেয়ার শেষে পারফরম্যান্স ও কোয়ালিটি টেস্ট চলছে।',
                                                     ],
                                                     'completed' => [
                                                         'title' => '৪. টেস্ট সম্পন্ন ও ডেলিভারির জন্য প্রস্তুত',
-                                                        'date' => $repair->completed_at ? \Carbon\Carbon::parse($repair->completed_at)->format('d M, Y h:i A') : null,
+                                                        'date' => ($repair->completed_at ? \Carbon\Carbon::parse($repair->completed_at) : $repair->getStatusDate('completed'))?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'ডিভাইসটি সফলভাবে প্রস্তুত করা হয়েছে। আউটলেট থেকে ডেলিভারি গ্রহণ করতে পারেন।',
                                                     ],
                                                     'delivered' => [
                                                         'title' => '৫. ডেলিভারি সম্পন্ন',
-                                                        'date' => $repair->updated_at->format('d M, Y h:i A'),
+                                                        'date' => ($repair->getStatusDate('delivered') ?? $repair->updated_at)?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'পণ্যটি সফলভাবে গ্রাহকের নিকট হস্তান্তর করা হয়েছে। ধন্যবাদ!',
                                                     ],
                                                     'cancelled' => [
                                                         'title' => 'সার্ভিস বাতিল (Cancelled)',
-                                                        'date' => $repair->updated_at->format('d M, Y h:i A'),
+                                                        'date' => ($repair->getStatusDate('cancelled') ?? $repair->updated_at)?->format('d M, Y h:i A'),
                                                         'desc' => $techNotes ?: 'অনিবার্য কারণে সার্ভিসটি বাতিল করা হয়েছে।',
                                                     ],
                                                 ];
@@ -347,7 +347,7 @@
                                 <div class="alert alert-danger text-center p-5 rounded-4">
                                     <i class="ti tabler-alert-circle fs-1 d-block mb-2 text-danger"></i>
                                     <h5 class="fw-bold mb-2">দুঃখিত! কোনো তথ্য পাওয়া যায়নি।</h5>
-                                    <p class="mb-0 text-muted">আপনার দেওয়া Ticket ID <strong>"{{ request('ticket_id') }}"</strong> আমাদের সিস্টেমে খুঁজে পাওয়া যায়নি। অনুগ্রহ করে রসিদে থাকা সঠিক টিকিট নাম্বারটি পুনরায় চেক করুন।</p>
+                                    <p class="mb-0 text-muted">আপনার দেওয়া Ticket ID <strong>"{{ request('ticket_id') }}"</strong> আমাদের সিস্টেমে খুঁজে পাওয়া যায়নি। অনুগ্রহ করে SMS থাকা সঠিক টিকিট নাম্বারটি পুনরায় চেক করুন।</p>
                                 </div>
                             @endif
                         @else

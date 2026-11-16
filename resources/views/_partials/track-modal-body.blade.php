@@ -111,6 +111,7 @@
                         $step = $steps[$stepKey];
                         $isPassed = $currentIndex >= $index && $status != 'cancelled';
                         $isActive = $currentIndex === $index;
+                        $stepDate = $repair->getStatusDate($stepKey);
                     @endphp
                     <div class="mb-4 position-relative">
                         <!-- Node Indicator -->
@@ -119,12 +120,19 @@
                             <i class="ti {{ $step['Icon'] }} fs-6"></i>
                         </div>
                         <div class="ps-2">
-                            <h6 class="fw-bold mb-1 {{ $isActive ? 'step-active' : ($isPassed ? 'step-passed' : 'step-pending') }}">
-                                {{ $step['Title'] }}
-                                @if($isActive)
-                                    <span class="badge bg-label-primary bg-opacity-20 text-primary ms-2 fs-9">Current Status</span>
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-1">
+                                <h6 class="fw-bold mb-1 {{ $isActive ? 'step-active' : ($isPassed ? 'step-passed' : 'step-pending') }}">
+                                    {{ $step['Title'] }}
+                                    @if($isActive)
+                                        <span class="badge bg-label-primary bg-opacity-20 text-primary ms-2 fs-9">Current Status</span>
+                                    @endif
+                                </h6>
+                                @if($stepDate && ($isPassed || $isActive))
+                                    <span class="badge bg-dark bg-opacity-40 text-slate-300 border border-secondary border-opacity-25" style="font-size: 0.7rem;">
+                                        <i class="ti tabler-calendar me-1 text-primary"></i>{{ $stepDate->format('d M, Y') }}
+                                    </span>
                                 @endif
-                            </h6>
+                            </div>
                             <p class="step-desc mb-0 small">{{ $step['Desc'] }}</p>
                         </div>
                     </div>
